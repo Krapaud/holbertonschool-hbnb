@@ -1,0 +1,30 @@
+---
+config:
+  look: classic
+---
+classDiagram
+class PresentationLayer {
+    <<API / Services>>
+    +UserAPI
+    +PlaceAPI
+    +ReviewAPI
+    +AmenityAPI
+}
+class BusinessLogicLayer {
+    <<Models + Facade>>
+    +HBnBFacade
+    +User
+    +Place
+    +Review
+    +Amenity
+}
+class PersistenceLayer {
+    <<Repositories / ORM>>
+    +UserRepository
+    +PlaceRepository
+    +ReviewRepository
+    +AmenityRepository
+    +Database
+}
+PresentationLayer --> BusinessLogicLayer : Facade Pattern
+BusinessLogicLayer --> PersistenceLayer : Database Operations
