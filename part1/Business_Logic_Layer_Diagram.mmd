@@ -1,17 +1,22 @@
 ---
 config:
   layout: elk
-  theme: mc
+  theme: neo
 ---
 classDiagram
 direction LR
+    class BaseModel {
+	    +UUID4 Id
+	    +datetime created_at
+	    +datetime updated_at
+    }
     class PlaceModel {
 	    +string name
 	    +string description
 	    +float price
 	    +float latitude
 	    +float longitude
-	    +updated_place(place)
+	    +update_place(place)
 	    +add_amenity(amenity)
 	    +create_place()
 	    +delete_place(place)
@@ -20,7 +25,7 @@ direction LR
 	    +string name
 	    +string description
 	    +update_amenity(amenity)
-	    +listamenity()
+	    +list_amenity()
 	    +create_amenity()
 	    +delete_amenity(amenity)
     }
@@ -42,16 +47,12 @@ direction LR
 	    +create_review()
 	    +delete_review(review)
     }
-    class BaseModel {
-	    +UUID4 Id
-	    +Datetime created_at
-	    +Datetime updated_at
-    }
-    BaseModel --|> ReviewModel : Inheritance
-    BaseModel --|> PlaceModel : Inheritance
-    BaseModel --|> UserModel : Inheritance
-    BaseModel --|> AmenityModel : Inheritance
+
+    BaseModel <|-- PlaceModel : Inheritance
+    BaseModel <|-- UserModel : Inheritance
+    BaseModel <|-- AmenityModel : Inheritance
     UserModel "1" --> "*" PlaceModel
     UserModel "1" --> "*" ReviewModel
     ReviewModel "*" --> "1" PlaceModel
     PlaceModel "*" -- "*" AmenityModel
+    ReviewModel --|> BaseModel : Inheritance
