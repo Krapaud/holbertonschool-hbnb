@@ -26,5 +26,5 @@ class PersistenceLayer {
     +AmenityRepository
     +Database
 }
-PresentationLayer --> BusinessLogicLayer : Facade Pattern
-BusinessLogicLayer --> PersistenceLayer : Database Operations
+PresentationLayer ..> BusinessLogicLayer : Facade Pattern
+BusinessLogicLayer ..> PersistenceLayer : Database Operations
