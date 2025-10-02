@@ -20,7 +20,8 @@ sequenceDiagram
       PlaceModel -->> API: error (404 Not Found)
       API -->> Client: 404 Place Not Found
     else place exists
-      Database -->> API: place found
+      Database -->> PlaceModel: place found
+      PlaceModel -->> API: place found
       API ->> ReviewModel: validate review data
       alt invalid review data
         ReviewModel -->> API: error (400 Bad Request)

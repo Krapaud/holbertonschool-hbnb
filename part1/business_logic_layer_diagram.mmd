@@ -6,7 +6,7 @@ config:
 classDiagram
 direction LR
     class BaseModel {
-	    +UUID4 Id
+	    +UUID4 id
 	    +datetime created_at
 	    +datetime updated_at
     }
@@ -51,8 +51,8 @@ direction LR
     BaseModel <|-- PlaceModel : Inheritance
     BaseModel <|-- UserModel : Inheritance
     BaseModel <|-- AmenityModel : Inheritance
+    BaseModel <|-- ReviewModel : Inheritance
     UserModel "1" --> "*" PlaceModel
     UserModel "1" --> "*" ReviewModel
     ReviewModel "*" --> "1" PlaceModel
     PlaceModel "*" -- "*" AmenityModel
-    ReviewModel --|> BaseModel : Inheritance
