@@ -1,50 +1,50 @@
-# HBnB — Document technique : Blueprint d'architecture
+# HBnB — Technical Document: Architecture Blueprint
 
 ---
 
-## 1. Objet du document
+## 1. Document Purpose
 
-Ce document regroupe et explique les diagrammes et notes produits lors des tâches précédentes (diagramme de packages haut niveau, diagramme de classes détaillé pour la couche Business Logic, diagrammes de séquence pour les appels API). Il sert de référence technique pour l'implémentation et la maintenance du projet HBnB.
+This document brings together and explains the diagrams and notes produced during previous tasks (high-level package diagram, detailed class diagram for the Business Logic layer, sequence diagrams for API calls). It serves as a technical reference for the implementation and maintenance of the HBnB project.
 
-**Public visé** : développeurs backend, architectes, chefs de projet, QA.
+**Target Audience**: backend developers, architects, project managers, QA.
 
-**Périmètre** : architecture applicative, conception de la Business Logic, flux d'interaction API. Ne couvre pas les choix d'infrastructure détaillés (déploiement CI/CD, infra cloud) sauf mention explicite.
-
----
-
-## 2. Table des matières
-
-1. [Objet du document](#1-objet-du-document)
-2. [Table des matières](#2-table-des-matières)
-3. [Vue d'ensemble du projet](#3-vue-densemble-du-projet)
-4. [Architecture globale](#4-architecture-globale)
-5. [Couche Business Logic (Domain)](#5-couche-business-logic-domain)
-6. [Flux d'interaction API](#6-flux-dinteraction-api)
-7. [Décisions de conception et justifications](#7-décisions-de-conception-et-justifications)
-8. [Contrats API (résumé)](#8-contrats-api-résumé)
-9. [Non-fonctionnel et contraintes](#9-non-fonctionnel-et-contraintes)
-10. [Checklist de relecture / livraison](#10-checklist-de-relecture--livraison)
-11. [Annexes](#11-annexes)
+**Scope**: application architecture, Business Logic design, API interaction flows. Does not cover detailed infrastructure choices (CI/CD deployment, cloud infra) except when explicitly mentioned.
 
 ---
 
-## 3. Vue d'ensemble du projet
+## 2. Table of Contents
 
-HBnB est une application de location (similaire conceptuellement à « hôte & bed and breakfast ») qui permet :
-
-- **gestion des hébergements** (création, modification, suppression),
-- **recherche et réservation**,
-- **gestion des disponibilités et calendriers**,
-- **facturation et gestion des paiements**,
-- **gestion des utilisateurs** (hôtes, voyageurs, admins).
-
-Le système adopte une architecture en couches : présentation (API REST), service / business logic, couche d'accès aux données (repository / DAL), et persistance (base de données). Une façade (Facade) ou API service expose des points d'entrée simplifiés à la couche supérieure.
+1. [Document Purpose](#1-document-purpose)
+2. [Table of Contents](#2-table-of-contents)
+3. [Project Overview](#3-project-overview)
+4. [Global Architecture](#4-global-architecture)
+5. [Business Logic Layer (Domain)](#5-business-logic-layer-domain)
+6. [API Interaction Flows](#6-api-interaction-flows)
+7. [Design Decisions and Justifications](#7-design-decisions-and-justifications)
+8. [API Contracts (Summary)](#8-api-contracts-summary)
+9. [Non-functional Requirements and Constraints](#9-non-functional-requirements-and-constraints)
+10. [Review/Delivery Checklist](#10-reviewdelivery-checklist)
+11. [Appendices](#11-appendices)
 
 ---
 
-## 4. Architecture globale
+## 3. Project Overview
 
-### 4.1 Diagramme de packages (HAUT NIVEAU)
+HBnB is a rental application (conceptually similar to "host & bed and breakfast") that enables:
+
+- **accommodation management** (creation, modification, deletion),
+- **search and booking**,
+- **availability and calendar management**,
+- **billing and payment management**,
+- **user management** (hosts, travelers, admins).
+
+The system adopts a layered architecture: presentation (REST API), service/business logic, data access layer (repository/DAL), and persistence (database). A Facade or API service exposes simplified entry points to the upper layer.
+
+---
+
+## 4. Global Architecture
+
+### 4.1 High-Level Package Diagram
 
 ```mermaid
 classDiagram
@@ -72,37 +72,37 @@ classDiagram
     BusinessLogicLayer ..> PersistenceLayer : "Database Operations"
 ```
 
-**Objectif du diagramme** : montrer les principaux modules/packages et leurs dépendances (API, Controllers, Services, Domain, Repositories, Models/DTOs, Infrastructure, Auth).
+**Diagram Objective**: show the main modules/packages and their dependencies (API, Controllers, Services, Domain, Repositories, Models/DTOs, Infrastructure, Auth).
 
-### 4.2 Composants clés
+### 4.2 Key Components
 
-- **Presentation Layer (API)** : contrôleurs REST, validation des requêtes, mapping DTO → Domain
-- **Business Logic Layer** : logique métier, orchestration, transactions
-- **Persistence Layer** : abstractions d'accès aux données, implémentations (SQL/NoSQL)
-- **Infrastructure** : intégrations externes (paiements, email, storage)
-- **Security** : gestion JWT / OAuth, politiques d'accès
+- **Presentation Layer (API)**: REST controllers, request validation, DTO → Domain mapping
+- **Business Logic Layer**: business logic, orchestration, transactions
+- **Persistence Layer**: data access abstractions, implementations (SQL/NoSQL)
+- **Infrastructure**: external integrations (payments, email, storage)
+- **Security**: JWT/OAuth management, access policies
 
-### 4.3 Décisions de conception
+### 4.3 Design Decisions
 
-> **Decision** : Séparation claire entre domain (logique pure) et service (orchestration) pour faciliter tests unitaires et réutilisabilité.
+> **Decision**: Clear separation between domain (pure logic) and service (orchestration) to facilitate unit testing and reusability.
 
-> **Decision** : Dépendances dirigées vers l'intérieur (outer layers dépendent des abstractions du domain).
+> **Decision**: Dependencies directed inward (outer layers depend on domain abstractions).
 
-> **Decision** : Pattern façade pour fournir une interface stable aux contrôleurs et masquer la complexité des opérations transactionnelles.
+> **Decision**: Facade pattern to provide a stable interface to controllers and mask the complexity of transactional operations.
 
-### 4.4 Pattern façade et raisons
+### 4.4 Facade Pattern and Reasons
 
-Le pattern Façade simplifie l'interface entre la couche de présentation et la logique métier en :
-- Centralisant les points d'entrée de l'API
-- Gérant les transactions de manière cohérente
-- Masquant la complexité interne des interactions entre services
-- Facilitant les tests et la maintenance
+The Facade pattern simplifies the interface between the presentation layer and business logic by:
+- Centralizing API entry points
+- Managing transactions consistently
+- Hiding internal complexity of service interactions
+- Facilitating testing and maintenance
 
 ---
 
-## 5. Couche Business Logic (Domain)
+## 5. Business Logic Layer (Domain)
 
-### 5.1 Diagramme de classes détaillé
+### 5.1 Detailed Class Diagram
 
 ```mermaid
 classDiagram
@@ -159,68 +159,68 @@ classDiagram
     PlaceModel "*" -- "*" AmenityModel
 ```
 
-**But** : représenter les entités, agrégats, repos, services de domaine et leurs relations.
+**Purpose**: represent entities, aggregates, repos, domain services and their relationships.
 
-### 5.2 Principales entités (extrait)
+### 5.2 Main Entities (Extract)
 
-#### User (hôte / voyageur)
-- **attributs** : id, email, hashedPassword, role, profile
-- **méthodes** : authenticate(), canCreateListing(), isHost()
+#### User (host/traveler)
+- **attributes**: id, email, hashedPassword, role, profile
+- **methods**: authenticate(), canCreateListing(), isHost()
 
-#### Place (hébergement)
-- **attributs** : id, ownerId, title, description, location, amenities, basePrice
-- **méthodes** : calculatePrice(dateRange), isAvailable(dateRange)
+#### Place (accommodation)
+- **attributes**: id, ownerId, title, description, location, amenities, basePrice
+- **methods**: calculatePrice(dateRange), isAvailable(dateRange)
 
-#### Review (avis)
-- **attributs** : id, placeId, guestId, text, rating, createdAt
-- **méthodes** : validate(), update(), delete()
+#### Review (feedback)
+- **attributes**: id, placeId, guestId, text, rating, createdAt
+- **methods**: validate(), update(), delete()
 
-#### Amenity (équipement)
-- **attributs** : id, name, description
-- **méthodes** : create(), update(), delete(), list()
+#### Amenity (equipment)
+- **attributes**: id, name, description
+- **methods**: create(), update(), delete(), list()
 
-### 5.3 Description des entités et relations
+### 5.3 Entity and Relationship Description
 
-- **BaseModel** : classe abstraite fournissant les propriétés communes (ID, timestamps)
-- **UserModel** : représente les utilisateurs du système (hôtes et voyageurs)
-- **PlaceModel** : représente les logements disponibles à la location
-- **ReviewModel** : représente les avis laissés par les voyageurs
-- **AmenityModel** : représente les équipements et services disponibles
+- **BaseModel**: abstract class providing common properties (ID, timestamps)
+- **UserModel**: represents system users (hosts and travelers)
+- **PlaceModel**: represents accommodations available for rental
+- **ReviewModel**: represents reviews left by travelers
+- **AmenityModel**: represents available equipment and services
 
-### 5.4 Règles métier importantes
+### 5.4 Important Business Rules
 
-1. **Authentification** : seuls les utilisateurs authentifiés peuvent créer des places et des reviews
-2. **Propriété** : un utilisateur ne peut modifier que ses propres places
-3. **Reviews** : un utilisateur ne peut laisser qu'un seul avis par place
-4. **Validation des données** : tous les champs obligatoires doivent être validés côté serveur
+1. **Authentication**: only authenticated users can create places and reviews
+2. **Ownership**: a user can only modify their own places
+3. **Reviews**: a user can leave only one review per place
+4. **Data Validation**: all mandatory fields must be validated server-side
 
-### 5.5 Services et objets de domaine
+### 5.5 Services and Domain Objects
 
-- **PlaceService** : orchestration de la gestion des places
-- **UserService** : gestion de l'authentification et des profils
-- **ReviewService** : validation des avis et gestion des conflits
-- **AmenityService** : gestion des équipements
+- **PlaceService**: place management orchestration
+- **UserService**: authentication and profile management
+- **ReviewService**: review validation and conflict management
+- **AmenityService**: amenity management
 
-### 5.6 Repositories (interfaces)
+### 5.6 Repositories (Interfaces)
 
 - **IUserRepository**, **IPlaceRepository**, **IReviewRepository**, **IAmenityRepository**
-- **implémentations** : SqlUserRepository, MongoPlaceRepository (exemples selon DB choisie)
+- **implementations**: SqlUserRepository, MongoPlaceRepository (examples depending on chosen DB)
 
-> **Raisons** : interfaces permettent substitution pour tests et choix de persistance variable.
+> **Reasons**: interfaces allow substitution for testing and variable persistence choices.
 
 ---
 
-## 6. Flux d'interaction API
+## 6. API Interaction Flows
 
-### 6.1 Diagrammes de séquence inclus
+### 6.1 Included Sequence Diagrams
 
-Les diagrammes suivants illustrent les principaux flux d'interaction :
-- Création d'un utilisateur
-- Création d'une place
-- Recherche de places
-- Création d'un avis
+The following diagrams illustrate the main interaction flows:
+- User creation
+- Place creation
+- Place search
+- Review creation
 
-### 6.2 Séquence : Création d'un utilisateur
+### 6.2 Sequence: User Creation
 
 ```mermaid
 sequenceDiagram
@@ -250,16 +250,16 @@ sequenceDiagram
     end
 ```
 
-**Acteurs** : Client (frontend/mobile), API Controller, UserModel, Database
+**Actors**: Client (frontend/mobile), API Controller, UserModel, Database
 
-**Étapes clefs** :
-1. Frontend POST /users avec données d'inscription
-2. API valide les données via UserModel
-3. Vérification de l'unicité de l'email
-4. Création du compte utilisateur
-5. Retour du token d'authentification
+**Key Steps**:
+1. Frontend POST /users with registration data
+2. API validates data via UserModel
+3. Email uniqueness verification
+4. User account creation
+5. Authentication token return
 
-### 6.3 Séquence : Création d'une place
+### 6.3 Sequence: Place Creation
 
 ```mermaid
 sequenceDiagram
@@ -289,12 +289,12 @@ sequenceDiagram
     end
 ```
 
-**Points d'attention** : 
-- Vérification de l'authentification obligatoire
-- Validation complète des données de la place
-- Gestion des erreurs d'autorisation et de validation
+**Key Points**: 
+- Mandatory authentication verification
+- Complete place data validation
+- Authorization and validation error handling
 
-### 6.4 Séquence : Recherche de places
+### 6.4 Sequence: Place Search
 
 ```mermaid
 sequenceDiagram
@@ -322,9 +322,9 @@ sequenceDiagram
     end
 ```
 
-**Résumé** : frontend → PlaceController.search() → PlaceService applique filtres, appelle PlaceRepository.search() → mapper DTOs vers frontend. Pagination, cache (Redis) recommandé.
+**Summary**: frontend → PlaceController.search() → PlaceService applies filters, calls PlaceRepository.search() → map DTOs to frontend. Pagination, cache (Redis) recommended.
 
-### 6.5 Séquence : Création d'un avis
+### 6.5 Sequence: Review Creation
 
 ```mermaid
 sequenceDiagram
@@ -364,103 +364,97 @@ sequenceDiagram
     end
 ```
 
-**Étapes critiques** :
-1. Authentification de l'utilisateur
-2. Vérification de l'existence de la place
-3. Validation des données de l'avis
-4. Persistance de l'avis
+**Critical Steps**:
+1. User authentication
+2. Place existence verification
+3. Review data validation
+4. Review persistence
 
 ---
 
-## 7. Décisions de conception et justifications
+## 7. Design Decisions and Justifications
 
-### 7.1 Architecture en couches
-- **Facilite tests** : chaque couche peut être testée indépendamment
-- **Remplaçabilité** : les implémentations peuvent être changées sans impact
-- **Séparation de responsabilités** : chaque couche a un rôle bien défini
+### 7.1 Layered Architecture
+- **Facilitates testing**: each layer can be tested independently
+- **Replaceability**: implementations can be changed without impact
+- **Separation of concerns**: each layer has a well-defined role
 
-### 7.2 Façade/API Service
-- **Simplifie controllers** : interface unifiée pour les opérations complexes
-- **Centralise transactions** : gestion cohérente des rollbacks
+### 7.2 Facade/API Service
+- **Simplifies controllers**: unified interface for complex operations
+- **Centralizes transactions**: consistent rollback management
 
 ### 7.3 Repositories + Interfaces
-- **Inversion de dépendance** : facilite les tests unitaires
-- **Migrations DB futures** : changement de base de données simplifié
+- **Dependency inversion**: facilitates unit testing
+- **Future DB migrations**: simplified database changes
 
-### 7.4 Sécurité
-- **JWT pour API stateless** : scalabilité horizontale
-- **RBAC pour endpoints sensibles** : contrôle d'accès granulaire
-- **Validation côté serveur** : sécurité renforcée
-
----
-
-## 8. Contrats API (résumé)
-
-### 8.1 Endpoints principaux
-
-#### POST /users (Création d'utilisateur)
-- **Request body** : `{ first_name, last_name, email, password }`
-- **Response 201** : `{ user_id, email, token }`
-- **Response 409** : Conflit si email déjà utilisé
-- **Response 400** : Données invalides
-
-#### POST /places (Création de place)
-- **Headers requis** : `Authorization: Bearer <token>`
-- **Request body** : `{ name, description, price, latitude, longitude }`
-- **Response 201** : `{ place_id, name, price }`
-- **Response 401** : Token invalide ou expiré
-- **Response 400** : Données invalides
-
-#### GET /places (Recherche de places)
-- **Query params** : `city, price_min, price_max`
-- **Response 200** : `[{ place_id, name, price, location }]`
-- **Response 400** : Paramètres de recherche invalides
-
-#### POST /reviews (Création d'avis)
-- **Headers requis** : `Authorization: Bearer <token>`
-- **Request body** : `{ place_id, text, rating }`
-- **Response 201** : `{ review_id, text, rating }`
-- **Response 404** : Place non trouvée
-- **Response 401** : Non authentifié
+### 7.4 Security
+- **JWT for stateless API**: horizontal scalability
+- **RBAC for sensitive endpoints**: granular access control
+- **Server-side validation**: enhanced security
 
 ---
 
-## 9. Non-fonctionnel et contraintes
+## 8. API Contracts (Summary)
+
+### 8.1 Main Endpoints
+
+#### POST /users (User Creation)
+- **Request body**: `{ first_name, last_name, email, password }`
+- **Response 201**: `{ user_id, email, token }`
+- **Response 409**: Conflict if email already used
+- **Response 400**: Invalid data
+
+#### POST /places (Place Creation)
+- **Required headers**: `Authorization: Bearer <token>`
+- **Request body**: `{ name, description, price, latitude, longitude }`
+- **Response 201**: `{ place_id, name, price }`
+- **Response 401**: Invalid or expired token
+- **Response 400**: Invalid data
+
+#### GET /places (Place Search)
+- **Query params**: `city, price_min, price_max`
+- **Response 200**: `[{ place_id, name, price, location }]`
+- **Response 400**: Invalid search parameters
+
+#### POST /reviews (Review Creation)
+- **Required headers**: `Authorization: Bearer <token>`
+- **Request body**: `{ place_id, text, rating }`
+- **Response 201**: `{ review_id, text, rating }`
+- **Response 404**: Place not found
+- **Response 401**: Not authenticated
+
+---
+
+## 9. Non-functional Requirements and Constraints
 
 ### 9.1 Performance
-- **Temps de réponse** : recherche et pages listes < 300ms sous charge normale
-- **Optimisations** : index DB et cache Redis recommandés
+- **Response time**: search and list pages < 300ms under normal load
+- **Optimizations**: DB indexes and Redis cache recommended
 
-### 9.2 Scalabilité
-- **Architecture stateless** : JWT pour faciliter la montée en charge
-- **Cache distribué** : Redis pour les requêtes fréquentes
+### 9.2 Scalability
+- **Stateless architecture**: JWT to facilitate scaling
+- **Distributed cache**: Redis for frequent queries
 
-### 9.3 Résilience
-- **Gestion d'erreur** : retry/backoff sur intégrations externes
-- **Circuit-breaker** : protection contre les cascades de pannes
+### 9.3 Resilience
+- **Error handling**: retry/backoff on external integrations
+- **Circuit-breaker**: protection against failure cascades
 
-### 9.4 Observabilité
-- **Logs structurés** : format JSON pour faciliter l'analyse
-- **Traces distribuées** : OpenTelemetry recommandé
-- **Métriques** : Prometheus pour le monitoring
+### 9.4 Observability
+- **Structured logs**: JSON format to facilitate analysis
+- **Distributed tracing**: OpenTelemetry recommended
+- **Metrics**: Prometheus for monitoring
 
-### 9.5 Sécurité
-- **Chiffrement** : données sensibles chiffrées en base
-- **Validation** : sanitisation de toutes les entrées utilisateur
-- **Rate limiting** : protection contre les abus
+### 9.5 Security
+- **Encryption**: sensitive data encrypted in database
+- **Validation**: sanitization of all user inputs
+- **Rate limiting**: protection against abuse
 
 ---
 
-## 10. Checklist de relecture / livraison
+## Authors
 
-- [ ] Diagrammes intégrés et à jour
-- [ ] Contrats API documentés
-- [ ] Tests unitaires couvrant les règles métier
-- [ ] Documentation de déploiement
-- [ ] Configuration de sécurité validée
-- [ ] Monitoring et alertes configurés
-- [ ] Performance testée sous charge
-- [ ] Relecture par un pair architecture
-- [ ] Relecture orthographe et style
+**Jordann Miso** & **Mickael Mur**
+
+*Holberton School Project*
 
 ---
