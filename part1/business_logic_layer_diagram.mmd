@@ -1,0 +1,58 @@
+---
+config:
+  layout: elk
+  theme: neo
+---
+classDiagram
+direction LR
+    class BaseModel {
+	    +UUID4 id
+	    +datetime created_at
+	    +datetime updated_at
+    }
+    class PlaceModel {
+	    +string name
+	    +string description
+	    +float price
+	    +float latitude
+	    +float longitude
+	    +update_place(place)
+	    +add_amenity(amenity)
+	    +create_place()
+	    +delete_place(place)
+    }
+    class AmenityModel {
+	    +string name
+	    +string description
+	    +update_amenity(amenity)
+	    +list_amenity()
+	    +create_amenity()
+	    +delete_amenity(amenity)
+    }
+    class UserModel {
+	    +string first_name
+	    +string last_name
+	    +string email
+	    -string password
+	    +bool admin
+	    +authenticate(email, password)
+	    +create_profile()
+	    +update_profile(user)
+	    +delete_profile(user)
+    }
+    class ReviewModel {
+	    +string text
+	    +int rating
+	    +update_review(review)
+	    +create_review()
+	    +delete_review(review)
+    }
+
+    BaseModel <|-- PlaceModel : Inheritance
+    BaseModel <|-- UserModel : Inheritance
+    BaseModel <|-- AmenityModel : Inheritance
+    BaseModel <|-- ReviewModel : Inheritance
+    UserModel "1" --> "*" PlaceModel
+    UserModel "1" --> "*" ReviewModel
+    ReviewModel "*" --> "1" PlaceModel
+    PlaceModel "*" -- "*" AmenityModel
