@@ -4,7 +4,7 @@ participant API
 participant PlaceModel
 participant Database
 
-Client->>API: GET /places?city=X&price<Y
+Client->>API: GET filters
 API->>PlaceModel: validate search filters
 alt invalid filters
     PlaceModel-->>API: error (400 Bad Request)

@@ -1,23 +1,23 @@
-# 🏠 HBnB - Holberton School Project
+# 🏠 HBnB - My Holberton Project
 
-> **Project Status**: 🚧 **Under Development** 🚧
+> **Status**: 🚧 **Under Development** 🚧
 
-## 📋 Overview
+## 📋 What I'm Building
 
-HBnB is a "bed and breakfast" type accommodation rental application developed as part of the Holberton School curriculum. The project aims to create a complete platform for managing accommodations, reservations, and users.
+I'm developing HBnB, a "bed and breakfast" style accommodation rental application as part of my Holberton School curriculum. The goal is to create a complete platform for managing accommodations, reservations, and users.
 
-## 🎯 Project Objectives
+## 🎯 My Objectives
 
-This project aims to develop a complete web application following software development best practices:
+This project allows me to develop a complete web application following best practices:
 
 - **Layered Architecture**: Clear separation between presentation, business logic, and data
 - **REST API**: Standardized programming interface
 - **UML Modeling**: Complete technical documentation with diagrams
-- **Design Patterns**: Use of patterns like Repository, Facade, etc.
+- **Design Patterns**: Using patterns like Repository, Facade, etc.
 
-## 🏗️ Project Architecture
+## 🏗️ Architecture I Designed
 
-The project follows a well-defined layered architecture:
+I opted for a well-defined layered architecture:
 
 ```
 📁 HBnB Application
@@ -27,7 +27,7 @@ The project follows a well-defined layered architecture:
 └── 🗄️ Persistence Layer (Database)
 ```
 
-## 📁 Current Project Structure
+## 📁 My Current Project Structure
 
 ```
 holbertonschool-hbnb/
@@ -43,7 +43,7 @@ holbertonschool-hbnb/
     └── sequence_api_call_request_list.mmd    # Sequence diagram - Lists
 ```
 
-## 🚀 Planned Features
+## 🚀 Features I'm Going to Implement
 
 ### 👥 User Management
 - Registration and authentication
@@ -69,7 +69,7 @@ holbertonschool-hbnb/
 
 ## 📊 Current Phase - Part 1: Design and Modeling
 
-### ✅ Delivered Elements
+### ✅ What I've Already Accomplished
 
 1. **Complete Technical Documentation**
    - Detailed architecture document
@@ -86,7 +86,7 @@ holbertonschool-hbnb/
    - Review system flows
    - List request flows
 
-### 🔄 Next Steps
+### 🔄 My Next Steps
 
 - [ ] **Part 2**: Business Logic layer implementation
 - [ ] **Part 3**: REST API development
@@ -98,16 +98,18 @@ holbertonschool-hbnb/
 - **[Complete Technical Documentation](./HBnB_Document_Technique_Architecture.md)** - Detailed architecture blueprint
 - **[Part 1 Documentation](./part1/README.md)** - Design and modeling phase
 
-## 🛠️ Planned Technologies
+## 🛠️ Technologies I'm Using
 
 - **Backend**: Python/Flask or FastAPI
 - **Database**: SQLite/PostgreSQL
 - **Frontend**: HTML/CSS/JavaScript
 - **Documentation**: Mermaid for UML diagrams
 
-## 👨‍💻 Developers
+## 👨‍💻 About Me
 
-Project developed as part of the **Holberton School** curriculum.
+Project developed as part of my **Holberton School** curriculum.
+
+I'm learning and applying software architecture concepts, web development, and programming best practices.
 
 ## 📄 License
 

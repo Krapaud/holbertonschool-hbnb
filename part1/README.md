@@ -1,36 +1,36 @@
-# HBnB — Technical Document: Architecture Blueprint
+# HBnB — Our Technical Documentation: Architecture Blueprint
 
 ---
 
-## 1. Document Purpose
+## 1. What This Document Is About
 
-This document brings together and explains the diagrams and notes produced during previous tasks (high-level package diagram, detailed class diagram for the Business Logic layer, sequence diagrams for API calls). It serves as a technical reference for the implementation and maintenance of the HBnB project.
+This document brings together and explains the diagrams and notes we produced during our design phase (high-level package diagram, detailed class diagram for the Business Logic layer, sequence diagrams for API calls). It serves as our technical reference for implementing and maintaining the HBnB project.
 
-**Target Audience**: backend developers, architects, project managers, QA.
+**Who might find this useful**: backend developers, architects, project managers, QA teams.
 
-**Scope**: application architecture, Business Logic design, API interaction flows. Does not cover detailed infrastructure choices (CI/CD deployment, cloud infra) except when explicitly mentioned.
+**What we cover**: application architecture, Business Logic design, API interaction flows. We don't dive into detailed infrastructure choices (CI/CD deployment, cloud infra) unless specifically relevant.
 
 ---
 
 ## 2. Table of Contents
 
-1. [Document Purpose](#1-document-purpose)
+1. [What This Document Is About](#1-what-this-document-is-about)
 2. [Table of Contents](#2-table-of-contents)
-3. [Project Overview](#3-project-overview)
-4. [Global Architecture](#4-global-architecture)
+3. [Our Project Overview](#3-our-project-overview)
+4. [The Architecture We Designed](#4-the-architecture-we-designed)
 5. [Business Logic Layer (Domain)](#5-business-logic-layer-domain)
-6. [API Interaction Flows](#6-api-interaction-flows)
-7. [Design Decisions and Justifications](#7-design-decisions-and-justifications)
+6. [API Interaction Flows We Mapped](#6-api-interaction-flows-we-mapped)
+7. [Our Design Decisions and Why](#7-our-design-decisions-and-why)
 8. [API Contracts (Summary)](#8-api-contracts-summary)
 9. [Non-functional Requirements and Constraints](#9-non-functional-requirements-and-constraints)
-10. [Review/Delivery Checklist](#10-reviewdelivery-checklist)
+10. [Our Review/Delivery Checklist](#10-our-reviewdelivery-checklist)
 11. [Appendices](#11-appendices)
 
 ---
 
-## 3. Project Overview
+## 3. Our Project Overview
 
-HBnB is a rental application (conceptually similar to "host & bed and breakfast") that enables:
+HBnB is the rental application we're building (conceptually similar to "host & bed and breakfast") that will enable:
 
 - **accommodation management** (creation, modification, deletion),
 - **search and booking**,
@@ -38,13 +38,13 @@ HBnB is a rental application (conceptually similar to "host & bed and breakfast"
 - **billing and payment management**,
 - **user management** (hosts, travelers, admins).
 
-The system adopts a layered architecture: presentation (REST API), service/business logic, data access layer (repository/DAL), and persistence (database). A Facade or API service exposes simplified entry points to the upper layer.
+We designed the system with a layered architecture: presentation (REST API), service/business logic, data access layer (repository/DAL), and persistence (database). We're using a Facade or API service to expose simplified entry points to the upper layer.
 
 ---
 
-## 4. Global Architecture
+## 4. The Architecture We Designed
 
-### 4.1 High-Level Package Diagram
+### 4.1 Our High-Level Package Diagram
 
 ```mermaid
 classDiagram
@@ -72,9 +72,9 @@ classDiagram
     BusinessLogicLayer ..> PersistenceLayer : "Database Operations"
 ```
 
-**Diagram Objective**: show the main modules/packages and their dependencies (API, Controllers, Services, Domain, Repositories, Models/DTOs, Infrastructure, Auth).
+**What we wanted to show**: the main modules/packages and their dependencies (API, Controllers, Services, Domain, Repositories, Models/DTOs, Infrastructure, Auth).
 
-### 4.2 Key Components
+### 4.2 Key Components We Identified
 
 - **Presentation Layer (API)**: REST controllers, request validation, DTO → Domain mapping
 - **Business Logic Layer**: business logic, orchestration, transactions
@@ -82,17 +82,17 @@ classDiagram
 - **Infrastructure**: external integrations (payments, email, storage)
 - **Security**: JWT/OAuth management, access policies
 
-### 4.3 Design Decisions
+### 4.3 Our Design Decisions
 
-> **Decision**: Clear separation between domain (pure logic) and service (orchestration) to facilitate unit testing and reusability.
+> **Why we chose this**: Clear separation between domain (pure logic) and service (orchestration) to facilitate unit testing and reusability.
 
-> **Decision**: Dependencies directed inward (outer layers depend on domain abstractions).
+> **Our approach**: Dependencies directed inward (outer layers depend on domain abstractions).
 
-> **Decision**: Facade pattern to provide a stable interface to controllers and mask the complexity of transactional operations.
+> **Pattern we selected**: Facade pattern to provide a stable interface to controllers and mask the complexity of transactional operations.
 
-### 4.4 Facade Pattern and Reasons
+### 4.4 Why We Chose the Facade Pattern
 
-The Facade pattern simplifies the interface between the presentation layer and business logic by:
+We implemented the Facade pattern to simplify the interface between the presentation layer and business logic by:
 - Centralizing API entry points
 - Managing transactions consistently
 - Hiding internal complexity of service interactions
@@ -102,7 +102,7 @@ The Facade pattern simplifies the interface between the presentation layer and b
 
 ## 5. Business Logic Layer (Domain)
 
-### 5.1 Detailed Class Diagram
+### 5.1 Our Detailed Class Diagram
 
 ```mermaid
 classDiagram
@@ -159,9 +159,9 @@ classDiagram
     PlaceModel "*" -- "*" AmenityModel
 ```
 
-**Purpose**: represent entities, aggregates, repos, domain services and their relationships.
+**What we're representing**: entities, aggregates, repos, domain services and their relationships.
 
-### 5.2 Main Entities (Extract)
+### 5.2 Main Entities We Defined
 
 #### User (host/traveler)
 - **attributes**: id, email, hashedPassword, role, profile
@@ -210,11 +210,11 @@ classDiagram
 
 ---
 
-## 6. API Interaction Flows
+## 6. API Interaction Flows We Mapped
 
-### 6.1 Included Sequence Diagrams
+### 6.1 Sequence Diagrams We Created
 
-The following diagrams illustrate the main interaction flows:
+We designed the following diagrams to illustrate the main interaction flows:
 - User creation
 - Place creation
 - Place search
@@ -250,9 +250,9 @@ sequenceDiagram
     end
 ```
 
-**Actors**: Client (frontend/mobile), API Controller, UserModel, Database
+**Actors we identified**: Client (frontend/mobile), API Controller, UserModel, Database
 
-**Key Steps**:
+**Key Steps we mapped**:
 1. Frontend POST /users with registration data
 2. API validates data via UserModel
 3. Email uniqueness verification
@@ -289,7 +289,7 @@ sequenceDiagram
     end
 ```
 
-**Key Points**: 
+**What we focused on**: 
 - Mandatory authentication verification
 - Complete place data validation
 - Authorization and validation error handling
@@ -303,7 +303,7 @@ sequenceDiagram
     participant PlaceModel
     participant Database
 
-    Client->>API: GET /places?city=X&price<Y
+    Client->>API: GET filters
     API->>PlaceModel: validate search filters
     alt invalid filters
         PlaceModel-->>API: error (400 Bad Request)
@@ -322,7 +322,7 @@ sequenceDiagram
     end
 ```
 
-**Summary**: frontend → PlaceController.search() → PlaceService applies filters, calls PlaceRepository.search() → map DTOs to frontend. Pagination, cache (Redis) recommended.
+**How we designed it**: frontend → PlaceController.search() → PlaceService applies filters, calls PlaceRepository.search() → map DTOs to frontend. We're planning to add pagination and cache (Redis).
 
 ### 6.5 Sequence: Review Creation
 
@@ -364,7 +364,7 @@ sequenceDiagram
     end
 ```
 
-**Critical Steps**:
+**Critical Steps we identified**:
 1. User authentication
 2. Place existence verification
 3. Review data validation
@@ -372,23 +372,23 @@ sequenceDiagram
 
 ---
 
-## 7. Design Decisions and Justifications
+## 7. Our Design Decisions and Why
 
-### 7.1 Layered Architecture
-- **Facilitates testing**: each layer can be tested independently
-- **Replaceability**: implementations can be changed without impact
-- **Separation of concerns**: each layer has a well-defined role
+### 7.1 Why We Chose Layered Architecture
+- **Testing benefits**: each layer can be tested independently
+- **Flexibility**: implementations can be changed without impact
+- **Clear responsibilities**: each layer has a well-defined role
 
-### 7.2 Facade/API Service
-- **Simplifies controllers**: unified interface for complex operations
-- **Centralizes transactions**: consistent rollback management
+### 7.2 Our Facade/API Service Approach
+- **Controller simplification**: unified interface for complex operations
+- **Transaction management**: consistent rollback handling
 
-### 7.3 Repositories + Interfaces
-- **Dependency inversion**: facilitates unit testing
-- **Future DB migrations**: simplified database changes
+### 7.3 Our Repository + Interface Strategy
+- **Testing advantage**: dependency inversion facilitates unit testing
+- **Future flexibility**: simplified database changes
 
-### 7.4 Security
-- **JWT for stateless API**: horizontal scalability
+### 7.4 Security Approach We Selected
+- **JWT for stateless API**: enables horizontal scalability
 - **RBAC for sensitive endpoints**: granular access control
 - **Server-side validation**: enhanced security
 
@@ -451,10 +451,10 @@ sequenceDiagram
 
 ---
 
-## Authors
+## About This Work
 
-**Jordann Miso** & **Mickael Mur**
+**Created by Jordann Miso** & **Mickael Mur**
 
-*Holberton School Project*
+*My Holberton School Project - Part 1*
 
 ---
