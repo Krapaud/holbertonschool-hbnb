@@ -4,11 +4,6 @@ import re
 class UserModel(BaseModel):
     def __init__(self, first_name, last_name, email, password, is_admin=False):
         super().__init__()
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.is_admin = is_admin
-        
     
     def validate_user_data(self):
         """Validate user data"""
@@ -23,3 +18,9 @@ class UserModel(BaseModel):
         """Basic email validation"""
         email_pattern = r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_pattern, email) is not None
+
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.is_admin = is_admin
+        self.validate_user_data()
