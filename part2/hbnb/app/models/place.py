@@ -1,4 +1,5 @@
 from . import BaseModel
+from .user import UserModel
 
 class PlaceModel(BaseModel):
     def __init__(self, title, price, latitude, longitude, owner, description=None):
@@ -12,14 +13,14 @@ class PlaceModel(BaseModel):
             self.price = price
         else:
             print("price must be positive")
-        if latitude > -180.0 and latitude < 180.0:
+        if latitude >= -90.0 and latitude <= 90.0:
             self.latitude = latitude
         else:
-            print("latitude msut be between -180.0 and 180.0")
-        if longitude < 90.0 and longitude > -90.0:
+            print("latitude must be between -90.0 and 90.0")
+        if longitude >= -180.0 and longitude <= 180.0:
             self.longitude = longitude
         else:
-            print("longitude must be between -90.0 and 90.0")
+            print("longitude must be between -180.0 and 180.0")
         if isinstance(owner, UserModel):
             self.owner = owner
         else:
