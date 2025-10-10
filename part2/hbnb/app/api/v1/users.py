@@ -1,5 +1,5 @@
-from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_restx import Namespace, Resource, fields
 
 api = Namespace('users', description='User operations')
 
@@ -9,6 +9,7 @@ user_model = api.model('User', {
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user')
 })
+
 
 @api.route('/')
 class UserList(Resource):
@@ -20,13 +21,24 @@ class UserList(Resource):
         """Register a new user"""
         user_data = api.payload
 
-        # Simulate email uniqueness check (to be replaced by real validation with persistence)
-        existing_user = facade.get_user_by_email(user_data['email'])
-        if existing_user:
-            return {'error': 'Email already registered'}, 400
+        try:
+            # Check for email uniqueness first
+            existing_user = facade.get_user_by_email(user_data['email'])
+            if existing_user:
+                return {'error': 'Email already registered'}, 400
 
-        new_user = facade.create_user(user_data)
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+            # Try to create the user (this will trigger validation)
+            new_user = facade.create_user(user_data)
+            return {'id': new_user.id, 'first_name': new_user.first_name,
+                    'last_name': new_user.last_name, 'email': new_user.email}, 201
+
+        except ValueError as e:
+            # Handle validation errors from the model
+            return {'message': str(e)}, 400
+        except Exception as e:
+            # Handle any other unexpected errors
+            return {'error': 'Internal server error', 'message': str(e)}, 500
+
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -37,4 +49,5 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return {'id': user.id, 'first_name': user.first_name,
+                'last_name': user.last_name, 'email': user.email}, 200
