@@ -7,24 +7,24 @@ class PlaceModel(BaseModel):
         if len(title) < 100:
             self.title = title
         else:
-            print("Required, maximum length of 100 characters.")
+            raise ValueError ("Required, maximum length of 100 characters.")
         self.description = description
         if price > 0:
             self.price = price
         else:
-            print("price must be positive")
+            raise ValueError ("price must be positive")
         if latitude >= -90.0 and latitude <= 90.0:
             self.latitude = latitude
         else:
-            print("latitude must be between -90.0 and 90.0")
+            raise ValueError ("latitude must be between -90.0 and 90.0")
         if longitude >= -180.0 and longitude <= 180.0:
             self.longitude = longitude
         else:
-            print("longitude must be between -180.0 and 180.0")
+            raise ValueError ("longitude must be between -180.0 and 180.0")
         if isinstance(owner, UserModel):
             self.owner = owner
         else:
-            print("The owner doesn't exist")
+            raise ValueError ("The owner doesn't exist")
         self.reviews = []
         self.amenities = []
 

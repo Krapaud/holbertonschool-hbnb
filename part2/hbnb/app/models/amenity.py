@@ -7,4 +7,4 @@ class AmenityModel(BaseModel):
         if len(name) < 50:
             self.name = name
         else:
-            print("Required, maximum length of 50 characters.")
+            raise ValueError ("Required, maximum length of 50 characters.")
