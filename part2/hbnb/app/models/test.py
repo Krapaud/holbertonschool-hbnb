@@ -1,7 +1,7 @@
-from app.models.user import User
+from app.models.user import UserModel
 
 def test_user_creation():
-    user = User(first_name="John", last_name="Doe", email="john.doe@example.com")
+    user = UserModel(first_name="John", last_name="Doe", email="john.doe@example.com", password="password123")
     assert user.first_name == "John"
     assert user.last_name == "Doe"
     assert user.email == "john.doe@example.com"
@@ -10,30 +10,27 @@ def test_user_creation():
 
 test_user_creation()
 
-from app.models.place import Place
-from app.models.user import User
-from app.models.review import Review
+from app.models.place import PlaceModel
+from app.models.amenity import AmenityModel
 
 def test_place_creation():
-    owner = User(first_name="Alice", last_name="Smith", email="alice.smith@example.com")
-    place = Place(title="Cozy Apartment", description="A nice place to stay", price=100, latitude=37.7749, longitude=-122.4194, owner=owner)
+    owner = UserModel(first_name="Alice", last_name="Smith", email="alice.smith@example.com", password="password123")
+    place = PlaceModel(title="Cozy Apartment", description="A nice place to stay", price=100, latitude=37.7749, longitude=-122.4194, owner=owner)
 
-    # Adding a review
-    review = Review(text="Great stay!", rating=5, place=place, user=owner)
-    place.add_review(review)
+    # Adding an amenity
+    amenity = AmenityModel(name="Wi-Fi")
+    place.add_amenity(amenity)
 
     assert place.title == "Cozy Apartment"
     assert place.price == 100
-    assert len(place.reviews) == 1
-    assert place.reviews[0].text == "Great stay!"
+    assert len(place.amenities) == 1
+    assert place.amenities[0].name == "Wi-Fi"
     print("Place creation and relationship test passed!")
 
 test_place_creation()
 
-from app.models.amenity import Amenity
-
 def test_amenity_creation():
-    amenity = Amenity(name="Wi-Fi")
+    amenity = AmenityModel(name="Wi-Fi")
     assert amenity.name == "Wi-Fi"
     print("Amenity creation test passed!")
 
