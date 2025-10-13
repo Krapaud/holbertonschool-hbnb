@@ -100,9 +100,14 @@ class PlaceList(Resource):
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get place details by ID"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         # Utilise la façade pour récupérer une place par ID
         place = facade.get_place(place_id)
         if not place:
@@ -118,10 +123,14 @@ class PlaceResource(Resource):
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
+    @api.response(400, 'Invalid input data or place ID')
     @api.response(404, 'Place not found')
-    @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update a place's information"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         # Placeholder for the logic to update a place by ID
         try:
             place_data = api.payload
@@ -151,9 +160,14 @@ class PlaceResource(Resource):
 @api.route('/<place_id>/amenities')
 class PlaceAmenities(Resource):
     @api.response(200, 'Amenities retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all amenities for a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
@@ -161,9 +175,14 @@ class PlaceAmenities(Resource):
     
     @api.expect(api.model('PlaceAmenityAdd', {'amenity_id': fields.String(required=True)}))
     @api.response(200, 'Amenity added successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place or amenity not found')
     def post(self, place_id):
         """Add an amenity to a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         data = api.payload
         try:
             success = facade.add_amenity_to_place(place_id, data['amenity_id'])
@@ -177,9 +196,14 @@ class PlaceAmenities(Resource):
 @api.route('/<place_id>/reviews')
 class PlaceReviews(Resource):
     @api.response(200, 'Reviews retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         reviews = facade.get_reviews_by_place(place_id)
         return [{'id': review.id, 'text': review.text, 'rating': review.rating,
                 'user_id': review.user_id} for review in reviews], 200
