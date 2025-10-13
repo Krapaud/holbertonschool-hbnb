@@ -59,8 +59,16 @@ class HBnBFacade:
         return amenity
 
     def create_place(self, place_data):
-        # Placeholder for logic to create a place, including validation for
-        # price, latitude, and longitude
+    # Récupérer l'owner une seule fois
+        owner = self.get_user(place_data['owner_id'])
+        if not owner:
+            raise ValueError(f"Owner with id {place_data['owner_id']} not found")
+        
+        # Remplacer owner_id par l'objet owner
+        place_data['owner'] = owner
+        del place_data['owner_id']
+        
+        # Créer la place
         place = PlaceModel(**place_data)
         self.place_repo.add(place)
         return place
@@ -69,6 +77,9 @@ class HBnBFacade:
         # Placeholder for logic to retrieve a place by ID, including associated
         # owner and amenities
         return self.place_repo.get(place_id)
+
+    def get_place_by_title(self, title):
+        return self.place_repo.get_by_attribute('title', title)
 
     def get_all_places(self):
         # Placeholder for logic to retrieve all places
@@ -79,6 +90,15 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
+        
+        # Si owner_id est fourni, le convertir en objet UserModel
+        if 'owner_id' in place_data:
+            owner = self.get_user(place_data['owner_id'])
+            if not owner:
+                raise ValueError(f"Owner with id {place_data['owner_id']} not found")
+            place_data['owner'] = owner
+            del place_data['owner_id']
+        
         place.update(place_data)
         place.save()
         return place
@@ -129,3 +149,28 @@ class HBnBFacade:
     def delete_review(self, review_id):
         # Placeholder for logic to delete a review
         return self.review_repo.delete(review_id)
+    
+    def add_amenity_to_place(self, place_id, amenity_id):
+        """Add an amenity to a place"""
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+        
+        if not place or not amenity:
+            return False
+            
+        # Vérifier si l'amenity n'est pas déjà ajoutée
+        if amenity not in place.amenities:
+            place.add_amenity(amenity)
+            place.save()
+        return True
+    
+    def remove_amenity_from_place(self, place_id, amenity_id):
+        """Remove an amenity from a place"""
+        place = self.get_place(place_id)
+        if not place:
+            return False
+            
+        # Trouver et supprimer l'amenity
+        place.amenities = [a for a in place.amenities if a.id != amenity_id]
+        place.save()
+        return True
