@@ -27,6 +27,9 @@ class HBnBFacade:
         user.save()
         return user
 
+    def get_all_users(self):
+        return self.user_repo.get_all()
+
     def create_amenity(self, amenity_data):
         # Placeholder for logic to create an amenity
         amenity = AmenityModel(**amenity_data)
