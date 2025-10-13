@@ -59,13 +59,15 @@ class HBnBFacade:
         return amenity
 
     def create_place(self, place_data):
-        # Placeholder for logic to create a place, including validation for price, latitude, and longitude
+        # Placeholder for logic to create a place, including validation for
+        # price, latitude, and longitude
         place = PlaceModel(**place_data)
         self.place_repo.add(place)
         return place
 
     def get_place(self, place_id):
-        # Placeholder for logic to retrieve a place by ID, including associated owner and amenities
+        # Placeholder for logic to retrieve a place by ID, including associated
+        # owner and amenities
         return self.place_repo.get(place_id)
 
     def get_all_places(self):
@@ -80,3 +82,34 @@ class HBnBFacade:
         place.update(place_data)
         place.save()
         return place
+
+    def create_review(self, review_data):
+    # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
+        review = ReviewModel(**review_data)
+        self.review_repo.add(review)
+        return review
+
+    def get_review(self, review_id):
+        # Placeholder for logic to retrieve a review by ID
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+        # Placeholder for logic to retrieve all reviews
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        # Retrieve all reviews for a specific place
+        return self.review_repo.get_by_attribute('place_id', place_id)
+
+    def update_review(self, review_id, review_data):
+        # Placeholder for logic to update a review
+        review = self.review_repo.get(review_id)
+        if not review:
+            return None
+        review.update(review_data)
+        review.save()
+        return review
+
+    def delete_review(self, review_id):
+        # Placeholder for logic to delete a review
+        return self.review_repo.delete(review_id)
