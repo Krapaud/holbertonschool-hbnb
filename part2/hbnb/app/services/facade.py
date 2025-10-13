@@ -84,10 +84,26 @@ class HBnBFacade:
         return place
 
     def create_review(self, review_data):
-    # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
-        review = ReviewModel(**review_data)
+        # Placeholder for logic to create a review, including validation for
+        # user_id, place_id, and rating
+        user_id = review_data.get('user_id')
+        place_id = review_data.get('place_id')
+        text = review_data.get('text')
+        rating = review_data.get('rating')
+
+        # Get user and place objects
+        user = self.user_repo.get(user_id)
+        if not user:
+            raise ValueError(f"User with ID {user_id} not found")
+
+        place = self.place_repo.get(place_id)
+        if not place:
+            raise ValueError(f"Place with ID {place_id} not found")
+
+        # Create review with the expected parameters
+        review = ReviewModel(text=text, rating=rating, place=place, user=user)
         self.review_repo.add(review)
-        return review
+        return review.to_dict()
 
     def get_review(self, review_id):
         # Placeholder for logic to retrieve a review by ID
