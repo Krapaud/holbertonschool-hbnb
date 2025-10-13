@@ -56,7 +56,10 @@ class PlaceList(Resource):
                     'longitude': new_place.longitude, 
                     'owner': {'id': new_place.owner.id, 'first_name': new_place.owner.first_name, 
                              'last_name': new_place.owner.last_name, 'email': new_place.owner.email},
-                    'description': new_place.description}, 201
+                    'description': new_place.description,
+                    'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in new_place.amenities],
+                    'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                               'user_id': review.user_id} for review in new_place.reviews]}, 201
         except ValueError as e:
             # Handle validation errors from the model
             return {'message': str(e)}, 400
@@ -87,6 +90,10 @@ class PlaceList(Resource):
                     'last_name': place.owner.last_name, 
                     'email': place.owner.email
                 }
+            # Inclure amenities et reviews
+            place_dict['amenities'] = [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
+            place_dict['reviews'] = [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                                    'user_id': review.user_id} for review in place.reviews]
             result.append(place_dict)
         return result, 200
 
@@ -104,7 +111,10 @@ class PlaceResource(Resource):
                 'latitude': place.latitude, 'longitude': place.longitude,
                 'description': place.description, 
                 'owner': {'id': place.owner.id, 'first_name': place.owner.first_name,
-                         'last_name': place.owner.last_name, 'email': place.owner.email}}, 200
+                         'last_name': place.owner.last_name, 'email': place.owner.email},
+                'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities],
+                'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating, 
+                           'user_id': review.user_id} for review in place.reviews]}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -129,8 +139,47 @@ class PlaceResource(Resource):
                     'longitude': updated_place.longitude, 
                     'owner': {'id': updated_place.owner.id, 'first_name': updated_place.owner.first_name,
                              'last_name': updated_place.owner.last_name, 'email': updated_place.owner.email},
-                    'description': updated_place.description}, 200
+                    'description': updated_place.description,
+                    'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in updated_place.amenities],
+                    'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                               'user_id': review.user_id} for review in updated_place.reviews]}, 200
         except ValueError as e:
             return {'message': str(e)}, 400
         except Exception as e:
             return {'error': 'Internal server error', 'message': str(e)}, 500
+
+@api.route('/<place_id>/amenities')
+class PlaceAmenities(Resource):
+    @api.response(200, 'Amenities retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all amenities for a place"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+        return [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities], 200
+    
+    @api.expect(api.model('PlaceAmenityAdd', {'amenity_id': fields.String(required=True)}))
+    @api.response(200, 'Amenity added successfully')
+    @api.response(404, 'Place or amenity not found')
+    def post(self, place_id):
+        """Add an amenity to a place"""
+        data = api.payload
+        try:
+            success = facade.add_amenity_to_place(place_id, data['amenity_id'])
+            if success:
+                return {'message': 'Amenity added successfully'}, 200
+            else:
+                return {'error': 'Place or amenity not found'}, 404
+        except Exception as e:
+            return {'error': 'Internal server error', 'message': str(e)}, 500
+
+@api.route('/<place_id>/reviews')
+class PlaceReviews(Resource):
+    @api.response(200, 'Reviews retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a place"""
+        reviews = facade.get_reviews_by_place(place_id)
+        return [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                'user_id': review.user_id} for review in reviews], 200

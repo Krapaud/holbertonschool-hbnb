@@ -133,3 +133,28 @@ class HBnBFacade:
     def delete_review(self, review_id):
         # Placeholder for logic to delete a review
         return self.review_repo.delete(review_id)
+    
+    def add_amenity_to_place(self, place_id, amenity_id):
+        """Add an amenity to a place"""
+        place = self.get_place(place_id)
+        amenity = self.get_amenity(amenity_id)
+        
+        if not place or not amenity:
+            return False
+            
+        # Vérifier si l'amenity n'est pas déjà ajoutée
+        if amenity not in place.amenities:
+            place.add_amenity(amenity)
+            place.save()
+        return True
+    
+    def remove_amenity_from_place(self, place_id, amenity_id):
+        """Remove an amenity from a place"""
+        place = self.get_place(place_id)
+        if not place:
+            return False
+            
+        # Trouver et supprimer l'amenity
+        place.amenities = [a for a in place.amenities if a.id != amenity_id]
+        place.save()
+        return True
