@@ -59,8 +59,16 @@ class HBnBFacade:
         return amenity
 
     def create_place(self, place_data):
-        # Placeholder for logic to create a place, including validation for
-        # price, latitude, and longitude
+    # Récupérer l'owner une seule fois
+        owner = self.get_user(place_data['owner_id'])
+        if not owner:
+            raise ValueError(f"Owner with id {place_data['owner_id']} not found")
+        
+        # Remplacer owner_id par l'objet owner
+        place_data['owner'] = owner
+        del place_data['owner_id']
+        
+        # Créer la place
         place = PlaceModel(**place_data)
         self.place_repo.add(place)
         return place
@@ -69,6 +77,9 @@ class HBnBFacade:
         # Placeholder for logic to retrieve a place by ID, including associated
         # owner and amenities
         return self.place_repo.get(place_id)
+
+    def get_place_by_title(self, title):
+        return self.place_repo.get_by_attribute('title', title)
 
     def get_all_places(self):
         # Placeholder for logic to retrieve all places
@@ -79,6 +90,15 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
+        
+        # Si owner_id est fourni, le convertir en objet UserModel
+        if 'owner_id' in place_data:
+            owner = self.get_user(place_data['owner_id'])
+            if not owner:
+                raise ValueError(f"Owner with id {place_data['owner_id']} not found")
+            place_data['owner'] = owner
+            del place_data['owner_id']
+        
         place.update(place_data)
         place.save()
         return place
