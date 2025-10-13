@@ -35,13 +35,31 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         # Placeholder for the logic to register a new place
-        pass
+        place_data = api.payload
+        try:
+            # Check for email uniqueness first
+            existing_user = facade.get_place(place_data)
+            if existing_user:
+                return {'error': 'Place already registered'}, 400
+
+            # Try to create the user (this will trigger validation)
+            new_place = facade.create_place(place_data)
+            return {'id': new_place.id, 'title': new_place.title,
+                    'price': new_place.price, 'latitude': new_place.latiture,
+                    'longitude': new_place.longitude, 'owner': new_place.owner,
+                    'description': new_place.description}, 201
+        except ValueError as e:
+            # Handle validation errors from the model
+            return {'message': str(e)}, 400
+        except Exception as e:
+            # Handle any other unexpected errors
+            return {'error': 'Internal server error', 'message': str(e)}, 500
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
         # Placeholder for logic to return a list of all places
-        pass
+        return self.get_all_places()
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -50,7 +68,7 @@ class PlaceResource(Resource):
     def get(self, place_id):
         """Get place details by ID"""
         # Placeholder for the logic to retrieve a place by ID, including associated owner and amenities
-        pass
+        return self.get_place(place_id)
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -59,4 +77,22 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update a place's information"""
         # Placeholder for the logic to update a place by ID
-        pass
+        try:
+            place_data = api.payload
+            place = facade.get_place(place_id)
+            if not place:
+                return {'error': 'place not found'}, 404
+            if 'name' in place_data and place_data['name'] != place.name:
+                existing_place = facade.get_place(place_data['name'])
+                if existing_place:
+                    return {'error': 'Name already exist'}, 400
+
+            updated_place = facade.update_place(place_id, place_data)
+            return {'id': updated_place.id, 'title': updated_place.title,
+                    'price': updated_place.price, 'latitude': updated_place.latiture,
+                    'longitude': updated_place.longitude, 'owner': updated_place.owner,
+                    'description': updated_place.description}, 200
+        except ValueError as e:
+            return {'message': str(e)}, 400
+        except Exception as e:
+            return {'error': 'Internal server error', 'message': str(e)}, 500
