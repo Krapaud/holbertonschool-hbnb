@@ -1,6 +1,6 @@
+from app.models.user import UserModel
 from app.services import facade
 from flask_restx import Namespace, Resource, fields
-from app.models.user import UserModel
 
 api = Namespace('users', description='User operations')
 
@@ -14,6 +14,17 @@ user_model = api.model('User', {
 
 @api.route('/')
 class UserList(Resource):
+    @api.response(200, 'List of users retrieved successfully')
+    def get(self):
+        """Retrieve all users"""
+        try:
+            users = facade.get_all_users()
+            return [{'id': user.id, 'first_name': user.first_name,
+                     'last_name': user.last_name, 'email': user.email}
+                    for user in users], 200
+        except Exception as e:
+            return {'error': 'Internal server error', 'message': str(e)}, 500
+
     @api.expect(user_model, validate=True)
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
@@ -52,6 +63,7 @@ class UserResource(Resource):
             return {'error': 'User not found'}, 404
         return {'id': user.id, 'first_name': user.first_name,
                 'last_name': user.last_name, 'email': user.email}, 200
+
     @api.expect(user_model)
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid input data')
@@ -69,7 +81,7 @@ class UserResource(Resource):
 
             updated_user = facade.update_user(user_id, user_data)
             return {'id': updated_user.id, 'first_name': updated_user.first_name,
-                        'last_name': updated_user.last_name, 'email': updated_user.email}, 200
+                    'last_name': updated_user.last_name, 'email': updated_user.email}, 200
         except ValueError as e:
             return {'message': str(e)}, 400
         except Exception as e:
