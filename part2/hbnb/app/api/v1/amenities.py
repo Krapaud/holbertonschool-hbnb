@@ -32,6 +32,9 @@ class AmenityList(Resource):
 
         try:
             # Validate required field
+            existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
+            if existing_amenity:
+                return {'error': 'Amenity already exist'}, 400
             if not amenity_data or 'name' not in amenity_data:
                 return {'error': 'Name is required'}, 400
 

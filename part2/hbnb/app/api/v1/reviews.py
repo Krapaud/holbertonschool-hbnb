@@ -29,18 +29,19 @@ class ReviewList(Resource):
         user = facade.get_user(review_data['user_id'])
         if not user:
             return {'error': 'User not found'}, 404
-    try:
-        new_review = facade.create_review(review_data)
-        return {
-            'id': new_review.id,
-            'text': new_review.text,
-            'rating': new_review.rating,
-            'user_id': new_review.user.id,
-            'place_id': new_review.place.id
-        }, 201
         
-    except Exception as e:
-        return {'error': 'Failed to create review', 'message': str(e)}, 500
+        try:
+            new_review = facade.create_review(review_data)
+            return {
+                'id': new_review.id,
+                'text': new_review.text,
+                'rating': new_review.rating,
+                'user_id': new_review.user.id,
+                'place_id': new_review.place.id
+            }, 201
+            
+        except Exception as e:
+            return {'error': 'Failed to create review', 'message': str(e)}, 500
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -61,11 +62,11 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Get review details by ID"""
-        # Validate review.id is not empty
-        if not review.id or review.id.strip():
+        # Validate review_id is not empty
+        if not review_id or review_id.strip():
             return {'error': 'Invalid review ID'}, 400
         # Placeholder for the logic to retrieve a review by ID
-        review = facade.get_review(review.id)
+        review = facade.get_review(review_id)
         if not review:
             return {'error': 'Not found'}, 404
         return {}

@@ -163,7 +163,6 @@ class PlaceAmenities(Resource):
         # Validate place_id is not empty
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
-            
         data = api.payload
         try:
             success = facade.add_amenity_to_place(place_id, data['amenity_id'])
