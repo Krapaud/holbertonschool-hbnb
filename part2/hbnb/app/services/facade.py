@@ -128,7 +128,7 @@ class HBnBFacade:
         # Create review with the expected parameters
         review = ReviewModel(text=text, rating=rating, place=place, user=user)
         self.review_repo.add(review)
-        return review.to_dict()
+        return review
 
     def get_review(self, review_id):
         # Placeholder for logic to retrieve a review by ID
