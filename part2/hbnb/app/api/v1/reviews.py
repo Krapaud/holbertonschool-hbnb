@@ -21,7 +21,15 @@ class ReviewList(Resource):
         review_data = api.payload
         if not review_data or review_data.get('text') is None:
             return {'Bad Request': 'input data is invalid'}, 400
-
+        
+        place = facade.get_place(review_data['place_id'])
+        if not place:
+            return {'error': 'Place not found'}, 404
+        
+        user = facade.get_user(review_data['user_id'])
+        if not user:
+            return {'error': 'User not found'}, 404
+    try:
         new_review = facade.create_review(review_data)
         return {
             'id': new_review.id,
@@ -30,6 +38,9 @@ class ReviewList(Resource):
             'user_id': new_review.user.id,
             'place_id': new_review.place.id
         }, 201
+        
+    except Exception as e:
+        return {'error': 'Failed to create review', 'message': str(e)}, 500
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -50,8 +61,14 @@ class ReviewResource(Resource):
     @api.response(404, 'Review not found')
     def get(self, review_id):
         """Get review details by ID"""
+        # Validate review.id is not empty
+        if not review.id or review.id.strip():
+            return {'error': 'Invalid review ID'}, 400
         # Placeholder for the logic to retrieve a review by ID
-        pass
+        review = facade.get_review(review.id)
+        if not review:
+            return {'error': 'Not found'}, 404
+        return {}
 
     @api.expect(review_model)
     @api.response(200, 'Review updated successfully')
@@ -69,11 +86,17 @@ class ReviewResource(Resource):
         # Placeholder for the logic to delete a review
         pass
 
-@api.route('/places/<place_id>/reviews')
-class PlaceReviewList(Resource):
-    @api.response(200, 'List of reviews for the place retrieved successfully')
+@api.route('/<place_id>/reviews')
+class PlaceReviews(Resource):
+    @api.response(200, 'Reviews retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get all reviews for a specific place"""
-        # Placeholder for logic to return a list of reviews for a place
-        pass
+        """Get all reviews for a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
+        reviews = facade.get_reviews_by_place(place_id)
+        return [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                'user_id': review.user_id} for review in reviews], 200
