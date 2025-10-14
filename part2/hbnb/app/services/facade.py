@@ -162,10 +162,9 @@ class HBnBFacade:
         
         if not place or not amenity:
             return False
-            
         # Vérifier si l'amenity n'est pas déjà ajoutée
         if amenity not in place.amenities:
-            place.add_amenity(amenity)
+            place.amenities.append(amenity)
             place.save()
         return True
     
@@ -174,7 +173,6 @@ class HBnBFacade:
         place = self.get_place(place_id)
         if not place:
             return False
-            
         # Trouver et supprimer l'amenity
         place.amenities = [a for a in place.amenities if a.id != amenity_id]
         place.save()
