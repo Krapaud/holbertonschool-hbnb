@@ -37,6 +37,7 @@ class HBnBFacade:
 
     def create_amenity(self, amenity_data):
         # Placeholder for logic to create an amenity
+
         amenity = AmenityModel(**amenity_data)
         self.amenity_repo.add(amenity)
         return amenity
@@ -44,6 +45,10 @@ class HBnBFacade:
     def get_amenity(self, amenity_id):
         # Placeholder for logic to retrieve an amenity by ID
         return self.amenity_repo.get(amenity_id)
+    
+    def get_amenity_by_name(self, amenity_name):
+        # Placeholder for logic to retrieve an amenity by name
+        return self.amenity_repo.get_by_attribute('name', amenity_name)
 
     def get_all_amenities(self):
         # Placeholder for logic to retrieve all amenities
