@@ -54,12 +54,8 @@ class PlaceList(Resource):
             return {'id': new_place.id, 'title': new_place.title,
                     'price': new_place.price, 'latitude': new_place.latitude,
                     'longitude': new_place.longitude, 
-                    'owner': {'id': new_place.owner.id, 'first_name': new_place.owner.first_name, 
-                             'last_name': new_place.owner.last_name, 'email': new_place.owner.email},
-                    'description': new_place.description,
-                    'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in new_place.amenities],
-                    'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                               'user_id': review.user_id} for review in new_place.reviews]}, 201
+                    'owner_id': new_place.owner.id,
+                    'description': new_place.description}, 201
         except ValueError as e:
             # Handle validation errors from the model
             return {'message': str(e)}, 400
@@ -77,23 +73,8 @@ class PlaceList(Resource):
             place_dict = {
                 'id': place.id, 
                 'title': place.title, 
-                'price': place.price,
                 'latitude': place.latitude, 
-                'longitude': place.longitude,
-                'description': place.description
-            }
-            # Inclure l'owner seulement s'il existe et le sérialiser correctement
-            if hasattr(place, 'owner') and place.owner:
-                place_dict['owner'] = {
-                    'id': place.owner.id, 
-                    'first_name': place.owner.first_name,
-                    'last_name': place.owner.last_name, 
-                    'email': place.owner.email
-                }
-            # Inclure amenities et reviews
-            place_dict['amenities'] = [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
-            place_dict['reviews'] = [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                                    'user_id': review.user_id} for review in place.reviews]
+                'longitude': place.longitude}
             result.append(place_dict)
         return result, 200
 
@@ -112,7 +93,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        return {'id': place.id, 'title': place.title, 'price': place.price,
+        return {'id': place.id, 'title': place.title,
                 'latitude': place.latitude, 'longitude': place.longitude,
                 'description': place.description, 
                 'owner': {'id': place.owner.id, 'first_name': place.owner.first_name,
