@@ -54,12 +54,8 @@ class PlaceList(Resource):
             return {'id': new_place.id, 'title': new_place.title,
                     'price': new_place.price, 'latitude': new_place.latitude,
                     'longitude': new_place.longitude, 
-                    'owner': {'id': new_place.owner.id, 'first_name': new_place.owner.first_name, 
-                             'last_name': new_place.owner.last_name, 'email': new_place.owner.email},
-                    'description': new_place.description,
-                    'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in new_place.amenities],
-                    'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                               'user_id': review.user_id} for review in new_place.reviews]}, 201
+                    'owner_id': new_place.owner.id,
+                    'description': new_place.description}, 201
         except ValueError as e:
             # Handle validation errors from the model
             return {'message': str(e)}, 400
@@ -77,37 +73,27 @@ class PlaceList(Resource):
             place_dict = {
                 'id': place.id, 
                 'title': place.title, 
-                'price': place.price,
                 'latitude': place.latitude, 
-                'longitude': place.longitude,
-                'description': place.description
-            }
-            # Inclure l'owner seulement s'il existe et le sérialiser correctement
-            if hasattr(place, 'owner') and place.owner:
-                place_dict['owner'] = {
-                    'id': place.owner.id, 
-                    'first_name': place.owner.first_name,
-                    'last_name': place.owner.last_name, 
-                    'email': place.owner.email
-                }
-            # Inclure amenities et reviews
-            place_dict['amenities'] = [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
-            place_dict['reviews'] = [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                                    'user_id': review.user_id} for review in place.reviews]
+                'longitude': place.longitude}
             result.append(place_dict)
         return result, 200
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get place details by ID"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         # Utilise la façade pour récupérer une place par ID
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        return {'id': place.id, 'title': place.title, 'price': place.price,
+        return {'id': place.id, 'title': place.title,
                 'latitude': place.latitude, 'longitude': place.longitude,
                 'description': place.description, 
                 'owner': {'id': place.owner.id, 'first_name': place.owner.first_name,
@@ -118,10 +104,14 @@ class PlaceResource(Resource):
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
+    @api.response(400, 'Invalid input data or place ID')
     @api.response(404, 'Place not found')
-    @api.response(400, 'Invalid input data')
     def put(self, place_id):
         """Update a place's information"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         # Placeholder for the logic to update a place by ID
         try:
             place_data = api.payload
@@ -151,9 +141,14 @@ class PlaceResource(Resource):
 @api.route('/<place_id>/amenities')
 class PlaceAmenities(Resource):
     @api.response(200, 'Amenities retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all amenities for a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
@@ -161,9 +156,14 @@ class PlaceAmenities(Resource):
     
     @api.expect(api.model('PlaceAmenityAdd', {'amenity_id': fields.String(required=True)}))
     @api.response(200, 'Amenity added successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place or amenity not found')
     def post(self, place_id):
         """Add an amenity to a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         data = api.payload
         try:
             success = facade.add_amenity_to_place(place_id, data['amenity_id'])
@@ -177,9 +177,14 @@ class PlaceAmenities(Resource):
 @api.route('/<place_id>/reviews')
 class PlaceReviews(Resource):
     @api.response(200, 'Reviews retrieved successfully')
+    @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place not found')
     def get(self, place_id):
         """Get all reviews for a place"""
+        # Validate place_id is not empty
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+            
         reviews = facade.get_reviews_by_place(place_id)
         return [{'id': review.id, 'text': review.text, 'rating': review.rating,
                 'user_id': review.user_id} for review in reviews], 200
