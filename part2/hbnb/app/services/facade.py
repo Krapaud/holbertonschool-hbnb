@@ -175,13 +175,3 @@ class HBnBFacade:
             place.amenities.append(amenity)
             place.save()
         return True
-
-    def remove_amenity_from_place(self, place_id, amenity_id):
-        """Remove an amenity from a place"""
-        place = self.get_place(place_id)
-        if not place:
-            return False
-        # Trouver et supprimer l'amenity
-        place.amenities = [a for a in place.amenities if a.id != amenity_id]
-        place.save()
-        return True
