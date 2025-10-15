@@ -10,7 +10,8 @@ amenity_model = api.model('Amenity', {
 
 # Define the amenity response model
 amenity_response_model = api.model('AmenityResponse', {
-    'id': fields.String(required=True, description='Unique identifier of the amenity'),
+    'id': fields.String(required=True,
+                        description='Unique identifier of the amenity'),
     'name': fields.String(required=True, description='Name of the amenity')
 })
 

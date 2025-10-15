@@ -6,8 +6,10 @@ api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user'),
+    'first_name': fields.String(required=True,
+                                description='First name of the user'),
+    'last_name': fields.String(required=True,
+                               description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user')
 })
 
@@ -42,7 +44,8 @@ class UserList(Resource):
             # Try to create the user (this will trigger validation)
             new_user = facade.create_user(user_data)
             return {'id': new_user.id, 'first_name': new_user.first_name,
-                    'last_name': new_user.last_name, 'email': new_user.email}, 201
+                    'last_name': new_user.last_name,
+                    'email': new_user.email}, 201
 
         except ValueError as e:
             # Handle validation errors from the model
@@ -80,9 +83,12 @@ class UserResource(Resource):
                     return {'error': 'Email already registered'}, 400
 
             updated_user = facade.update_user(user_id, user_data)
-            return {'id': updated_user.id, 'first_name': updated_user.first_name,
-                    'last_name': updated_user.last_name, 'email': updated_user.email}, 200
+            return {'id': updated_user.id,
+                    'first_name': updated_user.first_name,
+                    'last_name': updated_user.last_name,
+                    'email': updated_user.email}, 200
         except ValueError as e:
             return {'message': str(e)}, 400
         except Exception as e:
-            return {'error': 'Internal server error', 'message': str(e)}, 500
+            return {'error': 'Internal server error',
+                    'message': str(e)}, 500

@@ -37,7 +37,6 @@ class HBnBFacade:
 
     def create_amenity(self, amenity_data):
         # Placeholder for logic to create an amenity
-
         amenity = AmenityModel(**amenity_data)
         self.amenity_repo.add(amenity)
         return amenity
@@ -45,7 +44,7 @@ class HBnBFacade:
     def get_amenity(self, amenity_id):
         # Placeholder for logic to retrieve an amenity by ID
         return self.amenity_repo.get(amenity_id)
-    
+
     def get_amenity_by_name(self, amenity_name):
         # Placeholder for logic to retrieve an amenity by name
         return self.amenity_repo.get_by_attribute('name', amenity_name)
@@ -64,23 +63,24 @@ class HBnBFacade:
         return amenity
 
     def create_place(self, place_data):
-    # Récupérer l'owner une seule fois
+        # Récupérer l'owner une seule fois
         owner = self.get_user(place_data['owner_id'])
         if not owner:
-            raise ValueError(f"Owner with id {place_data['owner_id']} not found")
-        
+            raise ValueError("Owner with id {} not found"
+                             .format(place_data['owner_id']))
+
         # Remplacer owner_id par l'objet owner
         place_data['owner'] = owner
         del place_data['owner_id']
-        
+
         # Créer la place
         place = PlaceModel(**place_data)
         self.place_repo.add(place)
         return place
 
     def get_place(self, place_id):
-        # Placeholder for logic to retrieve a place by ID, including associated
-        # owner and amenities
+        # Placeholder for logic to retrieve a place by ID, including
+        # associated owner and amenities
         return self.place_repo.get(place_id)
 
     def get_place_by_title(self, title):
@@ -95,22 +95,23 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        
+
         # Si owner_id est fourni, le convertir en objet UserModel
         if 'owner_id' in place_data:
             owner = self.get_user(place_data['owner_id'])
             if not owner:
-                raise ValueError(f"Owner with id {place_data['owner_id']} not found")
+                raise ValueError("Owner with id {} not found"
+                                 .format(place_data['owner_id']))
             place_data['owner'] = owner
             del place_data['owner_id']
-        
+
         place.update(place_data)
         place.save()
         return place
 
     def create_review(self, review_data):
-        # Placeholder for logic to create a review, including validation for
-        # user_id, place_id, and rating
+        # Placeholder for logic to create a review, including validation
+        # for user_id, place_id, and rating
         user_id = review_data.get('user_id')
         place_id = review_data.get('place_id')
         text = review_data.get('text')
@@ -119,11 +120,11 @@ class HBnBFacade:
         # Get user and place objects
         user = self.user_repo.get(user_id)
         if not user:
-            raise ValueError(f"User with ID {user_id} not found")
+            raise ValueError("User with ID {} not found".format(user_id))
 
         place = self.place_repo.get(place_id)
         if not place:
-            raise ValueError(f"Place with ID {place_id} not found")
+            raise ValueError("Place with ID {} not found".format(place_id))
 
         # Create review with the expected parameters
         review = ReviewModel(text=text, rating=rating, place=place, user=user)
@@ -161,12 +162,12 @@ class HBnBFacade:
             self.review_repo.delete(review_id)
             return True
         return False
-    
+
     def add_amenity_to_place(self, place_id, amenity_id):
         """Add an amenity to a place"""
         place = self.get_place(place_id)
         amenity = self.get_amenity(amenity_id)
-        
+
         if not place or not amenity:
             return False
         # Vérifier si l'amenity n'est pas déjà ajoutée
@@ -174,7 +175,7 @@ class HBnBFacade:
             place.amenities.append(amenity)
             place.save()
         return True
-    
+
     def remove_amenity_from_place(self, place_id, amenity_id):
         """Remove an amenity from a place"""
         place = self.get_place(place_id)

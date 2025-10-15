@@ -412,10 +412,13 @@ def test_get_all_users_return_format():
 
     # Check that returned user is the same as created user
     assert returned_user.id == created_user.id, "User ID should match"
-    assert returned_user.first_name == created_user.first_name, "First name should match"
-    assert returned_user.last_name == created_user.last_name, "Last name should match"
+    assert (returned_user.first_name == created_user.first_name,
+            "First name should match")
+    assert (returned_user.last_name == created_user.last_name,
+            "Last name should match")
     assert returned_user.email == created_user.email, "Email should match"
-    assert returned_user.is_admin == created_user.is_admin, "Admin status should match"
+    assert (returned_user.is_admin == created_user.is_admin,
+            "Admin status should match")
 
 
 run_test("Get all users - return format", test_get_all_users_return_format)
@@ -427,10 +430,16 @@ def test_get_all_users_after_operations():
     facade = HBnBFacade()
 
     # Create initial users
-    user1 = facade.create_user(
-        {"first_name": "Alice", "last_name": "Johnson", "email": "alice@example.com"})
-    user2 = facade.create_user(
-        {"first_name": "Bob", "last_name": "Smith", "email": "bob@example.com"})
+    user1 = facade.create_user({
+        "first_name": "Alice",
+        "last_name": "Johnson",
+        "email": "alice@example.com"
+    })
+    user2 = facade.create_user({
+        "first_name": "Bob",
+        "last_name": "Smith",
+        "email": "bob@example.com"
+    })
 
     # Check initial count
     users = facade.get_all_users()
@@ -448,8 +457,11 @@ def test_get_all_users_after_operations():
     assert updated_user.first_name == "Alice Updated", "User should be updated"
 
     # Add another user
-    user3 = facade.create_user(
-        {"first_name": "Charlie", "last_name": "Brown", "email": "charlie@example.com"})
+    user3 = facade.create_user({
+        "first_name": "Charlie",
+        "last_name": "Brown",
+        "email": "charlie@example.com"
+    })
 
     # Final check
     users = facade.get_all_users()
@@ -498,7 +510,8 @@ def test_complete_place_setup():
         place.add_amenity(amenity)
 
     # Assertions
-    assert place.owner.email == "john.owner@example.com", "Owner email should match"
+    assert (place.owner.email == "john.owner@example.com",
+            "Owner email should match")
     assert len(place.amenities) == 4, "Should have 4 amenities"
     assert place.price == 250, "Price should be 250"
     assert "Beach" in place.title, "Title should contain 'Beach'"
@@ -536,8 +549,8 @@ def test_multiple_places_same_owner():
         assert place.owner == owner, "All places should have same owner"
 
     assert len(places) == 3, "Should have 3 places"
-    assert all(p.owner.email ==
-               "multi@example.com" for p in places), "All should link to same owner"
+    assert all(p.owner.email == "multi@example.com" for p in places), \
+        "All should link to same owner"
 
 
 run_test("Multiple places same owner", test_multiple_places_same_owner)
@@ -569,8 +582,10 @@ def test_shared_amenities():
     place2.add_amenity(wifi)
     place2.add_amenity(parking)
 
-    assert wifi in place1.amenities and wifi in place2.amenities, "Wi-Fi should be in both places"
-    assert parking in place1.amenities and parking in place2.amenities, "Parking should be in both places"
+    assert (wifi in place1.amenities and wifi in place2.amenities), \
+        "Wi-Fi should be in both places"
+    assert (parking in place1.amenities and parking in place2.amenities), \
+        "Parking should be in both places"
 
 
 run_test("Shared amenities across places", test_shared_amenities)
@@ -589,9 +604,10 @@ success_rate = (
 print(f"Total tests run: {total_tests}")
 print(f"{GREEN}Passed: {test_results['passed']}{RESET}")
 print(f"{RED}Failed: {test_results['failed']}{RESET}")
-print(f"Success rate: {success_rate:.1f}%\n")
+print(f"Success rate: {success_rate:.1f}%")
 
 if test_results["failed"] == 0:
     print(f"{GREEN}🎉 All tests passed!{RESET}\n")
 else:
-    print(f"{YELLOW}⚠ Some tests failed. Please review the output above.{RESET}\n")
+    print(f"{YELLOW}⚠ Some tests failed. Please review the output above."
+          f"{RESET}\n")
