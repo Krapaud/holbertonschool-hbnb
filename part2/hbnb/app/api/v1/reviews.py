@@ -34,6 +34,8 @@ class ReviewList(Resource):
 
         except ValueError as e:
             return {'error': str(e)}, 404  # Not found for User/Place
+        except NameError as e:
+            return{'error': str(e)}, 400
         except Exception as e:
             return {'error': 'Failed to create review', 'details': str(e)}, 500
 

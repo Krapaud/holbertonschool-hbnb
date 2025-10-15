@@ -8,10 +8,10 @@ class ReviewModel(BaseModel):
         super().__init__()
 
         if not text or not isinstance(text, str) or len(text.strip()) == 0:
-            raise ValueError("Text is required and cannot be empty")
+            raise NameError("Text is required and cannot be empty")
 
         if not isinstance(rating, int) or rating < 1 or rating > 5:
-            raise ValueError("Rating must be an integer between 1 and 5")
+            raise NameError("Rating must be an integer between 1 and 5")
 
         if not isinstance(place, PlaceModel):
             raise ValueError("Place must be a valid Place instance")

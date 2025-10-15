@@ -6,7 +6,7 @@ class PlaceModel(BaseModel):
     def __init__(self, title, price, latitude, longitude, owner,
                  description=None):
         super().__init__()
-        if len(title) < 100:
+        if title and len(title) < 100:
             self.title = title
         else:
             raise ValueError("Required, maximum length of 100 characters.")
