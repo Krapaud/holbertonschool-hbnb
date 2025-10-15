@@ -128,6 +128,10 @@ class HBnBFacade:
         # Create review with the expected parameters
         review = ReviewModel(text=text, rating=rating, place=place, user=user)
         self.review_repo.add(review)
+
+        # Add the new review to the place's list of reviews
+        place.reviews.append(review)
+        place.save()
         return review
 
     def get_review(self, review_id):
