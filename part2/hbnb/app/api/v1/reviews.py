@@ -77,15 +77,43 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     def put(self, review_id):
         """Update a review's information"""
-        # Placeholder for the logic to update a review by ID
-        pass
+        if not review_id or review.strip() == '':
+            return {'error': 'Invalid review ID'}, 400
+            
+        try:
+            review_data = api.payload
+            review = facade.get_review(review_id)
+            if not review:
+                return {'error': 'review not found'}, 404
+
+            updated_review = facade.update_review(review_id, review_data)
+            return {'text': new_review.text, 'rating': new_review.rating}, 200
+        except ValueError as e:
+            return {'message': str(e)}, 400
+        except Exception as e:
+            return {'error': 'Internal server error', 'message': str(e)}, 500
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     def delete(self, review_id):
         """Delete a review"""
-        # Placeholder for the logic to delete a review
-        pass
+        if not review_id:
+            return {'error': 'Invalid review ID'}, 400
+        
+        try:
+            review_data = api.payload
+            review = facade.get_review(review_id)
+            if not review:
+                return {'error': 'review not found'}, 404
+            
+            delete_review = facade.delete_review(review_id)
+            return {'message': 'Review deleted successfully'}, 200
+        
+        except ValueError as e:
+            return {'message': str(e)}, 400
+        except Exception as e:
+            return {'error': 'Internal server error', 'message': str(e)}, 500
+        
 
 @api.route('/<place_id>/reviews')
 class PlaceReviews(Resource):
