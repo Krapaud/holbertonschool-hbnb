@@ -100,7 +100,7 @@ class PlaceResource(Resource):
                          'last_name': place.owner.last_name, 'email': place.owner.email},
                 'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities],
                 'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating, 
-                           'user_id': review.user_id} for review in place.reviews]}, 200
+                           'user_id': review.user.id} for review in place.reviews]}, 200
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
@@ -132,7 +132,7 @@ class PlaceResource(Resource):
                     'description': updated_place.description,
                     'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in updated_place.amenities],
                     'reviews': [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                               'user_id': review.user_id} for review in updated_place.reviews]}, 200
+                               'user_id': review.user.id} for review in updated_place.reviews]}, 200
         except ValueError as e:
             return {'message': str(e)}, 400
         except Exception as e:
