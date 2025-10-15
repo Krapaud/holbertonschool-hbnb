@@ -156,8 +156,11 @@ class HBnBFacade:
         return review
 
     def delete_review(self, review_id):
-        # Placeholder for logic to delete a review
-        return self.review_repo.delete(review_id)
+        # Check if review exists first
+        if self.review_repo.get(review_id):
+            self.review_repo.delete(review_id)
+            return True
+        return False
     
     def add_amenity_to_place(self, place_id, amenity_id):
         """Add an amenity to a place"""
