@@ -33,9 +33,12 @@ class ReviewList(Resource):
             }, 201
 
         except ValueError as e:
-            return {'error': str(e)}, 404  # Not found for User/Place
-        except NameError as e:
-            return{'error': str(e)}, 400
+            error_msg = str(e)
+            # Check if it's a "not found" error (User/Place not found)
+            if "not found" in error_msg:
+                return {'error': error_msg}, 404
+            # Otherwise, it's a validation error (empty text, invalid rating, etc.)
+            return {'error': error_msg}, 400
         except Exception as e:
             return {'error': 'Failed to create review', 'details': str(e)}, 500
 
@@ -119,19 +122,3 @@ class ReviewResource(Resource):
             return {'error': str(e)}, 400
         except Exception as e:
             return {'error': 'Internal server error', 'details': str(e)}, 500
-
-
-@api.route('/<place_id>/reviews')
-class PlaceReviews(Resource):
-    @api.response(200, 'Reviews retrieved successfully')
-    @api.response(400, 'Invalid place ID')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get all reviews for a place"""
-        # Validate place_id is not empty
-        if not place_id or place_id.strip() == '':
-            return {'error': 'Invalid place ID'}, 400
-
-        reviews = facade.get_reviews_by_place(place_id)
-        return [{'id': review.id, 'text': review.text, 'rating': review.rating,
-                'user_id': review.user.id} for review in reviews], 200

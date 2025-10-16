@@ -24,7 +24,6 @@ update_response_model = api.model('UpdateResponse', {
 @api.route('/')
 class AmenityList(Resource):
     @api.expect(amenity_model)
-    @api.marshal_with(amenity_response_model, code=201)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
@@ -32,10 +31,7 @@ class AmenityList(Resource):
         amenity_data = api.payload
 
         try:
-            # Validate required field
-            existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
-            if existing_amenity:
-                return {'error': 'Amenity already exist'}, 400
+            # Validate required field FIRST
             if not amenity_data or 'name' not in amenity_data:
                 return {'error': 'Name is required'}, 400
 
@@ -43,6 +39,11 @@ class AmenityList(Resource):
             name = amenity_data['name'].strip()
             if not name:
                 return {'error': 'Name cannot be empty'}, 400
+
+            # Check for duplicate amenity
+            existing_amenity = facade.get_amenity_by_name(name)
+            if existing_amenity:
+                return {'error': 'Amenity already exist'}, 400
 
             # Try to create the amenity (this will trigger validation)
             new_amenity = facade.create_amenity(amenity_data)
