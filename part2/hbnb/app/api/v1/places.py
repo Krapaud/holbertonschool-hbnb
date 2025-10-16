@@ -197,3 +197,22 @@ class PlaceAmenities(Resource):
                 return {'error': 'Place or amenity not found'}, 404
         except Exception as e:
             return {'error': 'Internal server error', 'message': str(e)}, 500
+
+
+@api.route('/<place_id>/reviews')
+class PlaceReviewsList(Resource):
+    @api.response(200, 'Reviews retrieved successfully')
+    @api.response(400, 'Invalid place ID')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a place"""
+        if not place_id or place_id.strip() == '':
+            return {'error': 'Invalid place ID'}, 400
+
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+
+        reviews = facade.get_reviews_by_place(place_id)
+        return [{'id': review.id, 'text': review.text, 'rating': review.rating,
+                'user_id': review.user.id} for review in reviews], 200
