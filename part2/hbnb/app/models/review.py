@@ -1,6 +1,6 @@
-from base import BaseModel
-from place import PlaceModel
-from user import UserModel
+from .base import BaseModel
+from .place import PlaceModel
+from .user import UserModel
 
 
 class ReviewModel(BaseModel):
