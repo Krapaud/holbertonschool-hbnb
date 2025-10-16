@@ -1,5 +1,5 @@
-from . import BaseModel
-from .user import UserModel
+from base import BaseModel
+from user import UserModel
 
 
 class PlaceModel(BaseModel):
