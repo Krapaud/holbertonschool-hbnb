@@ -1,4 +1,4 @@
-from . import BaseModel
+from .base import BaseModel
 
 
 class AmenityModel(BaseModel):
