@@ -12,32 +12,33 @@ hbnb/
 │   ├── __init__.py              # Flask application factory
 │   ├── api/
 │   │   ├── __init__.py
-│   │   ├── v1/
+│   │   └── v1/
 │   │       ├── __init__.py
 │   │       ├── users.py         # User API endpoints
 │   │       ├── places.py        # Place API endpoints
 │   │       ├── reviews.py       # Review API endpoints
-│   │       ├── amenities.py     # Amenity API endpoints
+│   │       └── amenities.py     # Amenity API endpoints
 │   ├── models/
 │   │   ├── __init__.py
+│   │   ├── base_model.py        # Base model with common attributes
 │   │   ├── user.py              # User business logic model
 │   │   ├── place.py             # Place business logic model
 │   │   ├── review.py            # Review business logic model
-│   │   ├── amenity.py           # Amenity business logic model
+│   │   └── amenity.py           # Amenity business logic model
 │   ├── services/
 │   │   ├── __init__.py          # Facade singleton instance
-│   │   ├── facade.py            # Facade pattern implementation
-│   ├── persistence/
+│   │   └── facade.py            # Facade pattern implementation
+│   └── persistence/
 │       ├── __init__.py
-│       ├── repository.py        # In-memory repository implementation
+│       └── repository.py        # In-memory repository implementation
 ├── tests/
 │   ├── __init__.py
 │   ├── test_endpoint.py         # Automated endpoint tests
-│   ├── test_endpoint_report.md  # Test results report
+│   └── test_endpoint_report.md  # Test results report
 ├── run.py                       # Application entry point
 ├── config.py                    # Environment configuration
 ├── requirements.txt             # Python dependencies
-├── README.md                    # This file
+└── README.md                    # This file
 ```
 
 ## Architecture
@@ -102,10 +103,10 @@ The project includes comprehensive automated tests for all API endpoints.
 
 ### Test Results Summary
 
-**API Testing Report - October 15, 2025**
+**API Testing Report - October 16, 2025**
 
-- **Total tests:** 20
-- **Successful tests:** 20
+- **Total tests:** 26
+- **Successful tests:** 26
 - **Failed tests:** 0
 - **Success rate:** 100%
 
@@ -129,8 +130,12 @@ The project includes comprehensive automated tests for all API endpoints.
 - User and Place ID validation
 - Rating validation (valid range: 1-5)
 
-#### Amenity Endpoints
-- Basic CRUD operations tested
+#### Amenity Endpoints (6 tests)
+- Amenity creation with valid data
+- Name validation (empty/whitespace)
+- Duplicate amenity detection
+- Missing required fields handling
+- Name length validation (max 50 characters)
 
 ### Key Validations Implemented
 - **Email Format**: Comprehensive regex validation
@@ -146,6 +151,34 @@ python -m pytest tests/test_endpoint.py -v
 ```
 
 For detailed test results, see `tests/test_endpoint_report.md`.
+
+## API Endpoints
+
+### Users
+- `POST /api/v1/users` - Create a new user
+- `GET /api/v1/users` - Get all users
+- `GET /api/v1/users/<user_id>` - Get a specific user
+- `PUT /api/v1/users/<user_id>` - Update a user
+
+### Places
+- `POST /api/v1/places` - Create a new place
+- `GET /api/v1/places` - Get all places
+- `GET /api/v1/places/<place_id>` - Get a specific place
+- `PUT /api/v1/places/<place_id>` - Update a place
+- `GET /api/v1/places/<place_id>/reviews` - Get all reviews for a place
+
+### Reviews
+- `POST /api/v1/reviews` - Create a new review
+- `GET /api/v1/reviews` - Get all reviews
+- `GET /api/v1/reviews/<review_id>` - Get a specific review
+- `PUT /api/v1/reviews/<review_id>` - Update a review
+- `DELETE /api/v1/reviews/<review_id>` - Delete a review
+
+### Amenities
+- `POST /api/v1/amenities` - Create a new amenity
+- `GET /api/v1/amenities` - Get all amenities
+- `GET /api/v1/amenities/<amenity_id>` - Get a specific amenity
+- `PUT /api/v1/amenities/<amenity_id>` - Update an amenity
 
 ## API Documentation
 
