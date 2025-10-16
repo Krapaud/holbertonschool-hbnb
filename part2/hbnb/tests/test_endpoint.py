@@ -486,3 +486,73 @@ class TestEndpointsValidation(unittest.TestCase):
                     "place_id": place_id
                 })
                 self.assertEqual(response.status_code, 400)
+                
+    # ========================================================================
+    # AMENITY TESTS - Attribute validation
+    # ========================================================================
+
+    def test_create_amenity_valid_data(self):
+        """Test creating amenity with valid data"""
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": "WiFi"
+        })
+        self.assertEqual(response.status_code, 201)
+        data = response.get_json()
+        self.assertIn('id', data)
+        self.assertEqual(data['name'], 'WiFi')
+
+    def test_create_amenity_empty_text(self):
+        """Test creating amenity with empty name"""
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": ""
+        })
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+    def test_create_amenity_whitespace_only_text(self):
+        """Test creating amenity with whitespace-only name"""
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": "   "
+        })
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+    def test_create_amenity_already_exist(self):
+        """Test creating duplicate amenity"""
+        # Create first amenity
+        response1 = self.client.post('/api/v1/amenities/', json={
+            "name": "Swimming Pool"
+        })
+        self.assertEqual(response1.status_code, 201)
+
+        # Try to create duplicate
+        response2 = self.client.post('/api/v1/amenities/', json={
+            "name": "Swimming Pool"
+        })
+        self.assertEqual(response2.status_code, 400)
+        data = response2.get_json()
+        self.assertIn('error', data)
+
+    def test_create_amenity_missing_name(self):
+        """Test creating amenity without name field"""
+        response = self.client.post('/api/v1/amenities/', json={})
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+    def test_create_amenity_name_too_long(self):
+        """Test creating amenity with name exceeding maximum length"""
+        long_name = "A" * 51  # Exceeds 50 character limit
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": long_name
+        })
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+
+if __name__ == '__main__':
+    unittest.main()
+           
