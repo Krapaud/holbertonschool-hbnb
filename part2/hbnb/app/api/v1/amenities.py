@@ -35,6 +35,10 @@ class AmenityList(Resource):
             if not amenity_data or 'name' not in amenity_data:
                 return {'error': 'Name is required'}, 400
 
+            # Validate name is string type
+            if not isinstance(amenity_data['name'], str):
+                return {'error': 'Name must be a string'}, 400
+
             # Validate name format
             name = amenity_data['name'].strip()
             if not name:

@@ -22,6 +22,30 @@ class ReviewList(Resource):
         """Register a new review"""
         review_data = api.payload
         try:
+            # Validate required fields
+            required_fields = ['text', 'rating', 'user_id', 'place_id']
+            for field in required_fields:
+                if field not in review_data:
+                    return {'error': f'Missing required field: {field}'}, 400
+            
+            # Validate text is string and not empty
+            if not isinstance(review_data['text'], str):
+                return {'error': 'Text must be a string'}, 400
+            if not review_data['text'].strip():
+                return {'error': 'Text cannot be empty'}, 400
+            
+            # Validate rating is integer and in range
+            if not isinstance(review_data['rating'], int):
+                return {'error': 'Rating must be an integer'}, 400
+            if not 1 <= review_data['rating'] <= 5:
+                return {'error': 'Rating must be between 1 and 5'}, 400
+            
+            # Validate user_id and place_id are strings
+            if not isinstance(review_data['user_id'], str):
+                return {'error': 'user_id must be a string'}, 400
+            if not isinstance(review_data['place_id'], str):
+                return {'error': 'place_id must be a string'}, 400
+            
             new_review = facade.create_review(review_data)
             return {
                 'message': 'Review successfully created',
