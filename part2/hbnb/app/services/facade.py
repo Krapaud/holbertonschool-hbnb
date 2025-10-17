@@ -160,7 +160,15 @@ class HBnBFacade:
 
     def delete_review(self, review_id):
         # Check if review exists first
-        if self.review_repo.get(review_id):
+        review = self.review_repo.get(review_id)
+        if review:
+            # Remove the review from the associated place's reviews list
+            place = review.place
+            if review in place.reviews:
+                place.reviews.remove(review)
+                place.save()
+
+            # Delete the review from the repository
             self.review_repo.delete(review_id)
             return True
         return False
