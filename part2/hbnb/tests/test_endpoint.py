@@ -120,9 +120,30 @@ class TestEndpointsValidation(unittest.TestCase):
         response = self.client.post('/api/v1/users/', json={
             "first_name": "   ",
             "last_name": "   ",
-            "email": "jane.doe@example.com"
+            "email": "janette.doe@example.com"
         })
         self.assertEqual(response.status_code, 400)
+
+    def test_create_user_duplicate_email(self):
+        """Test creating user with duplicate email returns 409"""
+        # Create first user
+        response1 = self.client.post('/api/v1/users/', json={
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "duplicate@example.com"
+        })
+        self.assertEqual(response1.status_code, 201)
+
+        # Try to create user with same email
+        response2 = self.client.post('/api/v1/users/', json={
+            "first_name": "John",
+            "last_name": "Smith",
+            "email": "duplicate@example.com"
+        })
+        self.assertEqual(response2.status_code, 409)
+        data = response2.get_json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'Email already registered')
 
     # ========================================================================
     # PLACE TESTS - Attribute validation

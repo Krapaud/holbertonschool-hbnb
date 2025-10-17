@@ -13,9 +13,11 @@ class UserModel(BaseModel):
 
     def validate_user_data(self):
         """Validate user data"""
-        if not self.first_name or len(self.first_name) > 50:
+        if (not self.first_name or len(self.first_name) > 50 or
+            len(self.first_name.strip()) == 0):
             raise ValueError("First name is required and must be <= 50 chars")
-        if not self.last_name or len(self.last_name) > 50:
+        if (not self.last_name or len(self.last_name) > 50 or
+            len(self.last_name.strip()) == 0):
             raise ValueError("Last name is required and must be <= 50 chars")
         if not self.email or not self.is_valid_email(self.email):
             raise ValueError("Valid email is required")
