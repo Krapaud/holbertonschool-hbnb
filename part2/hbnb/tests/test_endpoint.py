@@ -125,7 +125,7 @@ class TestEndpointsValidation(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_create_user_duplicate_email(self):
-        """Test creating user with duplicate email returns 409"""
+        """Test creating user with duplicate email returns 400"""
         # Create first user
         response1 = self.client.post('/api/v1/users/', json={
             "first_name": "Jane",
