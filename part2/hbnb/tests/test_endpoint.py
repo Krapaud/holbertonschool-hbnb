@@ -140,7 +140,7 @@ class TestEndpointsValidation(unittest.TestCase):
             "last_name": "Smith",
             "email": "duplicate@example.com"
         })
-        self.assertEqual(response2.status_code, 409)
+        self.assertEqual(response2.status_code, 400)
         data = response2.get_json()
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'Email already registered')
