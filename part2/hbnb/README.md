@@ -20,7 +20,7 @@ hbnb/
 │   │       └── amenities.py     # Amenity API endpoints
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── base_model.py        # Base model with common attributes
+│   │   ├── base.py              # Base model with common attributes
 │   │   ├── user.py              # User business logic model
 │   │   ├── place.py             # Place business logic model
 │   │   ├── review.py            # Review business logic model
@@ -103,50 +103,43 @@ The project includes comprehensive automated tests for all API endpoints.
 
 ### Test Results Summary
 
-**API Testing Report - October 16, 2025**
+**API Testing Report - October 17, 2025**
 
-- **Total tests:** 26
-- **Successful tests:** 26
+- **Total tests:** 27
+- **Successful tests:** 27
 - **Failed tests:** 0
 - **Success rate:** 100%
 
-### Test Categories
+### Test Suites
 
-#### User Endpoints (7 tests)
-- User creation with valid data
-- Validation for empty/whitespace fields
-- Email format validation (7 invalid formats tested)
-- Missing required fields handling
+#### test_endpoint.py (27 tests)
+**Purpose:** Validates endpoint functionality and data validation
 
-#### Place Endpoints (7 tests)
-- Place creation with valid data
-- Title validation (empty/whitespace)
-- Price validation (negative/zero values)
-- Geographic coordinates validation (latitude: -90 to 90, longitude: -180 to 180)
-
-#### Review Endpoints (6 tests)
-- Review creation with valid data
-- Text validation (empty/whitespace)
-- User and Place ID validation
-- Rating validation (valid range: 1-5)
-
-#### Amenity Endpoints (6 tests)
-- Amenity creation with valid data
-- Name validation (empty/whitespace)
-- Duplicate amenity detection
-- Missing required fields handling
-- Name length validation (max 50 characters)
+**Test Categories:**
+- **User Endpoints (8 tests):** User creation, validation for empty/whitespace fields, email format validation, missing required fields, duplicate email handling
+- **Place Endpoints (7 tests):** Place creation, title validation, price validation (negative/zero values), geographic coordinates validation (latitude: -90 to 90, longitude: -180 to 180)
+- **Review Endpoints (6 tests):** Review creation, text validation, user/place ID validation, rating validation (1-5)
+- **Amenity Endpoints (6 tests):** Amenity creation, name validation, duplicate detection, missing fields, name length validation (max 50 characters)
 
 ### Key Validations Implemented
-- **Email Format**: Comprehensive regex validation
-- **Geographic Coordinates**: Proper latitude/longitude bounds
-- **Data Integrity**: Required field validation and type checking
-- **Error Handling**: Appropriate HTTP status codes (400 for validation errors, 404 for not found)
+- **Email Format:** Comprehensive regex validation
+- **Geographic Coordinates:** Proper latitude/longitude bounds
+- **Data Integrity:** Required field validation and type checking
+- **Error Handling:** Appropriate HTTP status codes (400 for validation errors, 404 for not found, 409 for conflicts)
+- **Type Safety:** Strict type validation for all inputs
+- **Boundary Testing:** Extreme values and edge cases handled correctly
 
 ### Running Tests
 
-To run the automated tests:
+To run all the automated tests:
 ```bash
+# Activate virtual environment first
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Run all tests
+python -m pytest tests/ -v
+
+# Run specific test file
 python -m pytest tests/test_endpoint.py -v
 ```
 

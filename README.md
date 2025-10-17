@@ -47,6 +47,9 @@ holbertonschool-hbnb/
         │   ├── models/                       # Data models
         │   ├── services/                     # Business logic (Facade)
         │   └── persistence/                  # Data persistence layer
+        ├── tests/                             # Test suite
+        │   ├── test_endpoint.py              # Endpoint validation tests
+        │   └── test_endpoint_report.md       # Test documentation
         ├── config.py                         # Application configuration
         ├── run.py                            # Application entry point
         └── requirements.txt                  # Python dependencies
@@ -110,6 +113,11 @@ holbertonschool-hbnb/
    - Repository pattern for data persistence
    - Facade pattern for business logic
    - Proper dependency injection
+
+4. **Testing Suite**
+   - Comprehensive automated tests
+   - Endpoint validation tests
+   - Full test coverage for all API endpoints
 
 ## Documentation
 
