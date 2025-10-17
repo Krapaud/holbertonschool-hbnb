@@ -30,17 +30,7 @@ This document brings together and explains the diagrams and notes we produced du
 
 ## 3. Our Project Overview
 
-<<<<<<< HEAD
-HBnB is the rental application we're building (conceptually similar to "host & bed and breakfast") that will enable:
-
-- **accommodation management** (creation, modification, deletion),
-- **search and booking**,
-- **availability and calendar management**,
-- **billing and payment management**,
-- **user management** (hosts, travelers, admins).
-=======
 HBnB is the rental application we're building (conceptually similar to "Airbed and breakfast") that will enable:
->>>>>>> dev
 
 We designed the system with a layered architecture: presentation (REST API), service/business logic, data access layer (repository/DAL), and persistence (database). We're using a Facade or API service to expose simplified entry points to the upper layer.
 
