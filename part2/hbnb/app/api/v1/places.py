@@ -51,19 +51,21 @@ class PlaceList(Resource):
     def post(self):
         """Register a new place"""
         place_data = api.payload
-        
+
         # Validate input data types and required fields
         try:
             # Check for required fields
-            required_fields = ['title', 'price', 'latitude', 'longitude', 'owner_id']
+            required_fields = ['title', 'price', 'latitude', 'longitude',
+                               'owner_id']
             for field in required_fields:
                 if field not in place_data:
                     return {'error': f'Missing required field: {field}'}, 400
-            
+
             # Validate title is string and not empty
-            if not isinstance(place_data['title'], str) or not place_data['title'].strip():
+            if (not isinstance(place_data['title'], str) or
+                    not place_data['title'].strip()):
                 return {'error': 'Title must be a non-empty string'}, 400
-            
+
             # Validate price is numeric (convert string to float if needed)
             if isinstance(place_data['price'], str):
                 try:
@@ -72,10 +74,10 @@ class PlaceList(Resource):
                     return {'error': 'Price must be a valid number'}, 400
             elif not isinstance(place_data['price'], (int, float)):
                 return {'error': 'Price must be a number'}, 400
-            
+
             if place_data['price'] <= 0:
                 return {'error': 'Price must be positive'}, 400
-            
+
             # Validate latitude is numeric and in valid range
             if isinstance(place_data['latitude'], str):
                 try:
@@ -84,10 +86,10 @@ class PlaceList(Resource):
                     return {'error': 'Latitude must be a valid number'}, 400
             elif not isinstance(place_data['latitude'], (int, float)):
                 return {'error': 'Latitude must be a number'}, 400
-            
+
             if not -90 <= place_data['latitude'] <= 90:
                 return {'error': 'Latitude must be between -90 and 90'}, 400
-            
+
             # Validate longitude is numeric and in valid range
             if isinstance(place_data['longitude'], str):
                 try:
@@ -96,14 +98,14 @@ class PlaceList(Resource):
                     return {'error': 'Longitude must be a valid number'}, 400
             elif not isinstance(place_data['longitude'], (int, float)):
                 return {'error': 'Longitude must be a number'}, 400
-            
+
             if not -180 <= place_data['longitude'] <= 180:
                 return {'error': 'Longitude must be between -180 and 180'}, 400
-            
+
             # Validate owner_id is string
             if not isinstance(place_data['owner_id'], str):
                 return {'error': 'Owner ID must be a string'}, 400
-            
+
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
                 return {'error': 'Place already registered'}, 400
@@ -176,12 +178,13 @@ class PlaceResource(Resource):
 
         try:
             place_data = api.payload
-            
+
             # Validate data types for update fields
             if 'title' in place_data:
-                if not isinstance(place_data['title'], str) or not place_data['title'].strip():
+                if (not isinstance(place_data['title'], str) or
+                        not place_data['title'].strip()):
                     return {'error': 'Title must be a non-empty string'}, 400
-            
+
             if 'price' in place_data:
                 if isinstance(place_data['price'], str):
                     try:
@@ -190,34 +193,39 @@ class PlaceResource(Resource):
                         return {'error': 'Price must be a valid number'}, 400
                 elif not isinstance(place_data['price'], (int, float)):
                     return {'error': 'Price must be a number'}, 400
-                
+
                 if place_data['price'] <= 0:
                     return {'error': 'Price must be positive'}, 400
-            
+
             if 'latitude' in place_data:
                 if isinstance(place_data['latitude'], str):
                     try:
                         place_data['latitude'] = float(place_data['latitude'])
                     except ValueError:
-                        return {'error': 'Latitude must be a valid number'}, 400
+                        return {'error': 'Latitude must be a valid number'}, \
+                            400
                 elif not isinstance(place_data['latitude'], (int, float)):
                     return {'error': 'Latitude must be a number'}, 400
-                
+
                 if not -90 <= place_data['latitude'] <= 90:
-                    return {'error': 'Latitude must be between -90 and 90'}, 400
-            
+                    return {'error': 'Latitude must be between -90 and 90'}, \
+                        400
+
             if 'longitude' in place_data:
                 if isinstance(place_data['longitude'], str):
                     try:
-                        place_data['longitude'] = float(place_data['longitude'])
+                        place_data['longitude'] = \
+                            float(place_data['longitude'])
                     except ValueError:
-                        return {'error': 'Longitude must be a valid number'}, 400
+                        return {'error': 'Longitude must be a valid number'}, \
+                            400
                 elif not isinstance(place_data['longitude'], (int, float)):
                     return {'error': 'Longitude must be a number'}, 400
-                
+
                 if not -180 <= place_data['longitude'] <= 180:
-                    return {'error': 'Longitude must be between -180 and 180'}, 400
-            
+                    return ({'error': 'Longitude must be between -180 and '
+                             '180'}, 400)
+
             place = facade.get_place(place_id)
             if not place:
                 return {'error': 'place not found'}, 404
@@ -286,13 +294,13 @@ class PlaceAmenities(Resource):
             # Validate amenity_id field exists and is string
             if 'amenity_id' not in data:
                 return {'error': 'Missing required field: amenity_id'}, 400
-            
+
             if not isinstance(data['amenity_id'], str):
                 return {'error': 'amenity_id must be a string'}, 400
-            
+
             if not data['amenity_id'].strip():
                 return {'error': 'amenity_id cannot be empty'}, 400
-            
+
             success = facade.add_amenity_to_place(place_id,
                                                   data['amenity_id'])
             if success:

@@ -1,13 +1,15 @@
 import unittest
 from app import create_app
 
+
 class TestEndpointsValidation(unittest.TestCase):
     """
     Validation tests for all HBNB API endpoints
-    
+
     Validation tests implemented:
     - User: first_name, last_name, email (not empty + valid email format)
-    - Place: title (not empty), price (positive), latitude (-90 to 90), longitude (-180 to 180)
+    - Place: title (not empty), price (positive), latitude (-90 to 90),
+      longitude (-180 to 180)
     - Review: text (not empty), user_id and place_id (valid entities)
     """
 
@@ -78,7 +80,7 @@ class TestEndpointsValidation(unittest.TestCase):
             "user@domain",
             "user@.com"
         ]
-        
+
         for email in invalid_emails:
             with self.subTest(email=email):
                 response = self.client.post('/api/v1/users/', json={
@@ -218,7 +220,7 @@ class TestEndpointsValidation(unittest.TestCase):
         owner_id = user_response.get_json()['id']
 
         invalid_latitudes = [-91.0, 91.0, -100.0, 200.0]
-        
+
         for latitude in invalid_latitudes:
             with self.subTest(latitude=latitude):
                 response = self.client.post('/api/v1/places/', json={
@@ -241,7 +243,7 @@ class TestEndpointsValidation(unittest.TestCase):
         owner_id = user_response.get_json()['id']
 
         invalid_longitudes = [-181.0, 181.0, -200.0, 300.0]
-        
+
         for longitude in invalid_longitudes:
             with self.subTest(longitude=longitude):
                 response = self.client.post('/api/v1/places/', json={
@@ -269,7 +271,7 @@ class TestEndpointsValidation(unittest.TestCase):
             {"latitude": 90.0, "longitude": 180.0},    # Max boundaries
             {"latitude": 0.0, "longitude": 0.0}        # Center
         ]
-        
+
         for i, coords in enumerate(valid_coordinates):
             with self.subTest(coords=coords):
                 response = self.client.post('/api/v1/places/', json={
@@ -476,7 +478,7 @@ class TestEndpointsValidation(unittest.TestCase):
 
         # Test invalid ratings
         invalid_ratings = [0, 6, -1, 10]
-        
+
         for rating in invalid_ratings:
             with self.subTest(rating=rating):
                 response = self.client.post('/api/v1/reviews/', json={
@@ -486,7 +488,7 @@ class TestEndpointsValidation(unittest.TestCase):
                     "place_id": place_id
                 })
                 self.assertEqual(response.status_code, 400)
-                
+
     # ========================================================================
     # AMENITY TESTS - Attribute validation
     # ========================================================================
@@ -555,4 +557,3 @@ class TestEndpointsValidation(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-           
