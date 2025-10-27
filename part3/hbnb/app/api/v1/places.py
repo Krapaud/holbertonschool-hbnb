@@ -35,7 +35,7 @@ place_model = api.model('Place', {
                              description='Latitude of the place'),
     'longitude': fields.Float(required=True,
                               description='Longitude of the place'),
-    'owner_id': fields.String(required=True,
+    'owner_id': fields.String(required=False,
                               description='ID of the owner'),
     'owner': fields.Nested(user_model, description='Owner of the place'),
     'amenities': fields.List(fields.Nested(amenity_model),
@@ -56,14 +56,14 @@ class PlaceList(Resource):
         """Register a new place"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
-        
+        if not current_user_id:
+            return {'error': 'Unauthorized action'}, 403
         place_data = api.payload
-
+        place_data['owner_id'] = current_user_id
         # Validate input data types and required fields
         try:
             # Check for required fields
-            required_fields = ['title', 'price', 'latitude', 'longitude',
-                               'owner_id']
+            required_fields = ['title', 'price', 'latitude', 'longitude']
             for field in required_fields:
                 if field not in place_data:
                     return {'error': f'Missing required field: {field}'}, 400
@@ -108,10 +108,6 @@ class PlaceList(Resource):
 
             if not -180 <= place_data['longitude'] <= 180:
                 return {'error': 'Longitude must be between -180 and 180'}, 400
-
-            # Validate owner_id is string
-            if not isinstance(place_data['owner_id'], str):
-                return {'error': 'Owner ID must be a string'}, 400
 
             existing_place = facade.get_place_by_title(place_data['title'])
             if existing_place:
@@ -185,7 +181,6 @@ class PlaceResource(Resource):
         """Update a place's information"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
-        
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
 
@@ -302,11 +297,19 @@ class PlaceAmenities(Resource):
     @api.expect(api.model('PlaceAmenityAdd', {
         'amenity_id': fields.String(required=True)
     }))
+    @jwt_required()
     @api.response(200, 'Amenity added successfully')
     @api.response(400, 'Invalid place ID')
     @api.response(404, 'Place or amenity not found')
     def post(self, place_id):
         """Add an amenity to a place"""
+        current_user_id = get_jwt_identity()
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+        if place.owner.id != current_user_id:
+            return {'error': 'Forbidden - Only place owner can add amenities'}, 403
+        
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
         data = api.payload

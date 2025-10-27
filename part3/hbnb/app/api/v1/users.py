@@ -1,6 +1,7 @@
 from app.models.user import UserModel
 from app.services import facade
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('users', description='User operations')
 
@@ -14,6 +15,10 @@ user_model = api.model('User', {
     'password': fields.String(required=True, description='Password of the user')
 })
 
+user_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user')
+})
 
 @api.route('/')
 class UserList(Resource):
@@ -75,23 +80,26 @@ class UserResource(Resource):
         return {'id': user.id, 'first_name': user.first_name,
                 'last_name': user.last_name, 'email': user.email}, 200
 
-    @api.expect(user_model)
+    @jwt_required()
+    @api.expect(user_update_model, validate=True)
     @api.response(200, 'User updated successfully')
-    @api.response(409, 'Email already registered')
+    @api.response(403, 'Forbidden - can only update own profile')
     @api.response(400, 'Invalid input data')
     @api.response(404, 'User not found')
     def put(self, user_id):
         try:
             user_data = api.payload
+            current_user_id = get_jwt_identity()
+            if current_user_id != user_id:
+                return {'error': 'Unauthorized action.'}, 403
+            if 'email' in user_data or 'password' in user_data:
+                return {'error': 'You cannot modify email or password.'}, 400
+            allowed_fields = ['first_name', 'last_name']
+            filtered_data = {k: v for k, v in user_data.items() if k in allowed_fields}
             user = facade.get_user(user_id)
             if not user:
                 return {'error': 'User not found'}, 404
-            if 'email' in user_data and user_data['email'] != user.email:
-                existing_user = facade.get_user_by_email(user_data['email'])
-                if existing_user:
-                    return {'error': 'Email already registered'}, 409
-
-            updated_user = facade.update_user(user_id, user_data)
+            updated_user = facade.update_user(user_id, filtered_data)
             return {'id': updated_user.id,
                     'first_name': updated_user.first_name,
                     'last_name': updated_user.last_name,
