@@ -42,7 +42,11 @@ class UserList(Resource):
             if existing_user:
                 return {'error': 'Email already registered'}, 400
 
-            # Try to create the user (password will be hashed in the model)
+            # Validate password presence (flask-restx should already validate this)
+            if 'password' not in user_data or not user_data['password']:
+                return {'error': 'password is required'}, 400
+
+            # Create user with password - it will be hashed in the model's __init__
             new_user = facade.create_user(user_data)
             
             # Return only user ID and success message
