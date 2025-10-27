@@ -10,7 +10,8 @@ user_model = api.model('User', {
                                 description='First name of the user'),
     'last_name': fields.String(required=True,
                                description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user')
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='Password of the user')
 })
 
 
@@ -41,11 +42,14 @@ class UserList(Resource):
             if existing_user:
                 return {'error': 'Email already registered'}, 400
 
-            # Try to create the user (this will trigger validation)
+            # Try to create the user (password will be hashed in the model)
             new_user = facade.create_user(user_data)
-            return {'id': new_user.id, 'first_name': new_user.first_name,
-                    'last_name': new_user.last_name,
-                    'email': new_user.email}, 201
+            
+            # Return only user ID and success message
+            return {
+                'id': new_user.id,
+                'message': 'User successfully created'
+            }, 201
 
         except ValueError as e:
             # Handle validation errors from the model
