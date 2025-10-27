@@ -1,5 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 api = Namespace('places', description='Place operations')
 
@@ -48,8 +50,13 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @api.response(401, 'Unauthorized')
+    @jwt_required()
     def post(self):
         """Register a new place"""
+        # Get the current user from JWT token
+        current_user_id = get_jwt_identity()
+        
         place_data = api.payload
 
         # Validate input data types and required fields
@@ -170,13 +177,28 @@ class PlaceResource(Resource):
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(400, 'Invalid input data or place ID')
+    @api.response(401, 'Unauthorized')
+    @api.response(403, 'Forbidden - Only the owner can update this place')
     @api.response(404, 'Place not found')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
+        # Get the current user from JWT token
+        current_user_id = get_jwt_identity()
+        
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
 
         try:
+            # Check if place exists first
+            place = facade.get_place(place_id)
+            if not place:
+                return {'error': 'Place not found'}, 404
+            
+            # Check if the current user is the owner of the place
+            if place.owner.id != current_user_id:
+                return {'error': 'Unauthorized action'}, 403
+            
             place_data = api.payload
 
             # Validate data types for update fields
@@ -226,9 +248,7 @@ class PlaceResource(Resource):
                     return ({'error': 'Longitude must be between -180 and '
                              '180'}, 400)
 
-            place = facade.get_place(place_id)
-            if not place:
-                return {'error': 'place not found'}, 404
+            # Place was already retrieved earlier for ownership check
             if ('title' in place_data and
                     place_data['title'] != place.title):
                 existing_place = facade.get_place_by_title(
