@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 
 api = Namespace('places', description='Place operations')
@@ -181,6 +181,9 @@ class PlaceResource(Resource):
         """Update a place's information"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
 
@@ -190,8 +193,9 @@ class PlaceResource(Resource):
             if not place:
                 return {'error': 'Place not found'}, 404
             
-            # Check if the current user is the owner of the place
-            if place.owner.id != current_user_id:
+            # Check if the current user is the owner of the place (admins can bypass)
+            if not is_admin and place.owner.id != current_user_id:
+                return {'error': 'Unauthorized action'}, 403
                 return {'error': 'Unauthorized action'}, 403
             
             place_data = api.payload

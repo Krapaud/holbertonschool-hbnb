@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
@@ -137,6 +137,8 @@ class ReviewResource(Resource):
         """Update a review's information"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
         
         if not review_id or not review_id.strip():
             return {'error': 'Invalid review ID'}, 400
@@ -147,8 +149,9 @@ class ReviewResource(Resource):
             if not review:
                 return {'error': 'Review not found'}, 404
             
-            # Check if the current user is the owner of the review
-            if review.user.id != current_user_id:
+            # Check if the current user is the owner of the review (admins can bypass)
+            if not is_admin and review.user.id != current_user_id:
+                return {'error': 'Unauthorized action.'}, 403
                 return {'error': 'Unauthorized action.'}, 403
             
             review_data = api.payload
@@ -173,6 +176,8 @@ class ReviewResource(Resource):
         """Delete a review"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
         
         if not review_id or not review_id.strip():
             return {'error': 'Invalid review ID'}, 400
@@ -183,8 +188,8 @@ class ReviewResource(Resource):
             if not review:
                 return {'error': 'Review not found'}, 404
             
-            # Check if the current user is the owner of the review
-            if review.user.id != current_user_id:
+            # Check if the current user is the owner of the review (admins can bypass)
+            if not is_admin and review.user.id != current_user_id:
                 return {'error': 'Unauthorized action.'}, 403
             
             if facade.delete_review(review_id):
