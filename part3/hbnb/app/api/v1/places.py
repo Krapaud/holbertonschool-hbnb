@@ -196,8 +196,7 @@ class PlaceResource(Resource):
             # Check if the current user is the owner of the place (admins can bypass)
             if not is_admin and place.owner.id != current_user_id:
                 return {'error': 'Unauthorized action'}, 403
-                return {'error': 'Unauthorized action'}, 403
-            
+
             place_data = api.payload
 
             # Validate data types for update fields
@@ -308,11 +307,13 @@ class PlaceAmenities(Resource):
     def post(self, place_id):
         """Add an amenity to a place"""
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        if place.owner.id != current_user_id:
-            return {'error': 'Forbidden - Only place owner can add amenities'}, 403
+        if not is_admin and place.owner.id != current_user_id:
+            return {'error': 'Unauthorized action'}, 403
         
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400

@@ -152,8 +152,7 @@ class ReviewResource(Resource):
             # Check if the current user is the owner of the review (admins can bypass)
             if not is_admin and review.user.id != current_user_id:
                 return {'error': 'Unauthorized action.'}, 403
-                return {'error': 'Unauthorized action.'}, 403
-            
+
             review_data = api.payload
             updated_review = facade.update_review(review_id, review_data)
             return {

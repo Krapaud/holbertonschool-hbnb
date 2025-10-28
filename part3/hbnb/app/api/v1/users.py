@@ -17,7 +17,9 @@ user_model = api.model('User', {
 
 user_update_model = api.model('UserUpdate', {
     'first_name': fields.String(description='First name of the user'),
-    'last_name': fields.String(description='Last name of the user')
+    'last_name': fields.String(description='Last name of the user'),
+    'email': fields.String(description='Email of the user (Admin only)'),
+    'password': fields.String(description='Password of the user (Admin only)')
 })
 
 @api.route('/')
@@ -37,16 +39,14 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
-    @api.response(403, 'Admin privileges required')
-    @jwt_required()
     def post(self):
         """Register a new user"""
-        # Check if current user is admin
-        claims = get_jwt()
-        if not claims.get('is_admin', False):
-            return {'error': 'Admin privileges required'}, 403
         user_data = api.payload
-
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+        # Allow admins to modify any user, regular users only themselves
+        if not is_admin:
+            return {'error': 'Unauthorized action.'}, 403
         try:
             # Check for email uniqueness first
             existing_user = facade.get_user_by_email(user_data['email'])
@@ -98,15 +98,14 @@ class UserResource(Resource):
             current_user_id = get_jwt_identity()
             claims = get_jwt()
             is_admin = claims.get('is_admin', False)
-            
             # Allow admins to modify any user, regular users only themselves
             if not is_admin and current_user_id != user_id:
                 return {'error': 'Unauthorized action.'}, 403
-                
+
             # For regular users, prevent modifying email or password
             if not is_admin and ('email' in user_data or 'password' in user_data):
                 return {'error': 'You cannot modify email or password.'}, 400
-                
+
             # For admins, allow all fields but validate email uniqueness
             if is_admin and 'email' in user_data:
                 existing_user = facade.get_user_by_email(user_data['email'])

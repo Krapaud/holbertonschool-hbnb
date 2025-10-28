@@ -3,6 +3,7 @@ from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.users import api as users_ns
 from app.api.v1.places import api as places_ns
 from app.api.v1.auth import api as auth_ns
+from app.api.v1.admin import api as admin_ns
 from flask import Flask, jsonify
 from flask_restx import Api
 from flask_bcrypt import Bcrypt
@@ -32,6 +33,9 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Register the auth namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
 
+    # Register the admin namespace
+    api.add_namespace(admin_ns, path='/api/v1/admin')
+
     # Register the places namespace
     api.add_namespace(places_ns, path='/api/v1/places')
 
@@ -52,7 +56,8 @@ def create_app(config_class="config.DevelopmentConfig"):
                 'places': '/api/v1/places',
                 'amenities': '/api/v1/amenities',
                 'reviews': '/api/v1/reviews',
-                'auth': '/api/v1/auth'
+                'auth': '/api/v1/auth',
+                'admin': '/api/v1/admin'
             }
         })
     return app
