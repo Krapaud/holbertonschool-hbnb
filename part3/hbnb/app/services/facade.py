@@ -1,9 +1,10 @@
 from app.models.amenity import AmenityModel
 from app.models.place import PlaceModel
 from app.models.review import ReviewModel
-from app.models.user import UserModel
+from app.models.user import User
 from app.persistence.repository import InMemoryRepository
 from app.persistence.repository import SQLAlchemyRepository
+from app.persistence.user_repository import UserRepository
 
 
 class HBnBFacade:
@@ -12,7 +13,7 @@ class HBnBFacade:
     Coordinates operations between models and repositories
     """
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(UserModel)
+        self.user_repo = UserRepository()
         self.amenity_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
@@ -21,7 +22,8 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         """Business logic: Create a new user"""
-        user = UserModel(**user_data)
+        user = User(**user_data)
+        user.hash_password(user_data['password'])
         self.user_repo.add(user)
         return user
 
@@ -31,7 +33,7 @@ class HBnBFacade:
 
     def get_user_by_email(self, email):
         """Business logic: Retrieve a user by email"""
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_user_by_email(email)
 
     def get_all_users(self):
         """Business logic: Retrieve all users"""
@@ -39,13 +41,8 @@ class HBnBFacade:
 
     def update_user(self, user_id, user_data):
         """Business logic: Update an existing user"""
-        user = self.user_repo.get(user_id)
-        if not user:
-            return None
-        user.update(user_data)
-        user.validate_user_data()
-        user.save()
-        return user
+        self.user_repo.update(user_id, user_data)
+        return self.user_repo.get(user_id)
 
     # ==================== AMENITY BUSINESS LOGIC ====================
 

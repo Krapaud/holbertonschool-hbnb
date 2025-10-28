@@ -1,5 +1,5 @@
 from .base import BaseModel
-from .user import UserModel
+from .user import User
 
 
 class PlaceModel(BaseModel):
@@ -23,7 +23,7 @@ class PlaceModel(BaseModel):
             self.longitude = longitude
         else:
             raise ValueError("longitude must be between -180.0 and 180.0")
-        if isinstance(owner, UserModel):
+        if isinstance(owner, User):
             self.owner = owner
         else:
             raise ValueError("The owner doesn't exist")

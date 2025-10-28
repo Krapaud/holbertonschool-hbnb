@@ -1,6 +1,6 @@
 from .base import BaseModel
 from .place import PlaceModel
-from .user import UserModel
+from .user import User
 
 
 class ReviewModel(BaseModel):
@@ -16,7 +16,7 @@ class ReviewModel(BaseModel):
         if not isinstance(place, PlaceModel):
             raise ValueError("Place must be a valid Place instance")
 
-        if not isinstance(user, UserModel):
+        if not isinstance(user, User):
             raise ValueError("User must be a valid User instance")
 
         self.text = text
