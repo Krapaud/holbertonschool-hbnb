@@ -3,7 +3,6 @@ from app.models.place import PlaceModel
 from app.models.review import ReviewModel
 from app.models.user import UserModel
 from app.persistence.repository import InMemoryRepository
-from app.models.user import User
 from app.persistence.repository import SQLAlchemyRepository
 
 
@@ -13,7 +12,7 @@ class HBnBFacade:
     Coordinates operations between models and repositories
     """
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
+        self.user_repo = SQLAlchemyRepository(UserModel)
         self.amenity_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.place_repo = InMemoryRepository()
