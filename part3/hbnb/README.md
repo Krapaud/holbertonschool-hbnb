@@ -1,4 +1,3 @@
-````markdown
 # HBnB Application - Part 3
 
 ## Project Overview
@@ -241,4 +240,3 @@ The API is fully documented using Flask-RESTX and Swagger UI:
 ## Contributing
 
 This project is part of the Holberton School curriculum. Follow the project guidelines and coding standards as specified in the course materials.
-````
