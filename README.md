@@ -1,37 +1,38 @@
-# HBnB - My Holberton Project
+# HBnB - Holberton Project
 
-> **Status**: **Under Development**
+## Project Description
 
-## What I'm Building
+HBnB is an accommodation rental application developed as part of the Holberton School curriculum. This project implements a complete web application with REST API, business logic layer, and database persistence.
 
-I'm developing HBnB, a style accommodation rental application as part of my Holberton School curriculum. The goal is to create a complete platform for managing accommodations, users, reviews, and amenities.
+## Objectives
 
-## My Objectives
+Development of a complete web application following best practices:
 
-This project allows me to develop a complete web application following best practices:
+- **Layered Architecture**: Separation between presentation, business logic, and data persistence
+- **REST API**: RESTful interface with Flask-RESTX
+- **UML Modeling**: Technical documentation with UML diagrams
+- **Design Patterns**: Repository and Facade patterns
+- **Authentication**: JWT-based authentication with password hashing
+- **Database**: SQLAlchemy ORM with SQLite
 
-- **Layered Architecture**: Clear separation between presentation, business logic, and data
-- **REST API**: Standardized programming interface
-- **UML Modeling**: Complete technical documentation with diagrams
-- **Design Patterns**: Using patterns like Repository, Facade, etc.
+## Architecture
 
-## Architecture I Designed
-
-I opted for a well-defined layered architecture:
+Layered architecture implementation:
 
 ```
 HBnB Application
-├── Presentation Layer (REST API)
-├── Business Logic Layer (Domain)
-├── Data Access Layer (Repository)
-└── Persistence Layer (In-Memory Storage)
+├── Presentation Layer (REST API with Flask-RESTX)
+├── Business Logic Layer (Models and Facade)
+├── Persistence Layer (Repository Pattern)
+└── Database Layer (SQLAlchemy with SQLite)
 ```
 
-## My Current Project Structure
+## Project Structure
 
 ```
 holbertonschool-hbnb/
 ├── README.md                                    # This file
+├── HBNB_API.postman_collection.json            # Postman collection for API testing
 ├── part1/                                      # Phase 1 - Design and modeling
 │   ├── README.md                              # Part 1 documentation
 │   ├── high-level_package_diagram.mmd        # High-level package diagram
@@ -40,120 +41,208 @@ holbertonschool-hbnb/
 │   ├── sequence_api_call_place.mmd           # Sequence diagram - Places
 │   ├── sequence_api_call_review.mmd          # Sequence diagram - Reviews
 │   └── sequence_api_call_request_list.mmd    # Sequence diagram - Lists
-└── part2/                                      # Phase 2 - Implementation
+├── part2/                                      # Phase 2 - Implementation with in-memory storage
+│   └── hbnb/                                  # Main application
+│       ├── app/                               # Application package
+│       │   ├── api/v1/                       # REST API endpoints
+│       │   ├── models/                       # Data models
+│       │   ├── services/                     # Business logic (Facade)
+│       │   └── persistence/                  # In-memory persistence layer
+│       ├── tests/                             # Test suite
+│       ├── config.py                         # Application configuration
+│       ├── run.py                            # Application entry point
+│       └── requirements.txt                  # Python dependencies
+└── part3/                                      # Phase 3 - Database and Authentication
     └── hbnb/                                  # Main application
         ├── app/                               # Application package
-        │   ├── api/v1/                       # REST API endpoints
-        │   ├── models/                       # Data models
+        │   ├── api/v1/                       # REST API endpoints with auth
+        │   ├── models/                       # SQLAlchemy models
         │   ├── services/                     # Business logic (Facade)
-        │   └── persistence/                  # Data persistence layer
+        │   └── persistence/                  # SQLAlchemy repository
+        ├── sql/                               # SQL schema files
         ├── tests/                             # Test suite
-        │   ├── test_endpoint.py              # Endpoint validation tests
-        │   └── test_endpoint_report.md       # Test documentation
-        ├── config.py                         # Application configuration
+        ├── init_db.py                        # Database initialization
+        ├── config.py                         # Configuration with SQLAlchemy
         ├── run.py                            # Application entry point
         └── requirements.txt                  # Python dependencies
 ```
 
-## Current Features Implemented
+## Implemented Features
 
 ### User Management
-- User creation and validation
-- User profile management
+- User creation with validation
 - Email uniqueness validation
-- User data retrieval and updates
+- Password hashing with Bcrypt
+- User authentication with JWT tokens
+- User profile management (CRUD operations)
 
 ### Accommodation Management
 - Place creation with validation
 - Owner assignment and validation
+- Price and location validation (latitude/longitude bounds)
+- Place-amenity relationships (many-to-many)
 - Place data retrieval and updates
-- Price and location validation
 
 ### Amenity System
 - Amenity creation and management
 - Amenity-place associations
-- Amenity retrieval operations
+- Name validation and length constraints
+- CRUD operations for amenities
 
 ### Review System
 - Review creation with user and place validation
 - Rating system (1-5 scale)
+- Text validation
 - Review retrieval and management
+- CRUD operations for reviews
 
-## Current Development Status
+### Authentication and Security
+- JWT token-based authentication
+- Login endpoint with email/password validation
+- Protected endpoints requiring valid tokens
+- Password hashing with Bcrypt
+- Role-based access control (is_admin flag)
 
-### What I've Already Accomplished
+### Database
+- SQLAlchemy ORM with SQLite
+- Database models with relationships
+- One-to-many relationships (User-Places, User-Reviews, Place-Reviews)
+- Many-to-many relationship (Place-Amenities)
+- Database initialization script
 
-**Part 1 - Design and Modeling:**
-1. **UML Diagrams**
-   - High-level package diagram
-   - Business Logic class diagram
-   - API call sequence diagrams
+## Development Status
 
-2. **Flow Modeling**
-   - User interaction flows
-   - Accommodation management flows
-   - Review system flows
-   - List request flows
+### Part 1 - Design and Modeling (Completed)
 
-**Part 2 - Implementation:**
-1. **Business Logic Layer**
-   - Complete model implementations (User, Place, Review, Amenity)
-   - Facade pattern for business operations
-   - In-memory repository pattern
-   - Data validation and error handling
+**UML Diagrams:**
+- High-level package diagram
+- Business Logic class diagram
+- API call sequence diagrams (User, Place, Review, Request list)
 
-2. **REST API**
-   - Flask-RESTX based API
-   - Complete CRUD operations for all entities
-   - Proper HTTP status codes and error handling
-   - API documentation with Swagger
+**Flow Modeling:**
+- User interaction flows
+- Accommodation management flows
+- Review system flows
+- List request flows
 
-3. **Architecture Implementation**
-   - Layered architecture with clear separation
-   - Repository pattern for data persistence
-   - Facade pattern for business logic
-   - Proper dependency injection
+### Part 2 - Implementation with In-Memory Storage (Completed)
 
-4. **Testing Suite**
-   - Comprehensive automated tests
-   - Endpoint validation tests
-   - Full test coverage for all API endpoints
+**Business Logic Layer:**
+- Complete model implementations (User, Place, Review, Amenity)
+- Facade pattern for business operations
+- In-memory repository pattern
+- Data validation and error handling
+
+**REST API:**
+- Flask-RESTX based API
+- Complete CRUD operations for all entities
+- HTTP status codes and error handling
+- API documentation with Swagger
+
+**Architecture Implementation:**
+- Layered architecture with clear separation
+- Repository pattern for data persistence
+- Facade pattern for business logic
+
+**Testing:**
+- Automated endpoint tests
+- Full test coverage for all API endpoints
+
+### Part 3 - Database and Authentication (Completed)
+
+**Database Integration:**
+- SQLAlchemy ORM implementation
+- SQLite database (development.db)
+- Database models with relationships
+- Table schemas in SQL files
+- Database initialization script (init_db.py)
+
+**Authentication System:**
+- JWT token-based authentication
+- Login endpoint (/api/v1/auth/login)
+- Protected endpoints with JWT verification
+- Password hashing with Bcrypt
+
+**Security Features:**
+- Bcrypt password hashing
+- JWT token generation and validation
+- Role-based access control (is_admin)
+- Secure token signing with secret key
+
+**Repository Pattern:**
+- SQLAlchemy repository implementation
+- Support for both in-memory and database storage
+- Abstract repository interface
 
 ## Documentation
 
 - **[Part 1 Documentation](./part1/README.md)** - Design and modeling phase
-- **[Part 2 Documentation](./part2/hbnb/README.md)** - Implementation phase
+- **[Part 2 Documentation](./part2/hbnb/README.md)** - Implementation with in-memory storage
+- **[Part 3 Documentation](./part3/hbnb/README.md)** - Database and authentication implementation
 
-## Technologies I'm Using
+## Technologies
 
-- **Backend**: Python 3.12 with Flask
-- **API Framework**: Flask-RESTX for REST API and documentation
-- **Data Persistence**: In-memory repository pattern
-- **Architecture Patterns**: Facade, Repository
-- **Documentation**: Mermaid for UML diagrams
-- **Code Style**: PEP 8 compliant with pycodestyle validation
+**Backend:**
+- Python 3.12
+- Flask (Web framework)
+- Flask-RESTX (REST API and documentation)
+- Flask-JWT-Extended (JWT authentication)
+- Flask-Bcrypt (Password hashing)
+- SQLAlchemy (ORM)
+- Flask-SQLAlchemy (Flask integration)
+
+**Database:**
+- SQLite (Development)
+
+**Architecture Patterns:**
+- Facade Pattern
+- Repository Pattern
+
+**Documentation:**
+- Mermaid for UML diagrams
+- Swagger UI for API documentation
+
+**Code Quality:**
+- PEP 8 compliant
 
 ## API Endpoints
 
-The application provides the following REST API endpoints:
+### Authentication (Part 3)
+- `POST /api/v1/auth/login` - Login with email and password, returns JWT token
+- `GET /api/v1/auth/protected` - Protected endpoint requiring valid JWT token
 
-- **Users**: `/api/v1/users/` - CRUD operations for users
-- **Places**: `/api/v1/places/` - CRUD operations for places
-- **Reviews**: `/api/v1/reviews/` - CRUD operations for reviews
-- **Amenities**: `/api/v1/amenities/` - CRUD operations for amenities
+### Users
+- `POST /api/v1/users/` - Create a new user
+- `GET /api/v1/users/` - Get all users
+- `GET /api/v1/users/<user_id>` - Get a specific user
+- `PUT /api/v1/users/<user_id>` - Update a user
 
-All endpoints support standard HTTP methods (GET, POST, PUT, DELETE) where appropriate and return JSON responses.
+### Places
+- `POST /api/v1/places/` - Create a new place
+- `GET /api/v1/places/` - Get all places
+- `GET /api/v1/places/<place_id>` - Get a specific place
+- `PUT /api/v1/places/<place_id>` - Update a place
+- `GET /api/v1/places/<place_id>/reviews` - Get all reviews for a place
 
-## About Me
+### Reviews
+- `POST /api/v1/reviews/` - Create a new review
+- `GET /api/v1/reviews/` - Get all reviews
+- `GET /api/v1/reviews/<review_id>` - Get a specific review
+- `PUT /api/v1/reviews/<review_id>` - Update a review
+- `DELETE /api/v1/reviews/<review_id>` - Delete a review
 
-Project developed as part of my **Holberton School** curriculum.
+### Amenities
+- `POST /api/v1/amenities/` - Create a new amenity
+- `GET /api/v1/amenities/` - Get all amenities
+- `GET /api/v1/amenities/<amenity_id>` - Get a specific amenity
+- `PUT /api/v1/amenities/<amenity_id>` - Update an amenity
 
-I'm learning and applying software architecture concepts, web development, and programming best practices.
+All endpoints return JSON responses with appropriate HTTP status codes.
+
+## About
+
+Project developed as part of the Holberton School curriculum, applying software architecture concepts, web development, and programming best practices.
 
 ## License
 
 This project is developed for educational purposes as part of the Holberton School program.
-
----
-
-**Note**: This project is currently in active development. Part 1 (Design) and Part 2 (Implementation) are completed. The application includes a working REST API with in-memory data storage.

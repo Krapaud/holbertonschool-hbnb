@@ -1,15 +1,16 @@
-# HBnB Application - Part 2
+````markdown
+# HBnB Application - Part 3
 
 ## Project Overview
 
-This is the second part of the HBnB (Holberton Airbnb clone) project, focusing on the implementation of the business logic layer, API endpoints, and in-memory data persistence.
+This is the third part of the HBnB (Holberton Airbnb clone) project, focusing on database persistence with SQLAlchemy, authentication with JWT, and password hashing.
 
 ## Project Structure
 
 ```
 hbnb/
 ├── app/
-│   ├── __init__.py              # Flask application factory
+│   ├── __init__.py              # Flask application factory with SQLAlchemy, Bcrypt and JWT
 │   ├── api/
 │   │   ├── __init__.py
 │   │   └── v1/
@@ -17,26 +18,35 @@ hbnb/
 │   │       ├── users.py         # User API endpoints
 │   │       ├── places.py        # Place API endpoints
 │   │       ├── reviews.py       # Review API endpoints
-│   │       └── amenities.py     # Amenity API endpoints
+│   │       ├── amenities.py     # Amenity API endpoints
+│   │       └── auth.py          # Authentication endpoints (login, protected)
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── base.py              # Base model with common attributes
-│   │   ├── user.py              # User business logic model
-│   │   ├── place.py             # Place business logic model
-│   │   ├── review.py            # Review business logic model
-│   │   └── amenity.py           # Amenity business logic model
+│   │   ├── base.py              # Base model with SQLAlchemy
+│   │   ├── user.py              # User model with password hashing
+│   │   ├── place.py             # Place model with relationships
+│   │   ├── review.py            # Review model
+│   │   └── amenity.py           # Amenity model
 │   ├── services/
 │   │   ├── __init__.py          # Facade singleton instance
 │   │   └── facade.py            # Facade pattern implementation
 │   └── persistence/
 │       ├── __init__.py
-│       └── repository.py        # In-memory repository implementation
+│       └── repository.py        # SQLAlchemy and In-memory repository implementations
+├── sql/
+│   ├── users.sql                # Users table schema
+│   ├── places.sql               # Places table schema
+│   ├── reviews.sql              # Reviews table schema
+│   ├── amenities.sql            # Amenities table schema
+│   ├── place_amenity.sql        # Many-to-many relationship table
+│   └── insert_data.sql          # Sample data
 ├── tests/
 │   ├── __init__.py
 │   ├── test_endpoint.py         # Automated endpoint tests
 │   └── test_endpoint_report.md  # Test results report
+├── init_db.py                   # Database initialization script
 ├── run.py                       # Application entry point
-├── config.py                    # Environment configuration
+├── config.py                    # Environment configuration with SQLAlchemy settings
 ├── requirements.txt             # Python dependencies
 └── README.md                    # This file
 ```
@@ -45,15 +55,25 @@ hbnb/
 
 This project follows a three-layer architecture:
 
-1. **Presentation Layer** (`app/api/`): REST API endpoints using Flask-RESTX
-2. **Business Logic Layer** (`app/models/` and `app/services/`): Domain models and business rules
-3. **Persistence Layer** (`app/persistence/`): Data storage and retrieval (currently in-memory)
+1. **Presentation Layer** (`app/api/`): REST API endpoints using Flask-RESTX with JWT authentication
+2. **Business Logic Layer** (`app/models/` and `app/services/`): Domain models with SQLAlchemy and business rules
+3. **Persistence Layer** (`app/persistence/`): Data storage with SQLAlchemy repository pattern
 
 ### Key Components
 
 - **Facade Pattern** (`app/services/facade.py`): Centralized interface for communication between layers
-- **Repository Pattern** (`app/persistence/repository.py`): Abstract interface for data persistence with in-memory implementation
+- **Repository Pattern** (`app/persistence/repository.py`): Abstract interface with SQLAlchemy and in-memory implementations
 - **API Versioning** (`app/api/v1/`): RESTful endpoints organized by version
+- **Authentication** (`app/api/v1/auth.py`): JWT-based authentication with login and protected endpoints
+- **Password Security** (`app/models/user.py`): Bcrypt password hashing
+
+### Key Features
+
+- **SQLAlchemy ORM**: Database models with relationships (User, Place, Review, Amenity)
+- **JWT Authentication**: Secure token-based authentication with role-based access (is_admin)
+- **Password Hashing**: Bcrypt for secure password storage
+- **Database Relationships**: One-to-many and many-to-many relationships between models
+- **SQL Schema**: Pre-defined SQL scripts for table creation and sample data
 
 ## Installation and Setup
 
@@ -68,12 +88,17 @@ This project follows a three-layer architecture:
    pip install -r requirements.txt
    ```
 
-3. **Run the application**:
+3. **Initialize the database**:
+   ```bash
+   python init_db.py
+   ```
+
+4. **Run the application**:
    ```bash
    python run.py
    ```
 
-4. **Access the API documentation**:
+5. **Access the API documentation**:
    Open your browser and navigate to `http://localhost:5000/api/v1/`
 
 ## Development
@@ -81,21 +106,35 @@ This project follows a three-layer architecture:
 ### Environment Configuration
 
 The application uses environment-based configuration defined in `config.py`:
-- `development`: Debug mode enabled
-- `default`: Falls back to development configuration
+- `development`: Debug mode enabled with SQLite database (`development.db`)
+- SQLAlchemy configuration with automatic database URI setup
+- Secret key for JWT token generation
+
+### Database Models
+
+All models inherit from `BaseModel` which provides:
+- UUID primary key
+- created_at and updated_at timestamps
+- SQLAlchemy declarative base
+
+**Relationships:**
+- User has many Places (one-to-many)
+- User has many Reviews (one-to-many)
+- Place has many Reviews (one-to-many)
+- Place has many Amenities (many-to-many via place_amenity table)
 
 ### API Documentation
 
 The API is documented using Flask-RESTX and is available at `/api/v1/` when the application is running.
 
-### In-Memory Repository
-
-The current implementation uses an in-memory repository for data persistence. This will be replaced with a database-backed solution in Part 3 of the project.
-
 ## Dependencies
 
 - **Flask**: Web framework
 - **Flask-RESTX**: REST API framework with automatic documentation
+- **Flask-JWT-Extended**: JWT token authentication
+- **Flask-Bcrypt**: Password hashing
+- **SQLAlchemy**: ORM for database interactions
+- **Flask-SQLAlchemy**: Flask integration for SQLAlchemy
 
 ## Testing
 
@@ -147,6 +186,10 @@ For detailed test results, see `tests/test_endpoint_report.md`.
 
 ## API Endpoints
 
+### Authentication
+- `POST /api/v1/auth/login` - Login with email and password, returns JWT token
+- `GET /api/v1/auth/protected` - Protected endpoint requiring valid JWT token
+
 ### Users
 - `POST /api/v1/users` - Create a new user
 - `GET /api/v1/users` - Get all users
@@ -179,7 +222,23 @@ The API is fully documented using Flask-RESTX and Swagger UI:
 - Access the interactive documentation at `http://localhost:5000/api/v1/`
 - All endpoints include proper schemas and response codes
 - Complete data model definitions
+- JWT authentication endpoints for secure access
+
+## Security Features
+
+- **Password Hashing**: User passwords are hashed using Bcrypt before storage
+- **JWT Authentication**: Token-based authentication for protected endpoints
+- **Role-Based Access**: Admin flag in JWT claims for role-based authorization
+- **Secure Token Generation**: Secret key configuration for JWT token signing
+
+## Database
+
+- **Database Engine**: SQLite (development.db)
+- **ORM**: SQLAlchemy with declarative models
+- **Initialization**: `init_db.py` script creates all tables
+- **SQL Scripts**: Pre-defined schemas in `sql/` directory for reference
 
 ## Contributing
 
 This project is part of the Holberton School curriculum. Follow the project guidelines and coding standards as specified in the course materials.
+````
