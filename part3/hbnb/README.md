@@ -230,6 +230,70 @@ The API is fully documented using Flask-RESTX and Swagger UI:
 - **Role-Based Access**: Admin flag in JWT claims for role-based authorization
 - **Secure Token Generation**: Secret key configuration for JWT token signing
 
+### RBAC (Role-Based Access Control) Matrix
+
+This application implements a role-based access control system with three roles:
+
+| Endpoint | Method | Unauthenticated | Authenticated User | Admin |
+|----------|--------|-----------------|-------------------|-------|
+| **Authentication** |
+| `/api/v1/auth/login` | POST | ✅ | ✅ | ✅ |
+| `/api/v1/auth/protected` | GET | ❌ | ✅ | ✅ |
+| **Users** |
+| `/api/v1/users` | POST | ✅ | ✅ (public fields only) | ✅ (all fields) |
+| `/api/v1/users` | GET | ✅ (public fields only) | ✅ (public fields only) | ✅ (all fields) |
+| `/api/v1/users/<id>` | GET | ✅ (public fields only) | ✅ (public fields only) | ✅ (all fields) |
+| `/api/v1/users/<id>` | PUT | ❌ | ✅ (own profile only, limited fields) | ✅ (any user, all fields) |
+| **Places** |
+| `/api/v1/places` | POST | ❌ | ✅ (as owner) | ✅ |
+| `/api/v1/places` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/places/<id>` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/places/<id>` | PUT | ❌ | ✅ (own places only) | ✅ (any place) |
+| `/api/v1/places/<id>` | DELETE | ❌ | ✅ (own places only) | ✅ (any place) |
+| `/api/v1/places/<id>/reviews` | GET | ✅ | ✅ | ✅ |
+| **Reviews** |
+| `/api/v1/reviews` | POST | ❌ | ✅ (as author) | ✅ |
+| `/api/v1/reviews` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/reviews/<id>` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/reviews/<id>` | PUT | ❌ | ✅ (own reviews only) | ✅ (any review) |
+| `/api/v1/reviews/<id>` | DELETE | ❌ | ✅ (own reviews only) | ✅ (any review) |
+| **Amenities** |
+| `/api/v1/amenities` | POST | ❌ | ❌ | ✅ (admin only) |
+| `/api/v1/amenities` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/amenities/<id>` | GET | ✅ | ✅ | ✅ |
+| `/api/v1/amenities/<id>` | PUT | ❌ | ❌ | ✅ (admin only) |
+
+**Legend:**
+- ✅ = Access granted
+- ❌ = Access denied (401 Unauthorized or 403 Forbidden)
+
+**Key Access Control Rules:**
+
+1. **Unauthenticated Users:**
+   - Can register (create user account with public fields only)
+   - Can view public data (users, places, reviews, amenities) with limited fields
+   - Cannot create, update, or delete any resources except initial registration
+
+2. **Authenticated Users (Regular Users):**
+   - Can create places (as owner) and reviews (as author)
+   - Can update/delete their own places and reviews only
+   - Can update their own profile with limited fields (cannot change email or is_admin)
+   - Cannot manage amenities
+
+3. **Administrators:**
+   - Full access to all resources
+   - Can create, update, and delete any place or review
+   - Can manage amenities (create, update)
+   - Can modify any user profile including email and is_admin flag
+   - Can view all user fields including sensitive information
+
+**Implementation Details:**
+- Authentication is handled via JWT tokens with `is_admin` claim
+- Ownership verification ensures users can only modify their own resources
+- Admin bypass allows administrators to manage any resource
+- Protected endpoints use `@jwt_required()` decorator
+- Admin-only endpoints check `is_admin` flag in JWT claims
+
 ## Database
 
 - **Database Engine**: SQLite (development.db)
