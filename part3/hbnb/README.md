@@ -230,7 +230,7 @@ The API is fully documented using Flask-RESTX and Swagger UI:
 - **Role-Based Access**: Admin flag in JWT claims for role-based authorization
 - **Secure Token Generation**: Secret key configuration for JWT token signing
 
-### RBAC (Role-Based Access Control) Matrix
+### RBAC (Role-Based Access Control)
 
 This application implements a role-based access control system with three roles:
 
