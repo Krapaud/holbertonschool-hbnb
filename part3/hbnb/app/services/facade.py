@@ -1,7 +1,7 @@
-from app.models.amenity import Amenity
-from app.models.place import Place
-from app.models.review import Review
-from app.models.user import User
+from app.models.amenity import AmenityModel
+from app.models.place import PlaceModel
+from app.models.review import ReviewModel
+from app.models.user import UserModel
 from app.persistence.repository import InMemoryRepository
 from app.persistence.repository import SQLAlchemyRepository
 from app.persistence.user_repository import UserRepository
@@ -22,7 +22,7 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         """Business logic: Create a new user"""
-        user = User(**user_data)
+        user = UserModel(**user_data)
         user.hash_password(user_data['password'])
         self.user_repo.add(user)
         return user
@@ -48,7 +48,7 @@ class HBnBFacade:
 
     def create_amenity(self, amenity_data):
         """Business logic: Create a new amenity"""
-        amenity = Amenity(**amenity_data)
+        amenity = AmenityModel(**amenity_data)
         self.amenity_repo.add(amenity)
         return amenity
 
@@ -85,7 +85,7 @@ class HBnBFacade:
         place_data['owner'] = owner
         del place_data['owner_id']
 
-        place = Place(**place_data)
+        place = PlaceModel(**place_data)
         self.place_repo.add(place)
         return place
 
@@ -144,7 +144,7 @@ class HBnBFacade:
         user = self.user_repo.get(user_id)
         place = self.place_repo.get(place_id)
 
-        review = Review(text=text, rating=rating, place=place, user=user)
+        review = ReviewModel(text=text, rating=rating, place=place, user=user)
         self.review_repo.add(review)
 
         place.reviews.append(review)

@@ -1,10 +1,10 @@
 from .base import BaseModel
-from .place import Place
-from .user import User
+from .place import PlaceModel
+from .user import UserModel
 from app import db
 
 
-class Review(BaseModel):
+class ReviewModel(BaseModel):
     __tablename__ = 'reviews'
     
     text = db.Column(db.Text, nullable=False)
@@ -12,8 +12,8 @@ class Review(BaseModel):
     place_id = db.Column(db.String(36), db.ForeignKey('places.id'))
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'))
     
-    place = db.relationship("Place", back_populates="reviews")
-    user = db.relationship("User", back_populates="reviews")
+    place = db.relationship("PlaceModel", back_populates="reviews")
+    user = db.relationship("UserModel", back_populates="reviews")
     
     def __init__(self, text, rating, place, user):
         super().__init__()
@@ -24,10 +24,10 @@ class Review(BaseModel):
         if not isinstance(rating, int) or rating < 1 or rating > 5:
             raise ValueError("Rating must be an integer between 1 and 5")
 
-        if not isinstance(place, Place):
+        if not isinstance(place, PlaceModel):
             raise ValueError("Place must be a valid Place instance")
 
-        if not isinstance(user, User):
+        if not isinstance(user, UserModel):
             raise ValueError("User must be a valid User instance")
 
         self.text = text

@@ -1,5 +1,5 @@
 from .base import BaseModel
-from .user import User
+from .user import UserModel
 from app import db
 
 place_amenity = db.Table('place_amenity',
@@ -7,7 +7,7 @@ place_amenity = db.Table('place_amenity',
     db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
 )
 
-class Place(BaseModel):
+class PlaceModel(BaseModel):
     __tablename__ = 'places'
     
 
@@ -18,9 +18,9 @@ class Place(BaseModel):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
 
-    owner = db.relationship("User", back_populates="places")
-    reviews = db.relationship("Review", back_populates="place")
-    amenities = db.relationship("Amenity", secondary="place_amenity", back_populates="places")
+    owner = db.relationship("UserModel", back_populates="places")
+    reviews = db.relationship("ReviewModel", back_populates="place")
+    amenities = db.relationship("AmenityModel", secondary="place_amenity", back_populates="places")
 
 
     def __init__(self, title, price, latitude, longitude, owner,
@@ -43,7 +43,7 @@ class Place(BaseModel):
             self.longitude = longitude
         else:
             raise ValueError("longitude must be between -180.0 and 180.0")
-        if isinstance(owner, User):
+        if isinstance(owner, UserModel):
             self.owner = owner
         else:
             raise ValueError("The owner doesn't exist")

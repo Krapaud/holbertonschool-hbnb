@@ -4,7 +4,7 @@ from sqlalchemy.orm import validates
 import re
 
 
-class User(BaseModel):
+class UserModel(BaseModel):
     __tablename__ = 'users'
     
     first_name = db.Column(db.String(50), nullable=False)
@@ -13,8 +13,8 @@ class User(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    places = db.relationship("Place", back_populates="owner")
-    reviews = db.relationship("Review", back_populates="user")
+    places = db.relationship("PlaceModel", back_populates="owner")
+    reviews = db.relationship("ReviewModel", back_populates="user")
 
     @validates('first_name')
     def validate_first_name(self, key, first_name):
