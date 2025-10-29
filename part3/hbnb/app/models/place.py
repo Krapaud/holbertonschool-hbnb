@@ -3,6 +3,19 @@ from .user import User
 
 
 class PlaceModel(BaseModel):
+    __tablename__ = 'places'
+    
+
+    id = Column(Integer, primary_key=True)
+    title = Column(db.String(50), nullable=False)
+    description = Column(db.string)
+    price = Column(float, nullable=False)
+    latitude = Column(float)
+    longitude = Column(float)
+
+    user = relationship("User", back_populates="places")
+
+
     def __init__(self, title, price, latitude, longitude, owner,
                  description=None):
         super().__init__()
