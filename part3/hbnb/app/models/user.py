@@ -12,6 +12,7 @@ class User(BaseModel):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+
     places = db.relationship("Place", back_populates="user")
     reviews = db.relationship("Review", back_populates="user")
 
