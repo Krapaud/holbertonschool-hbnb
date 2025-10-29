@@ -24,10 +24,10 @@ class PlaceModel(BaseModel):
 
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
     title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String)
+    description = db.Column(db.String, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
 
     owner = db.relationship("UserModel", back_populates="places")
     reviews = db.relationship("ReviewModel", back_populates="place")
