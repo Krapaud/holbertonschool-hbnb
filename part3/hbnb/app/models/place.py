@@ -1,6 +1,7 @@
 from .base import BaseModel
 from .user import UserModel
 from app import db
+from sqlalchemy.orm import validates
 
 place_amenity = db.Table(
     'place_amenity',
@@ -37,28 +38,38 @@ class PlaceModel(BaseModel):
         back_populates="places"
     )
 
-    def __init__(self, title, price, latitude, longitude, owner,
-                 description=None):
-        super().__init__()
+    @validates('title')
+    def validate_title(self, key, title):
         if title and len(title) < 100:
-            self.title = title
+            return title
         else:
             raise ValueError("Required, maximum length of 100 characters.")
-        self.description = description
+
+    @validates('price')
+    def validate_price(self, key, price):
         if price > 0:
-            self.price = price
+            return price
         else:
             raise ValueError("price must be positive")
+
+    @validates('latitude')
+    def validate_latitude(self, key, latitude):
         if latitude >= -90.0 and latitude <= 90.0:
-            self.latitude = latitude
+            return latitude
         else:
             raise ValueError("latitude must be between -90.0 and 90.0")
+
+    @validates('longitude')
+    def validate_longitude(self, key, longitude):
         if longitude >= -180.0 and longitude <= 180.0:
-            self.longitude = longitude
+            return longitude
         else:
             raise ValueError("longitude must be between -180.0 and 180.0")
+
+    @validates('owner')
+    def validate_owner(self, key, owner):
         if isinstance(owner, UserModel):
-            self.owner = owner
+            return owner
         else:
             raise ValueError("The owner doesn't exist")
 

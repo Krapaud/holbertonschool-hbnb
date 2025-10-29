@@ -2,6 +2,7 @@ from .base import BaseModel
 from .place import PlaceModel
 from .user import UserModel
 from app import db
+from sqlalchemy.orm import validates
 
 
 class ReviewModel(BaseModel):
@@ -15,22 +16,26 @@ class ReviewModel(BaseModel):
     place = db.relationship("PlaceModel", back_populates="reviews")
     user = db.relationship("UserModel", back_populates="reviews")
 
-    def __init__(self, text, rating, place, user):
-        super().__init__()
-
+    @validates('text')
+    def validate_text(self, key, text):
         if not text or not isinstance(text, str) or len(text.strip()) == 0:
             raise ValueError("Text is required and cannot be empty")
+        return text
 
+    @validates('rating')
+    def validate_rating(self, key, rating):
         if not isinstance(rating, int) or rating < 1 or rating > 5:
             raise ValueError("Rating must be an integer between 1 and 5")
+        return rating
 
+    @validates('place')
+    def validate_place(self, key, place):
         if not isinstance(place, PlaceModel):
             raise ValueError("Place must be a valid Place instance")
+        return place
 
+    @validates('user')
+    def validate_user(self, key, user):
         if not isinstance(user, UserModel):
             raise ValueError("User must be a valid User instance")
-
-        self.text = text
-        self.rating = rating
-        self.place = place
-        self.user = user
+        return user
