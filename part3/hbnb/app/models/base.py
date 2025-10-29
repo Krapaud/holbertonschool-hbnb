@@ -6,9 +6,14 @@ from app import db
 class BaseModel(db.Model):
     __abstract__ = True  # This ensures SQLAlchemy does not create a table for BaseModel
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.id:
+            self.id = str(uuid.uuid4())
 
     def save(self):
         """Update the updated_at timestamp whenever the object is modified"""

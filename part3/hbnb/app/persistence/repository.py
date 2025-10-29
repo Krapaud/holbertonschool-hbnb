@@ -60,7 +60,9 @@ class SQLAlchemyRepository(Repository):
 
     def add(self, obj):
         db.session.add(obj)
+        db.session.flush()  # Generate ID before commit
         db.session.commit()
+        db.session.refresh(obj)  # Ensure the object has all database-generated values
 
     def get(self, obj_id):
         return self.model.query.get(obj_id)
