@@ -7,7 +7,7 @@ place_amenity = db.Table('place_amenity',
     db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
 )
 
-class PlaceModel(BaseModel):
+class Place(BaseModel):
     __tablename__ = 'places'
     
 
