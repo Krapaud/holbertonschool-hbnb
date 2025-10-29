@@ -1,0 +1,52 @@
+erDiagram
+    USER ||--o{ PLACE : owns
+    USER ||--o{ REVIEW : writes
+    PLACE ||--o{ REVIEW : has
+    PLACE }o--o{ AMENITY : offers
+    PLACE_AMENITY }o--|| PLACE : references
+    PLACE_AMENITY }o--|| AMENITY : references
+
+    USER {
+        string id PK "UUID, Primary Key"
+        string first_name "Max 50 chars, Required"
+        string last_name "Max 50 chars, Required"
+        string email "Max 120 chars, Unique, Required"
+        string password "Max 128 chars, Hashed, Required"
+        boolean is_admin "Default: False"
+        datetime created_at "Timestamp"
+        datetime updated_at "Timestamp"
+    }
+
+    PLACE {
+        string id PK "UUID, Primary Key"
+        string owner_id FK "Foreign Key to USER"
+        string title "Max 50 chars, Required"
+        string description "Text, Required"
+        float price "Positive value, Required"
+        float latitude "Between -90.0 and 90.0, Required"
+        float longitude "Between -180.0 and 180.0, Required"
+        datetime created_at "Timestamp"
+        datetime updated_at "Timestamp"
+    }
+
+    REVIEW {
+        string id PK "UUID, Primary Key"
+        string user_id FK "Foreign Key to USER"
+        string place_id FK "Foreign Key to PLACE"
+        string text "Text, Required"
+        integer rating "Between 1 and 5, Required"
+        datetime created_at "Timestamp"
+        datetime updated_at "Timestamp"
+    }
+
+    AMENITY {
+        string id PK "UUID, Primary Key"
+        string name "Max 50 chars, Unique, Required"
+        datetime created_at "Timestamp"
+        datetime updated_at "Timestamp"
+    }
+
+    PLACE_AMENITY {
+        string place_id PK "Composite PK and FK to PLACE"
+        string amenity_id PK "Composite PK and FK to AMENITY"
+    }

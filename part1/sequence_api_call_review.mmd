@@ -9,28 +9,28 @@ sequenceDiagram
   Client ->> API: POST /reviews (review data)
   API ->> UserModel: verify authentication
   alt invalid token
-    UserModel -->> API: error (401 Unauthorized)
-    API -->> Client: 401 Unauthorized
+    UserModel -->> API: authentication error
+    API -->> Client: Unauthorized
   else user valid
     UserModel -->> API: user verified
     API ->> PlaceModel: verify place exists
     PlaceModel ->> Database: SELECT place by id
     alt place not found
       Database -->> PlaceModel: no match
-      PlaceModel -->> API: error (404 Not Found)
-      API -->> Client: 404 Place Not Found
+      PlaceModel -->> API: place not found error
+      API -->> Client: Place Not Found
     else place exists
       Database -->> PlaceModel: place found
       PlaceModel -->> API: place found
       API ->> ReviewModel: validate review data
       alt invalid review data
-        ReviewModel -->> API: error (400 Bad Request)
-        API -->> Client: 400 Bad Request
+        ReviewModel -->> API: validation error
+        API -->> Client: Bad Request
       else valid review
         ReviewModel ->> Database: INSERT new review
         Database -->> ReviewModel: success (review_id)
         ReviewModel -->> API: return review object
-        API -->> Client: 201 Created (review_id, info)
+        API -->> Client: Created (review_id, info)
       end
     end
   end

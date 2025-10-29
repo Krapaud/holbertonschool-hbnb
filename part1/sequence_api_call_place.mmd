@@ -8,18 +8,18 @@ participant Database
 Client->>API: POST /places (place data)
 API->>UserModel: verify authentication (token)
 alt invalid or expired token
-    UserModel-->>API: error (401 Unauthorized)
-    API-->>Client: 401 Unauthorized
+    UserModel-->>API: authentication error
+    API-->>Client: Unauthorized
 else user valid
     UserModel-->>API: user verified
     API->>PlaceModel: validate place data
     alt invalid data
-        PlaceModel-->>API: error (400 Bad Request)
-        API-->>Client: 400 Bad Request
+        PlaceModel-->>API: validation error
+        API-->>Client: Bad Request
     else valid data
         PlaceModel->>Database: INSERT new place
         Database-->>PlaceModel: success (place_id)
         PlaceModel-->>API: return place object
-        API-->>Client: 201 Created (place_id, info)
+        API-->>Client: Created (place_id, info)
     end
 end
