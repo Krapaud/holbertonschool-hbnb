@@ -1,7 +1,7 @@
 from app.models.user import User
 from app.services import facade
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt, verify_jwt_in_request
 
 api = Namespace('users', description='User operations')
 
@@ -39,14 +39,29 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Unauthorized action')
     def post(self):
-        """Register a new user"""
+        """Register a new user (public) or create a user (admin only)"""
         user_data = api.payload
-        claims = get_jwt()
-        is_admin = claims.get('is_admin', False)
-        # Allow admins to modify any user, regular users only themselves
-        if not is_admin:
-            return {'error': 'Unauthorized action.'}, 403
+        
+        # Check if a JWT token is present (optional authentication)
+        is_admin = False
+        is_authenticated = False
+        try:
+            verify_jwt_in_request(optional=True)
+            claims = get_jwt()
+            if claims:
+                is_authenticated = True
+                is_admin = claims.get('is_admin', False)
+        except Exception:
+            # No token or invalid token - proceed as public registration
+            is_authenticated = False
+            is_admin = False
+        
+        # If authenticated but not admin, deny access
+        if is_authenticated and not is_admin:
+            return {'error': 'Unauthorized action. Only admins can create users when authenticated.'}, 403
+        
         try:
             # Check for email uniqueness first
             existing_user = facade.get_user_by_email(user_data['email'])
