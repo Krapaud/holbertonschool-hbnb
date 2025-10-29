@@ -1,19 +1,22 @@
 from .base import BaseModel
 from .user import User
+from app import db
 
 
 class PlaceModel(BaseModel):
     __tablename__ = 'places'
     
 
-    id = Column(Integer, primary_key=True)
-    title = Column(db.String(50), nullable=False)
-    description = Column(db.string)
-    price = Column(float, nullable=False)
-    latitude = Column(float)
-    longitude = Column(float)
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
-    user = relationship("User", back_populates="places")
+    owner = db.relationship("User", back_populates="places")
+    reviews = db.relationship("Review", back_populates="place")
+    amenities = db.relationship("Amenity", secondary="place_amenity", back_populates="places")
 
 
     def __init__(self, title, price, latitude, longitude, owner,
@@ -40,8 +43,6 @@ class PlaceModel(BaseModel):
             self.owner = owner
         else:
             raise ValueError("The owner doesn't exist")
-        self.reviews = []
-        self.amenities = []
 
     def add_review(self, review):
         """Add a review to the place."""
