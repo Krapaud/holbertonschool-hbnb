@@ -7,8 +7,10 @@ api = Namespace('reviews', description='Review operations')
 # Define the review model for input validation and documentation
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
-    'rating': fields.Integer(required=True,
-                             description='Rating of the place (1-5)'),
+    'rating': fields.Integer(
+        required=True,
+        description='Rating of the place (1-5)'
+    ),
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
@@ -17,7 +19,10 @@ review_model = api.model('Review', {
 class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
-    @api.response(400, 'Invalid input data, cannot review own place, or already reviewed')
+    @api.response(
+        400,
+        'Invalid input data, cannot review own place, or already reviewed'
+    )
     @api.response(401, 'Unauthorized')
     @api.response(404, 'Place not found')
     @jwt_required()
@@ -25,7 +30,7 @@ class ReviewList(Resource):
         """Register a new review"""
         # Get the current user from JWT token
         current_user_id = get_jwt_identity()
-        
+
         review_data = api.payload
         try:
             # Validate required fields
@@ -68,10 +73,13 @@ class ReviewList(Resource):
                 return {'error': 'You cannot review your own place.'}, 400
 
             # Check if user has already reviewed this place
-            existing_reviews = facade.get_reviews_by_place(review_data['place_id'])
+            existing_reviews = facade.get_reviews_by_place(
+                review_data['place_id']
+            )
             for review in existing_reviews:
                 if review.user.id == current_user_id:
-                    return {'error': 'You have already reviewed this place.'}, 400
+                    msg = 'You have already reviewed this place.'
+                    return {'error': msg}, 400
 
             new_review = facade.create_review(review_data)
             return {
@@ -139,7 +147,7 @@ class ReviewResource(Resource):
         current_user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
-        
+
         if not review_id or not review_id.strip():
             return {'error': 'Invalid review ID'}, 400
 
@@ -148,8 +156,9 @@ class ReviewResource(Resource):
             review = facade.get_review(review_id)
             if not review:
                 return {'error': 'Review not found'}, 404
-            
-            # Check if the current user is the owner of the review (admins can bypass)
+
+            # Check if the current user is the owner of the review
+            # (admins can bypass)
             if not is_admin and review.user.id != current_user_id:
                 return {'error': 'Unauthorized action.'}, 403
 
@@ -177,7 +186,7 @@ class ReviewResource(Resource):
         current_user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
-        
+
         if not review_id or not review_id.strip():
             return {'error': 'Invalid review ID'}, 400
 
@@ -186,11 +195,12 @@ class ReviewResource(Resource):
             review = facade.get_review(review_id)
             if not review:
                 return {'error': 'Review not found'}, 404
-            
-            # Check if the current user is the owner of the review (admins can bypass)
+
+            # Check if the current user is the owner of the review
+            # (admins can bypass)
             if not is_admin and review.user.id != current_user_id:
                 return {'error': 'Unauthorized action.'}, 403
-            
+
             if facade.delete_review(review_id):
                 return {'message': 'Review deleted successfully'}, 200
             else:

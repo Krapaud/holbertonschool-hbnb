@@ -6,15 +6,15 @@ from app import db
 
 class ReviewModel(BaseModel):
     __tablename__ = 'reviews'
-    
+
     text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     place_id = db.Column(db.String(36), db.ForeignKey('places.id'))
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'))
-    
+
     place = db.relationship("PlaceModel", back_populates="reviews")
     user = db.relationship("UserModel", back_populates="reviews")
-    
+
     def __init__(self, text, rating, place, user):
         super().__init__()
 

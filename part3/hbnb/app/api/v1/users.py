@@ -1,26 +1,45 @@
 from app.models.user import UserModel
 from app.services import facade
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt, verify_jwt_in_request
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_identity,
+    get_jwt,
+    verify_jwt_in_request
+)
 
 api = Namespace('users', description='User operations')
 
 # Define the user model for input validation and documentation
 user_model = api.model('User', {
-    'first_name': fields.String(required=True,
-                                description='First name of the user'),
-    'last_name': fields.String(required=True,
-                               description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user'),
-    'password': fields.String(required=True, description='Password of the user')
+    'first_name': fields.String(
+        required=True,
+        description='First name of the user'
+    ),
+    'last_name': fields.String(
+        required=True,
+        description='Last name of the user'
+    ),
+    'email': fields.String(
+        required=True,
+        description='Email of the user'
+    ),
+    'password': fields.String(
+        required=True,
+        description='Password of the user'
+    )
 })
+
 
 user_update_model = api.model('UserUpdate', {
     'first_name': fields.String(description='First name of the user'),
     'last_name': fields.String(description='Last name of the user'),
     'email': fields.String(description='Email of the user (Admin only)'),
-    'password': fields.String(description='Password of the user (Admin only)')
+    'password': fields.String(
+        description='Password of the user (Admin only)'
+    )
 })
+
 
 @api.route('/')
 class UserList(Resource):
@@ -43,7 +62,7 @@ class UserList(Resource):
     def post(self):
         """Register a new user (public) or create a user (admin only)"""
         user_data = api.payload
-        
+
         # Check if a JWT token is present (optional authentication)
         is_admin = False
         is_authenticated = False
@@ -57,24 +76,28 @@ class UserList(Resource):
             # No token or invalid token - proceed as public registration
             is_authenticated = False
             is_admin = False
-        
+
         # If authenticated but not admin, deny access
         if is_authenticated and not is_admin:
-            return {'error': 'Unauthorized action. Only admins can create users when authenticated.'}, 403
-        
+            msg = ('Unauthorized action. Only admins can create users '
+                   'when authenticated.')
+            return {'error': msg}, 403
+
         try:
             # Check for email uniqueness first
             existing_user = facade.get_user_by_email(user_data['email'])
             if existing_user:
                 return {'error': 'Email already registered'}, 400
 
-            # Validate password presence (flask-restx should already validate this)
+            # Validate password presence
+            # (flask-restx should already validate this)
             if 'password' not in user_data or not user_data['password']:
                 return {'error': 'password is required'}, 400
 
-            # Create user with password - it will be hashed in the model's __init__
+            # Create user with password - it will be hashed in the
+            # model's __init__
             new_user = facade.create_user(user_data)
-            
+
             # Return only user ID and success message
             return {
                 'id': new_user.id,
@@ -104,7 +127,10 @@ class UserResource(Resource):
     @jwt_required()
     @api.expect(user_update_model, validate=True)
     @api.response(200, 'User updated successfully')
-    @api.response(403, 'Forbidden - can only update own profile or admin privileges required')
+    @api.response(
+        403,
+        'Forbidden - can only update own profile or admin privileges required'
+    )
     @api.response(400, 'Invalid input data')
     @api.response(404, 'User not found')
     def put(self, user_id):
@@ -118,7 +144,8 @@ class UserResource(Resource):
                 return {'error': 'Unauthorized action.'}, 403
 
             # For regular users, prevent modifying email or password
-            if not is_admin and ('email' in user_data or 'password' in user_data):
+            if not is_admin and ('email' in user_data or
+                                 'password' in user_data):
                 return {'error': 'You cannot modify email or password.'}, 400
 
             # For admins, allow all fields but validate email uniqueness
@@ -126,20 +153,23 @@ class UserResource(Resource):
                 existing_user = facade.get_user_by_email(user_data['email'])
                 if existing_user and existing_user.id != user_id:
                     return {'error': 'Email is already in use'}, 400
-            
+
             allowed_fields = ['first_name', 'last_name']
             if is_admin:
                 allowed_fields.extend(['email', 'password'])
-                
-            filtered_data = {k: v for k, v in user_data.items() if k in allowed_fields}
-            
+
+            filtered_data = {
+                k: v for k, v in user_data.items() if k in allowed_fields
+            }
+
             # Handle password hashing for admins
             if is_admin and 'password' in filtered_data:
                 user = facade.get_user(user_id)
                 if user:
                     user.hash_password(filtered_data['password'])
-                    filtered_data['password'] = user.password  # Use the hashed password
-                    
+                    # Use the hashed password
+                    filtered_data['password'] = user.password
+
             user = facade.get_user(user_id)
             if not user:
                 return {'error': 'User not found'}, 404

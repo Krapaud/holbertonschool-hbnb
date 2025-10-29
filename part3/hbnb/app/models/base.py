@@ -4,11 +4,19 @@ from app import db
 
 
 class BaseModel(db.Model):
-    __abstract__ = True  # This ensures SQLAlchemy does not create a table for BaseModel
+    # This ensures SQLAlchemy does not create a table for BaseModel
+    __abstract__ = True
 
     id = db.Column(db.String(36), primary_key=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,5 +33,3 @@ class BaseModel(db.Model):
             if hasattr(self, key):
                 setattr(self, key, value)
         self.save()  # Update the updated_at timestamp
-
-

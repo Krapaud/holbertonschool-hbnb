@@ -2,14 +2,25 @@ from .base import BaseModel
 from .user import UserModel
 from app import db
 
-place_amenity = db.Table('place_amenity',
-    db.Column('place_id', db.String(36), db.ForeignKey('places.id'), primary_key=True),
-    db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
+place_amenity = db.Table(
+    'place_amenity',
+    db.Column(
+        'place_id',
+        db.String(36),
+        db.ForeignKey('places.id'),
+        primary_key=True
+    ),
+    db.Column(
+        'amenity_id',
+        db.String(36),
+        db.ForeignKey('amenities.id'),
+        primary_key=True
+    )
 )
+
 
 class PlaceModel(BaseModel):
     __tablename__ = 'places'
-    
 
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
     title = db.Column(db.String(50), nullable=False)
@@ -20,8 +31,11 @@ class PlaceModel(BaseModel):
 
     owner = db.relationship("UserModel", back_populates="places")
     reviews = db.relationship("ReviewModel", back_populates="place")
-    amenities = db.relationship("AmenityModel", secondary="place_amenity", back_populates="places")
-
+    amenities = db.relationship(
+        "AmenityModel",
+        secondary="place_amenity",
+        back_populates="places"
+    )
 
     def __init__(self, title, price, latitude, longitude, owner,
                  description=None):

@@ -54,6 +54,7 @@ class InMemoryRepository(Repository):
         return next((obj for obj in self._storage.values()
                     if getattr(obj, attr_name) == attr_value), None)
 
+
 class SQLAlchemyRepository(Repository):
     def __init__(self, model):
         self.model = model
@@ -62,7 +63,8 @@ class SQLAlchemyRepository(Repository):
         db.session.add(obj)
         db.session.flush()  # Generate ID before commit
         db.session.commit()
-        db.session.refresh(obj)  # Ensure the object has all database-generated values
+        # Ensure the object has all database-generated values
+        db.session.refresh(obj)
 
     def get(self, obj_id):
         return self.model.query.get(obj_id)

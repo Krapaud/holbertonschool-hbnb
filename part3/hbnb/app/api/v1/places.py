@@ -192,8 +192,9 @@ class PlaceResource(Resource):
             place = facade.get_place(place_id)
             if not place:
                 return {'error': 'Place not found'}, 404
-            
-            # Check if the current user is the owner of the place (admins can bypass)
+
+            # Check if the current user is the owner of the place
+            # (admins can bypass)
             if not is_admin and place.owner.id != current_user_id:
                 return {'error': 'Unauthorized action'}, 403
 
@@ -314,7 +315,7 @@ class PlaceAmenities(Resource):
             return {'error': 'Place not found'}, 404
         if not is_admin and place.owner.id != current_user_id:
             return {'error': 'Unauthorized action'}, 403
-        
+
         if not place_id or place_id.strip() == '':
             return {'error': 'Invalid place ID'}, 400
         data = api.payload

@@ -6,7 +6,7 @@ import re
 
 class UserModel(BaseModel):
     __tablename__ = 'users'
-    
+
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
@@ -19,7 +19,9 @@ class UserModel(BaseModel):
     @validates('first_name')
     def validate_first_name(self, key, first_name):
         """Validate first name"""
-        if not first_name or len(first_name) > 50 or len(first_name.strip()) == 0:
+        max_length = 50
+        if (not first_name or len(first_name) > max_length or
+                len(first_name.strip()) == 0):
             raise ValueError("First name is required and must be <= 50 chars")
         return first_name
 

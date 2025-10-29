@@ -1,5 +1,10 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, jwt_required, get_jwt
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+    get_jwt
+)
 from app.services import facade
 
 api = Namespace('auth', description='Authentication operations')
@@ -13,6 +18,7 @@ token_model = api.model('Token', {
     'access_token': fields.String(description='JWT access token')
 })
 
+
 @api.route('/login')
 class Login(Resource):
     @api.expect(login_model)
@@ -23,7 +29,8 @@ class Login(Resource):
         """Authenticate user and return a JWT token"""
         credentials = api.payload
 
-        if not credentials or 'email' not in credentials or 'password' not in credentials:
+        if (not credentials or 'email' not in credentials or
+                'password' not in credentials):
             return {'error': 'Email and password are required.'}, 400
 
         user = facade.get_user_by_email(credentials['email'])
@@ -40,19 +47,21 @@ class Login(Resource):
             'access_token': access_token
         }, 200
 
+
 @api.route('/protected')
 class ProtectedResource(Resource):
     @jwt_required()
     def get(self):
         """A protected endpoint that requires a valid JWT token"""
-        
-        # Récupération de l’identité de l’utilisateur (l’ID, passé en 'identity' au login)
+
+        # Récupération de l'identité de l'utilisateur (l'ID, passé en
+        # 'identity' au login)
         current_user = get_jwt_identity()
-        
+
         # Récupération des claims additionnels (comme is_admin)
         claims = get_jwt()
         is_admin = claims.get("is_admin", False)
-        
+
         return {
             'message': f'Hello user {current_user}',
             'is_admin': is_admin

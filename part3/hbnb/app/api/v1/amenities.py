@@ -35,7 +35,7 @@ class AmenityList(Resource):
         claims = get_jwt()
         if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
-            
+
         amenity_data = api.payload
 
         try:
@@ -115,7 +115,7 @@ class AmenityResource(Resource):
         claims = get_jwt()
         if not claims.get('is_admin', False):
             return {'error': 'Admin privileges required'}, 403
-            
+
         try:
             # Check if amenity exists
             existing_amenity = facade.get_amenity(amenity_id)
