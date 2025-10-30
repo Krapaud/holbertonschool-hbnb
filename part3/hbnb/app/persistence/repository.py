@@ -67,7 +67,7 @@ class SQLAlchemyRepository(Repository):
         db.session.refresh(obj)
 
     def get(self, obj_id):
-        return self.model.query.get(obj_id)
+        return db.session.get(self.model, obj_id)
 
     def get_all(self):
         return self.model.query.all()
