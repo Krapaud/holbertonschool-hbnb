@@ -71,7 +71,6 @@ class AmenityList(Resource):
             # Handle any other unexpected errors
             return {'error': 'Internal server error', 'message': str(e)}, 500
 
-    @api.marshal_list_with(amenity_response_model)
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
@@ -85,7 +84,6 @@ class AmenityList(Resource):
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
-    @api.marshal_with(amenity_response_model)
     @api.response(200, 'Amenity details retrieved successfully')
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
@@ -103,7 +101,6 @@ class AmenityResource(Resource):
             return {'error': 'Internal server error', 'message': str(e)}, 500
 
     @api.expect(amenity_model)
-    @api.marshal_with(update_response_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
