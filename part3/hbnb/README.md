@@ -79,29 +79,45 @@ This project follows a three-layer architecture:
 
 ## Installation and Setup
 
-1. **Create a virtual environment** (recommended):
+### Prerequisites
+- Python 3.12 or higher
+- pip (Python package manager)
+- Virtual environment (recommended)
+
+### Setup Instructions
+
+1. **Clone the repository** (if not already done):
+   ```bash
+   git clone <repository-url>
+   cd holbertonschool-hbnb/part3/hbnb
+   ```
+
+2. **Create a virtual environment** (recommended):
    ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. **Install dependencies**:
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Initialize the database**:
+4. **Initialize the database**:
    ```bash
    python init_db.py
    ```
+   This will create the SQLite database (`development.db`) with all required tables.
 
-4. **Run the application**:
+5. **Run the application**:
    ```bash
    python run.py
    ```
+   The application will start on `http://localhost:5000`
 
-5. **Access the API documentation**:
+6. **Access the API documentation**:
    Open your browser and navigate to `http://localhost:5000/api/v1/`
+   The interactive Swagger UI documentation will be available.
 
 ## Development
 
@@ -144,12 +160,13 @@ The project includes comprehensive automated tests for all API endpoints and cor
 
 ### Test Results Summary
 
-**API Testing Report - October 29, 2025**
+**API Testing Report - November 6, 2025**
 
 - **Total tests:** 79 (52 API endpoint tests + 27 core model tests)
 - **Successful tests:** 79
 - **Failed tests:** 0
 - **Success rate:** 100%
+- **Test execution time:** ~3 seconds (core classes)
 
 ### Test Suites
 
