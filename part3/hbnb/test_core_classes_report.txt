@@ -1,0 +1,35 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0 -- /home/krapaud/holbertonschool-hbnb/part3/hbnb/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/krapaud/holbertonschool-hbnb/part3/hbnb
+collecting ... collected 27 items
+
+tests/test_core_classes.py::TestBaseModel::test_base_model_id_generation PASSED [  3%]
+tests/test_core_classes.py::TestBaseModel::test_base_model_save_updates_timestamp PASSED [  7%]
+tests/test_core_classes.py::TestBaseModel::test_base_model_timestamps PASSED [ 11%]
+tests/test_core_classes.py::TestUserModel::test_user_creation_valid PASSED [ 14%]
+tests/test_core_classes.py::TestUserModel::test_user_email_validation_invalid PASSED [ 18%]
+tests/test_core_classes.py::TestUserModel::test_user_email_validation_missing_at PASSED [ 22%]
+tests/test_core_classes.py::TestUserModel::test_user_first_name_validation_empty PASSED [ 25%]
+tests/test_core_classes.py::TestUserModel::test_user_first_name_validation_too_long PASSED [ 29%]
+tests/test_core_classes.py::TestUserModel::test_user_first_name_validation_whitespace PASSED [ 33%]
+tests/test_core_classes.py::TestUserModel::test_user_is_admin_default PASSED [ 37%]
+tests/test_core_classes.py::TestUserModel::test_user_last_name_validation_empty PASSED [ 40%]
+tests/test_core_classes.py::TestUserModel::test_user_password_hashing PASSED [ 44%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_creation_valid PASSED [ 48%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_name_validation_empty PASSED [ 51%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_name_validation_not_string PASSED [ 55%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_name_validation_too_long PASSED [ 59%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_name_validation_whitespace PASSED [ 62%]
+tests/test_core_classes.py::TestAmenityModel::test_amenity_update PASSED [ 66%]
+tests/test_core_classes.py::TestPlaceModel::test_place_creation_valid PASSED [ 70%]
+tests/test_core_classes.py::TestPlaceModel::test_place_latitude_validation_out_of_range PASSED [ 74%]
+tests/test_core_classes.py::TestPlaceModel::test_place_longitude_validation_out_of_range PASSED [ 77%]
+tests/test_core_classes.py::TestPlaceModel::test_place_price_validation_negative PASSED [ 81%]
+tests/test_core_classes.py::TestPlaceModel::test_place_title_validation_empty PASSED [ 85%]
+tests/test_core_classes.py::TestReviewModel::test_review_creation_valid PASSED [ 88%]
+tests/test_core_classes.py::TestReviewModel::test_review_rating_validation_above_range PASSED [ 92%]
+tests/test_core_classes.py::TestReviewModel::test_review_rating_validation_below_range PASSED [ 96%]
+tests/test_core_classes.py::TestReviewModel::test_review_text_validation_empty PASSED [100%]
+
+============================== 27 passed in 3.01s ==============================
