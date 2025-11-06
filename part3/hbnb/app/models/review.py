@@ -7,6 +7,9 @@ from sqlalchemy.orm import validates
 
 class ReviewModel(BaseModel):
     __tablename__ = 'reviews'
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'place_id', name='unique_user_place'),
+    )
 
     text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
