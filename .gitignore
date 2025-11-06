@@ -224,3 +224,4 @@ env*/
 # Postman
 postman/
 /postman
+*.postman_collection.json

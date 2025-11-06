@@ -1,0 +1,56 @@
+---
+config:
+  layout: elk
+---
+erDiagram
+    USER ||--o{ PLACE : owns
+    USER ||--o{ REVIEW : writes
+    PLACE ||--o{ REVIEW : has
+    PLACE_AMENITY }o--|| PLACE : references
+    PLACE_AMENITY }o--|| AMENITY : references
+
+    USER {
+        string id PK "CHAR(36), UUID, Primary Key"
+        string first_name "VARCHAR(255), Required"
+        string last_name "VARCHAR(255), Required"
+        string email "VARCHAR(255), Unique, Required"
+        string password "VARCHAR(255), Hashed, Required"
+        boolean is_admin "Default: FALSE"
+        datetime created_at "TIMESTAMP, Default: CURRENT_TIMESTAMP"
+        datetime updated_at "TIMESTAMP, Auto-update"
+    }
+
+    PLACE {
+        string id PK "CHAR(36), UUID, Primary Key"
+        string owner_id FK "CHAR(36), Foreign Key to USER"
+        string title "VARCHAR(255), Required"
+        string description "TEXT, Required"
+        decimal price "DECIMAL(10,2), Positive, Required"
+        float latitude "FLOAT, Between -90.0 and 90.0, Required"
+        float longitude "FLOAT, Between -180.0 and 180.0, Required"
+        datetime created_at "TIMESTAMP, Default: CURRENT_TIMESTAMP"
+        datetime updated_at "TIMESTAMP, Auto-update"
+    }
+
+    REVIEW {
+        string id PK "CHAR(36), UUID, Primary Key"
+        string user_id FK "CHAR(36), Foreign Key to USER"
+        string place_id FK "CHAR(36), Foreign Key to PLACE"
+        string text "TEXT, Required"
+        integer rating "INT, CHECK: 1-5, Required"
+        datetime created_at "TIMESTAMP, Default: CURRENT_TIMESTAMP"
+        datetime updated_at "TIMESTAMP, Auto-update"
+        constraint unique_user_place "UNIQUE(user_id, place_id)"
+    }
+
+    AMENITY {
+        string id PK "CHAR(36), UUID, Primary Key"
+        string name "VARCHAR(255), Unique, Required"
+        datetime created_at "TIMESTAMP, Default: CURRENT_TIMESTAMP"
+        datetime updated_at "TIMESTAMP, Auto-update"
+    }
+
+    PLACE_AMENITY {
+        string place_id PK "CHAR(36), Composite PK, FK to PLACE"
+        string amenity_id PK "CHAR(36), Composite PK, FK to AMENITY"
+    }

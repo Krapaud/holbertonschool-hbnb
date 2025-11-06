@@ -7,17 +7,17 @@ participant Database
 Client->>API: GET filters
 API->>PlaceModel: validate search filters
 alt invalid filters
-    PlaceModel-->>API: error (400 Bad Request)
-    API-->>Client: 400 Invalid Query Parameters
+    PlaceModel-->>API: validation error
+    API-->>Client: Invalid Query Parameters
 else valid filters
     PlaceModel->>Database: SELECT places WHERE filters
     alt no results found
         Database-->>PlaceModel: empty list
         PlaceModel-->>API: return []
-        API-->>Client: 200 OK (empty list)
+        API-->>Client: OK (empty list)
     else results found
         Database-->>PlaceModel: list of places
         PlaceModel-->>API: return place objects
-        API-->>Client: 200 OK (list of places)
+        API-->>Client: OK (list of places)
     end
 end
