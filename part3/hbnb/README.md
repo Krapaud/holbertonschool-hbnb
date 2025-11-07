@@ -44,7 +44,8 @@ hbnb/
 │   ├── __init__.py
 │   ├── test_endpoint.py         # Automated API endpoint tests with JWT
 │   ├── test_core_classes.py     # Core model validation tests
-│   └── test_endpoint_report.md  # Test results report
+│   ├── test_persistence.py      # Database persistence tests
+│   └── test_endpoint_report.md  # Comprehensive test results report
 ├── init_db.py                   # Database initialization script
 ├── run.py                       # Application entry point
 ├── config.py                    # Environment configuration with SQLAlchemy settings
@@ -160,35 +161,46 @@ The project includes comprehensive automated tests for all API endpoints and cor
 
 ### Test Results Summary
 
-**API Testing Report - November 6, 2025**
+**API Testing Report - November 7, 2025**
 
-- **Total tests:** 79 (52 API endpoint tests + 27 core model tests)
-- **Successful tests:** 79
+- **Total tests:** 86 (51 API endpoint tests + 28 core model tests + 7 persistence tests)
+- **Successful tests:** 86
 - **Failed tests:** 0
 - **Success rate:** 100%
-- **Test execution time:** ~3 seconds (core classes)
+- **Test execution time:** ~36 seconds (full test suite)
 
 ### Test Suites
 
-#### test_endpoint.py (52 tests)
+#### test_endpoint.py (51 tests)
 **Purpose:** Validates API endpoint functionality with JWT authentication and authorization
 
 **Test Categories:**
 - **Authentication Tests (6 tests):** Login with valid/invalid credentials, protected endpoints, JWT token validation
 - **User Endpoints (12 tests):** User creation with password, validation for empty/whitespace fields, email format validation, missing required fields, duplicate email handling, JWT authentication for profile updates, ownership verification, admin privileges
 - **Place Endpoints (13 tests):** Place creation with JWT, title validation, price validation (negative/zero values), geographic coordinates validation (latitude: -90 to 90, longitude: -180 to 180), JWT authentication, ownership verification for updates/deletes
-- **Review Endpoints (15 tests):** Review creation with JWT, text validation, user/place ID validation, rating validation (1-5), ownership verification, unique user-place constraint
+- **Review Endpoints (14 tests):** Review creation with JWT, text validation, user/place ID validation, rating validation (1-5), ownership verification, unique user-place constraint
 - **Amenity Endpoints (6 tests):** Amenity creation (admin only), name validation, duplicate detection, missing fields, name length validation (max 50 characters)
 
-#### test_core_classes.py (27 tests)
+#### test_core_classes.py (28 tests)
 **Purpose:** Validates core model classes and business logic
 
 **Test Categories:**
 - **BaseModel Tests (3 tests):** ID generation, timestamps, save/update functionality
 - **User Model Tests (9 tests):** User creation, field validation (first_name, last_name, email), password hashing, is_admin default value
-- **Amenity Model Tests (5 tests):** Amenity creation, name validation (empty, whitespace, length, type), update functionality
+- **Amenity Model Tests (6 tests):** Amenity creation, name validation (empty, whitespace, length, type), update functionality
 - **Place Model Tests (5 tests):** Place creation with relationships, title validation, price validation (negative), coordinate validation (latitude/longitude ranges)
 - **Review Model Tests (5 tests):** Review creation with user and place relationships, text validation, rating validation (range 1-5)
+
+#### test_persistence.py (7 tests)
+**Purpose:** Validates database persistence across application restarts
+
+**Test Categories:**
+- **User Persistence (1 test):** User data persists after app context restart, password verification after restart
+- **Place Persistence (1 test):** Place data persists with all attributes (title, description, price, coordinates, owner_id)
+- **Amenity Persistence (1 test):** Amenity data persists correctly
+- **Review Persistence (1 test):** Review data persists with relationships intact
+- **Relationship Persistence (1 test):** Entity relationships (place→owner, owner→places) persist correctly
+- **Unique Constraints (2 tests):** Email uniqueness and review (user_id, place_id) uniqueness enforced across restarts
 
 ### Key Validations Implemented
 - **Email Format:** Comprehensive regex validation
@@ -201,6 +213,9 @@ The project includes comprehensive automated tests for all API endpoints and cor
 - **JWT Authentication:** Token-based authentication with role-based access control
 - **Ownership Verification:** Users can only modify their own resources (unless admin)
 - **Unique Constraints:** One review per user per place, unique email addresses
+- **Database Persistence:** Data survives application restarts with SQLite
+- **Relationship Integrity:** Foreign key relationships maintained correctly
+- **Transaction Management:** Proper database session handling with flush and refresh
 
 ### Running Tests
 
@@ -209,8 +224,11 @@ To run all the automated tests:
 # Activate virtual environment first
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Run all tests
+# Run all tests with pytest
 python -m pytest tests/ -v
+
+# Run all tests (summary output)
+python -m pytest tests/ -q
 
 # Run specific test file for API endpoints
 python -m pytest tests/test_endpoint.py -v
@@ -218,11 +236,24 @@ python -m pytest tests/test_endpoint.py -v
 # Run specific test file for core model classes
 python -m pytest tests/test_core_classes.py -v
 
+# Run specific test file for database persistence
+python -m pytest tests/test_persistence.py -v
+
 # Run with coverage report
 python -m pytest tests/ --cov=app --cov-report=html
+
+# Run with detailed output for debugging
+python -m pytest tests/ -vv -s
 ```
 
-For detailed test results, see `tests/test_endpoint_report.md` and `test_core_classes_report.txt`.
+**Expected Output:**
+```bash
+$ python -m pytest tests/ -q
+......................................................................................                                                       
+86 passed in 36.18s
+```
+
+For detailed test results and documentation, see `tests/test_endpoint_report.md`.
 
 ## API Endpoints
 

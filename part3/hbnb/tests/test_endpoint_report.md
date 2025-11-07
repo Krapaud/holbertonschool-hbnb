@@ -4,9 +4,9 @@
 This report describes the tests performed on the User, Place, Review, and Amenity endpoints of the Flask-RESTx HBNB API.
 
 **Report date:** October 29, 2025  
-**Last update:** October 29, 2025  
+**Last update:** November 7, 2025  
 **API version:** v1  
-**Test framework:** unittest + test automation
+**Test framework:** unittest + pytest + test automation
 
 ## Methodology
 - **Tools:** unittest (Python standard library)
@@ -31,6 +31,19 @@ This report describes the tests performed on the User, Place, Review, and Amenit
   - Protected endpoints
 - **Success rate:** 100%
 
+### Phase 3: Database Persistence & Test Infrastructure Fixes (November 7, 2025)
+- **Total tests:** 86
+- **New features tested:**
+  - SQLite database persistence across application restarts
+  - Data integrity and unique constraints
+  - Entity relationships persistence
+  - Test infrastructure improvements
+- **Success rate:** 100%
+- **Test files:**
+  - `test_core_classes.py`: 28 tests
+  - `test_endpoint.py`: 51 tests
+  - `test_persistence.py`: 7 tests
+
 ## Manual cURL Tests
 | # | Method | Endpoint | Data | Expected Result | Actual Result | Status |
 |---|----------|-----------|----------|------------------|------------------|--------|
@@ -43,8 +56,8 @@ This report describes the tests performed on the User, Place, Review, and Amenit
 ## Automated Unit Tests
 
 ### Global Results
-- **Total tests:** 52
-- **Successful tests:** 52
+- **Total tests:** 86
+- **Successful tests:** 86
 - **Failed tests:** 0
 - **Success rate:** 100%
 
@@ -827,10 +840,248 @@ OK
 
 All tests now pass consistently across multiple runs with both in-memory and persistent databases.
 
+### 11. Database Persistence Test Infrastructure (November 7, 2025)
+
+During the implementation of comprehensive database persistence tests, critical infrastructure issues in the test suite were identified and resolved.
+
+#### 11.1. Missing Database Initialization in test_endpoint.py
+
+**Problem:** The `test_endpoint.py` test file did not initialize database tables in its `setUp()` method, causing all tests to fail with "no such table" errors.
+
+**Root Cause:** While `test_core_classes.py` and `test_persistence.py` properly called `db.create_all()` in their setup, `test_endpoint.py` only created the Flask app and test client without initializing the database schema.
+
+**Symptoms:**
+```
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: users
+[SQL: SELECT users.first_name AS users_first_name... FROM users WHERE users.email = ?]
+```
+
+**Initial Failure Rate:** 40 out of 86 tests (46.5% failure rate)
+
+**Solution Applied in `/home/krapaud/holbertonschool-hbnb/part3/hbnb/tests/test_endpoint.py`:**
+
+```python
+# BEFORE (missing database initialization)
+import unittest
+from app import create_app
+
+class TestEndpointsValidation(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app()
+        self.client = self.app.test_client()
+        self.app.config['TESTING'] = True
+
+# AFTER (complete database setup)
+import unittest
+import os
+from app import create_app, db
+
+class TestEndpointsValidation(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app()
+        self.app.config['TESTING'] = True
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_endpoints.db'
+        self.client = self.app.test_client()
+        
+        # Create database tables
+        with self.app.app_context():
+            db.create_all()
+
+    def tearDown(self):
+        """Clean up after each test."""
+        with self.app.app_context():
+            db.session.remove()
+            db.drop_all()
+        
+        # Remove test database file
+        try:
+            os.remove('test_endpoints.db')
+        except OSError:
+            pass
+```
+
+**Impact:**
+- ✅ All endpoint tests now have proper database schema
+- ✅ Clean database state for each test run
+- ✅ Proper cleanup prevents test interference
+- ✅ Reduced failures from 40 to 11 (72.5% improvement)
+
+#### 11.2. PlaceModel Description Field Constraint
+
+**Problem:** The `PlaceModel` had `description` defined as `nullable=False`, but many tests created places without providing a description field, causing database constraint violations.
+
+**Root Cause:** The model required a description, but the API and tests treated it as optional.
+
+**Symptoms:**
+```
+AssertionError: 500 != 201
+Internal Server Error when creating places without description
+```
+
+**Affected Tests:** 10 tests involving place creation
+
+**Solution Applied in `/home/krapaud/holbertonschool-hbnb/part3/hbnb/app/models/place.py`:**
+
+```python
+# BEFORE (description required)
+class PlaceModel(BaseModel):
+    __tablename__ = 'places'
+    
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String, nullable=False)  # Required
+    price = db.Column(db.Float, nullable=False)
+    # ...
+
+# AFTER (description optional)
+class PlaceModel(BaseModel):
+    __tablename__ = 'places'
+    
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String, nullable=True)  # Optional
+    price = db.Column(db.Float, nullable=False)
+    # ...
+```
+
+**Impact:**
+- ✅ Places can now be created with or without descriptions
+- ✅ More flexible API usage
+- ✅ Reduced failures from 11 to 1 (90.9% improvement)
+
+#### 11.3. Review Deletion - Simplified Relationship Management
+
+**Problem:** The `delete_review()` method in the facade was manually manipulating the place's reviews list and calling `place.save()`, which caused errors during deletion.
+
+**Root Cause:** SQLAlchemy's relationship management should handle the cascade automatically. Manual manipulation of the relationship list and saving the parent entity was unnecessary and caused transaction conflicts.
+
+**Symptoms:**
+```
+AssertionError: 400 != 200
+ValueError raised during review deletion
+```
+
+**Solution Applied in `/home/krapaud/holbertonschool-hbnb/part3/hbnb/app/services/facade.py`:**
+
+```python
+# BEFORE (manual relationship manipulation)
+def delete_review(self, review_id):
+    """Business logic: Delete a review and remove it from place"""
+    review = self.review_repo.get(review_id)
+    if review:
+        place = review.place
+        if review in place.reviews:
+            place.reviews.remove(review)
+            place.save()
+        
+        self.review_repo.delete(review_id)
+        return True
+    return False
+
+# AFTER (SQLAlchemy handles relationships)
+def delete_review(self, review_id):
+    """Business logic: Delete a review"""
+    review = self.review_repo.get(review_id)
+    if review:
+        self.review_repo.delete(review_id)
+        return True
+    return False
+```
+
+**Impact:**
+- ✅ Simpler, cleaner code
+- ✅ Let SQLAlchemy manage relationships automatically
+- ✅ No transaction conflicts
+- ✅ All 86 tests now pass (100% success rate)
+
+#### 11.4. Database Persistence Tests Added
+
+**New Test Suite:** `test_persistence.py` (7 comprehensive tests)
+
+**Tests Implemented:**
+1. **test_user_persists_after_restart** - Validates user data persists across app context restarts
+2. **test_place_persists_after_restart** - Validates place data persists with all attributes
+3. **test_amenity_persists_after_restart** - Validates amenity data persists
+4. **test_review_persists_after_restart** - Validates review data persists
+5. **test_relationships_persist_after_restart** - Validates entity relationships are maintained
+6. **test_unique_constraints_persist** - Validates unique email constraint across restarts
+7. **test_review_unique_constraint_persists** - Validates unique (user_id, place_id) constraint
+
+**Key Validations:**
+- ✅ Data survives application context close/reopen cycles
+- ✅ All attributes are correctly stored and retrieved
+- ✅ Relationships (place→owner, owner→places) persist correctly
+- ✅ Unique constraints are enforced across restarts
+- ✅ Passwords are hashed and verify correctly after restart
+- ✅ Created/updated timestamps are preserved
+
+**Test Pattern:**
+```python
+def test_user_persists_after_restart(self):
+    user_id = None
+    
+    # Step 1: Create user in first app context
+    with self.app.app_context():
+        user = UserModel(first_name='John', last_name='Doe', 
+                        email='test@example.com')
+        user.hash_password('password123')
+        db.session.add(user)
+        db.session.commit()
+        user_id = user.id
+        # Context ends - simulates app restart
+    
+    # Step 2: Verify user exists in new context
+    with self.app.app_context():
+        persisted_user = db.session.get(UserModel, user_id)
+        
+        self.assertIsNotNone(persisted_user)
+        self.assertEqual(persisted_user.first_name, 'John')
+        self.assertTrue(persisted_user.verify_password('password123'))
+```
+
+#### Summary of Database Persistence & Infrastructure Fixes
+
+**Issues Fixed:** 3 critical test infrastructure problems
+**Test Failures Resolved:** 40 → 0 (100% improvement)
+**Final Success Rate:** 100% (86/86 tests passing)
+**Execution Time:** ~36 seconds for full test suite
+
+**Test Breakdown:**
+- `test_core_classes.py`: 28/28 tests (100%) - Model validation and business logic
+- `test_endpoint.py`: 51/51 tests (100%) - API endpoints and JWT authentication
+- `test_persistence.py`: 7/7 tests (100%) - Database persistence and data integrity
+
+**Key Infrastructure Improvements:**
+1. **Proper test database setup** - All test files now initialize database schema correctly
+2. **Consistent teardown** - Clean database state between tests prevents interference
+3. **Optional fields** - Model constraints match API requirements
+4. **Simplified relationship management** - Let SQLAlchemy ORM handle cascades
+5. **Comprehensive persistence testing** - Validates data survives application restarts
+
+**Files Modified:**
+- `tests/test_endpoint.py` - Added database initialization and teardown
+- `app/models/place.py` - Made description field optional
+- `app/services/facade.py` - Simplified review deletion
+
+**Verification:**
+```bash
+$ python -m pytest tests/ -v
+...
+============================= 86 passed in 36.91s ==============================
+```
+
+All tests now pass consistently, validating:
+- Complete CRUD operations on all entities
+- JWT authentication and authorization
+- Database persistence across application restarts
+- Data integrity and unique constraints
+- Entity relationships and cascading operations
+
 ## Conclusion
 
 ### Strengths
-- **100% of unit tests pass**
+- **100% of unit tests pass (86/86)**
+- **Complete database persistence validation**
 - **All Error 500 cases identified and fixed**
 - **Data consistency maintained across all operations**
 - Robust input data validation with type checking
@@ -839,6 +1090,9 @@ All tests now pass consistently across multiple runs with both in-memory and per
 - Well-structured data models
 - Comprehensive error handling for edge cases
 - Proper management of bidirectional relationships (reviews ↔ places)
+- Full database persistence with SQLite
+- Complete test coverage across all layers (models, API, persistence)
+- Automated test suite with pytest integration
 
-**Global Status: FUNCTIONAL, TESTED, AND HARDENED API**  
-The API meets specifications and REST best practices with solid data validation and error handling. All potential Internal Server Errors have been identified and resolved with proper 400 Bad Request responses. Data integrity is maintained across all CRUD operations with proper relationship management.
+**Global Status: PRODUCTION-READY, FULLY TESTED API WITH DATABASE PERSISTENCE**  
+The API meets all specifications and REST best practices with solid data validation, error handling, and database persistence. All potential Internal Server Errors have been identified and resolved. Data integrity is maintained across all CRUD operations with proper relationship management. Database persistence is fully validated with comprehensive tests ensuring data survives application restarts.

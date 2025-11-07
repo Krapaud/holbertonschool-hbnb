@@ -174,14 +174,9 @@ class HBnBFacade:
         return review
 
     def delete_review(self, review_id):
-        """Business logic: Delete a review and remove it from place"""
+        """Business logic: Delete a review"""
         review = self.review_repo.get(review_id)
         if review:
-            place = review.place
-            if review in place.reviews:
-                place.reviews.remove(review)
-                place.save()
-
             self.review_repo.delete(review_id)
             return True
         return False
