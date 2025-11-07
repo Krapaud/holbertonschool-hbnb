@@ -61,7 +61,7 @@ holbertonschool-hbnb/
         │   ├── services/                     # Business logic (Facade)
         │   └── persistence/                  # SQLAlchemy repository
         ├── sql/                               # SQL schema files
-        ├── tests/                             # Test suite (52 API + 27 model tests)
+        ├── tests/                             # Test suite (51 API + 28 model + 7 persistence tests)
         ├── init_db.py                        # Database initialization
         ├── config.py                         # Configuration with SQLAlchemy
         ├── run.py                            # Application entry point
@@ -175,6 +175,7 @@ holbertonschool-hbnb/
 - Complete database models with relationships
 - SQL schema files for reference and documentation
 - Database initialization script (init_db.py)
+- Database persistence validation across application restarts
 - Entity-Relationship diagram (Mermaid)
 
 **Authentication System:**
@@ -203,13 +204,28 @@ holbertonschool-hbnb/
 - Specialized repositories (UserRepository with email lookup)
 - Support for both in-memory and database storage
 - Abstract repository interface for flexibility
+- Proper session management with flush and refresh
 
 **Testing:**
-- 79 comprehensive tests (52 API + 27 model tests)
+- 86 comprehensive tests (51 API + 28 model + 7 persistence tests)
 - 100% success rate across all test suites
 - Authentication and authorization testing
 - Database relationship validation
+- Database persistence across application restarts
 - Ownership and access control verification
+
+**Recent Improvements (November 7, 2025):**
+- Added comprehensive database persistence tests (test_persistence.py)
+  - Validates data persistence across application restarts
+  - Tests unique constraints enforcement (email, user-place review)
+  - Verifies entity relationships persistence
+  - Password hashing persistence validation
+- Fixed test infrastructure
+  - Added database initialization in test_endpoint.py
+  - Proper tearDown for database cleanup between tests
+  - Made PlaceModel description field optional
+  - Simplified review deletion logic
+- Updated all documentation to reflect 86 passing tests
 
 ## Documentation
 
