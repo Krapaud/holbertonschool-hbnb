@@ -25,7 +25,7 @@ class PlaceModel(BaseModel):
 
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
     title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=True)
     price = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
