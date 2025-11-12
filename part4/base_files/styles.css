@@ -109,6 +109,13 @@ main {
   display: inline-block;
 }
 
+.review-card {
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
 footer {
   text-align: center;
   padding: 1rem 0;
