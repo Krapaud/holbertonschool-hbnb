@@ -22,7 +22,7 @@ erDiagram
 
     PLACE {
         string id PK "CHAR(36), UUID, Primary Key"
-        string owner_id FK "CHAR(36), Foreign Key to USER"
+        string owner_id FK "CHAR(36), Foreign Key to USER, ON DELETE CASCADE"
         string title "VARCHAR(255), Required"
         string description "TEXT, Required"
         decimal price "DECIMAL(10,2), Positive, Required"
@@ -34,8 +34,8 @@ erDiagram
 
     REVIEW {
         string id PK "CHAR(36), UUID, Primary Key"
-        string user_id FK "CHAR(36), Foreign Key to USER"
-        string place_id FK "CHAR(36), Foreign Key to PLACE"
+        string user_id FK "CHAR(36), Foreign Key to USER, ON DELETE CASCADE"
+        string place_id FK "CHAR(36), Foreign Key to PLACE, ON DELETE CASCADE"
         string text "TEXT, Required"
         integer rating "INT, CHECK: 1-5, Required"
         datetime created_at "TIMESTAMP, Default: CURRENT_TIMESTAMP"
@@ -51,6 +51,6 @@ erDiagram
     }
 
     PLACE_AMENITY {
-        string place_id PK "CHAR(36), Composite PK, FK to PLACE"
-        string amenity_id PK "CHAR(36), Composite PK, FK to AMENITY"
+        string place_id PK "CHAR(36), Composite PK, FK to PLACE, ON DELETE CASCADE"
+        string amenity_id PK "CHAR(36), Composite PK, FK to AMENITY, ON DELETE CASCADE"
     }

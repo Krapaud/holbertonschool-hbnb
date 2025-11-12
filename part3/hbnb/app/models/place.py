@@ -23,7 +23,7 @@ place_amenity = db.Table(
 class PlaceModel(BaseModel):
     __tablename__ = 'places'
 
-    owner_id = db.Column(db.String(36), db.ForeignKey('users.id'))
+    owner_id = db.Column(db.String(36), db.ForeignKey('users.id', ondelete='CASCADE'))
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String, nullable=True)
     price = db.Column(db.Float, nullable=False)
@@ -31,7 +31,7 @@ class PlaceModel(BaseModel):
     longitude = db.Column(db.Float, nullable=False)
 
     owner = db.relationship("UserModel", back_populates="places")
-    reviews = db.relationship("ReviewModel", back_populates="place")
+    reviews = db.relationship("ReviewModel", back_populates="place", cascade="all, delete-orphan")
     amenities = db.relationship(
         "AmenityModel",
         secondary="place_amenity",
