@@ -226,6 +226,7 @@ main {
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .place-info h1 {
@@ -239,34 +240,12 @@ main {
   margin: 0.5rem 0;
   color: #555;
   font-size: 1rem;
+  text-align: center;
 }
 
 .place-info p strong {
   color: #333;
   font-weight: 600;
-}
-
-.place-info h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 600;
-}
-
-/* Amenities List */
-.place-info ul {
-  list-style: none;
-  padding-left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.place-info ul li {
-  background: #f0f0f0;
-  padding: 0.3rem 0.8rem;
-  border-radius: 5px;
-  color: #555;
 }
 
 /* ========================================
