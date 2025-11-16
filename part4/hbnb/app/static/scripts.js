@@ -99,6 +99,8 @@ async function fetchPlaces(token) {
 
   if (response.ok) {
     const data = await response.json();
+    console.log('Places reçues:', data);
+    console.log('Nombre de places:', data.length);
     displayPlaces(data);
   } else {
     console.error('Failed to fetch places');
@@ -114,8 +116,8 @@ function displayPlaces(places) {
     article.className = 'place-card';
 
     article.innerHTML = `
-      <h3>${place.name}</h3>
-      <p>Price: $${place.price_per_night} per night</p>
+      <h3>${place.title}</h3>
+      <p>Price: $${place.price} per night</p>
       <a href="place.html?id=${place.id}" class="details-button">View Details</a>
     `;
 

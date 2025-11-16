@@ -132,6 +132,7 @@ class PlaceList(Resource):
             place_dict = {
                 'id': place.id,
                 'title': place.title,
+                'price': place.price,
                 'latitude': place.latitude,
                 'longitude': place.longitude}
             result.append(place_dict)
