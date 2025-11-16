@@ -109,7 +109,7 @@ async function fetchPlaces(token) {
 
 function displayPlaces(places) {
   const placesList = document.getElementById('places-list');
-  placesList.innerHTML = '<h2>Available Places</h2>';
+  placesList.innerHTML = '';
 
   for (let place of places) {
     const article = document.createElement('article');

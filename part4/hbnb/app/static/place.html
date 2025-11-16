@@ -24,9 +24,9 @@
         <!-- Place details will be populated dynamically -->
         <div class="place-info">
           <h1>Cozy Apartment Paris</h1>
-          <p>Host: John Doe</p>
-          <p>Price: $120 per night</p>
-          <p>Description: A beautiful apartment in the heart of Paris...</p>
+          <p><strong>Host:</strong> John Doe</p>
+          <p><strong>Price per night:</strong> $120</p>
+          <p><strong>Description:</strong> A beautiful apartment in the heart of Paris...</p>
           <h3>Amenities</h3>
           <ul>
             <li>Wifi</li>
@@ -38,19 +38,19 @@
         <h2>Reviews</h2>
         <!-- Reviews will be populated dynamically -->
         <article class="review-card">
-          <h3 class="review-author">User: Alice Smith</h3>
+          <h3 class="review-author">Alice Smith:</h3>
           <p class="review-comment">"Amazing place! Very clean and comfortable."</p>
-          <p class="review-rating">Rating: ★★★★★ (5/5)</p>
+          <p class="review-rating">Rating: ★★★★★</p>
         </article>
         <article class="review-card">
-          <h3 class="review-author">User: John Wayne</h3>
+          <h3 class="review-author">John Wayne:</h3>
           <p class="review-comment">"Good Appartment, but need a Vault for something"</p>
-          <p class="review-rating">Rating: ★★★★ (4/5)</p>
+          <p class="review-rating">Rating: ★★★★</p>
         </article>
         <article class="review-card">
-          <h3 class="review-author">User: Elizabeth Sawyer</h3>
+          <h3 class="review-author">Elizabeth Sawyer:</h3>
           <p class="review-comment">"Beautiful, but the owner don't want to sell it"</p>
-          <p class="review-rating">Rating: ★ (1/5)</p>
+          <p class="review-rating">Rating: ★</p>
         </article>
       </section>
       <section id="add-review" class="add-review">
@@ -58,6 +58,16 @@
         <form id="review-form" class="form">
           <label for="review-text">Review:</label>
           <textarea id="review-text" name="review-text" required></textarea>
+
+          <label for="rating">Rating:</label>
+          <select id="rating" name="rating" required>
+            <option value="">Select rating</option>
+            <option value="1">1 - Poor</option>
+            <option value="2">2 - Fair</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Very Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
 
           <button type="submit">Submit</button>
         </form>

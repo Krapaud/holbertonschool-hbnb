@@ -83,21 +83,74 @@ main {
   padding: 2rem;
 }
 
-#places-list {
+.header-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
 }
 
+.header-container h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+#filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#filter label {
+  font-weight: 500;
+  color: #333;
+}
+
+#price-filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+#price-filter:hover {
+  border-color: #ff0000;
+}
+
+#price-filter:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem;
+}
 
 .place-card {
-  flex: 0 1 300px;
+  background: white;
   text-align: center;
   margin: 20px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.place-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .details-button {
@@ -112,11 +165,171 @@ main {
   display: inline-block;
 }
 
+/* Place Details Styles */
+.place-details {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.place-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.place-info h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.place-info p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 1rem;
+}
+
+.place-info p strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.place-info h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.place-info ul {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.place-info ul li {
+  background: #f0f0f0;
+  padding: 0.3rem 0.8rem;
+  border-radius: 5px;
+  color: #555;
+}
+
+/* Reviews Section */
+#reviews {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+#reviews h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
 .review-card {
-  margin: 20px;
+  background: white;
+  margin: 20px 0;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.review-author {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.review-comment {
+  color: #555;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+.review-rating {
+  color: #ff9800;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* Add Review Form */
+.add-review {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-review h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form textarea:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+.form select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.form select:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+.form button {
+  margin-top: 1rem;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.form button:hover {
+  background-color: #e60000;
 }
 
 footer {
