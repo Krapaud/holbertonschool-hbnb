@@ -1,5 +1,5 @@
-/* 
-*/
+/*
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  checkAuthentication();
 });
 
 async function loginUser(email, password) {
@@ -30,10 +32,80 @@ async function loginUser(email, password) {
   });
 
   if (response.ok) {
-      const data = await response.json();
-      document.cookie = `token=${data.access_token}; path=/`;
-      window.location.href = 'index.html';
+    const data = await response.json();
+    document.cookie = `token=${data.access_token}; path=/`;
+    window.location.href = 'index.html';
   } else {
-      alert('Login failed: ' + response.statusText);
+    alert('Login failed: ' + response.statusText);
   }
 }
+
+function checkAuthentication() {
+  const token = getCookie('token');
+  const loginLink = document.getElementById('login-link');
+
+  if (loginLink) {
+    if (!token) {
+      loginLink.style.display = 'block';
+    } else {
+      loginLink.style.display = 'none';
+    }
+  }
+
+  if (token && document.getElementById('places-list')) {
+    fetchPlaces(token);
+  }
+}
+
+function getCookie(name) {
+  // Function to get a cookie value by its name
+  const cookies = document.cookie.split('; ');
+  for (let cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split('=');
+    if (cookieName === name) {
+      return cookieValue;
+    }
+  }
+  return null;
+}
+
+async function fetchPlaces(token) {
+  // Make a GET request to fetch places data
+  const response = await fetch('/api/v1/places', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    displayPlaces(data);
+  } else {
+    console.error('Failed to fetch places');
+  }
+}
+
+function displayPlaces(places) {
+  const placesList = document.getElementById('places-list');
+  placesList.innerHTML = '<h2>Available Places</h2>';
+  
+  for (let place of places) {
+    const article = document.createElement('article'); 
+    article.className = 'place-card';
+    
+    article.innerHTML = `
+      <h3>${place.name}</h3>
+      <p>Price: $${place.price_per_night} per night</p>
+      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
+    `;
+    
+    placesList.appendChild(article);
+  }
+}
+
+document.getElementById('price-filter').addEventListener('change', (event) => {
+      // Get the selected price value
+      // Iterate over the places and show/hide them based on the selected price
+  });
