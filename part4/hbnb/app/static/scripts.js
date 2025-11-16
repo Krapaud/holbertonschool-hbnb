@@ -20,6 +20,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   checkAuthentication();
+
+  document.getElementById('price-filter').addEventListener('change', (event) => {
+    const selectedPrice = event.target.value;
+    const placeCards = document.querySelectorAll('.place-card');
+
+    for (let card of placeCards) {
+      const priceText = card.querySelector('p').textContent;
+      const price = parseInt(priceText.split('$')[1]);
+
+      if (selectedPrice === 'all') {
+        card.style.display = 'block';
+      } else if (price <= parseInt(selectedPrice)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    }
+  });
 });
 
 async function loginUser(email, password) {
@@ -90,22 +108,17 @@ async function fetchPlaces(token) {
 function displayPlaces(places) {
   const placesList = document.getElementById('places-list');
   placesList.innerHTML = '<h2>Available Places</h2>';
-  
+
   for (let place of places) {
-    const article = document.createElement('article'); 
+    const article = document.createElement('article');
     article.className = 'place-card';
-    
+
     article.innerHTML = `
       <h3>${place.name}</h3>
       <p>Price: $${place.price_per_night} per night</p>
       <a href="place.html?id=${place.id}" class="details-button">View Details</a>
     `;
-    
+
     placesList.appendChild(article);
   }
 }
-
-document.getElementById('price-filter').addEventListener('change', (event) => {
-      // Get the selected price value
-      // Iterate over the places and show/hide them based on the selected price
-  });
