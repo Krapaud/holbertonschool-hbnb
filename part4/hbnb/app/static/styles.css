@@ -1,10 +1,38 @@
 /* 
-  This is a SAMPLE File to get you started. Follow the instructions on the project to complete the tasks. 
-  You'll probably need to override some of theese styles.
+  HBnB Evolution - Main Stylesheet
+  This file contains all the styles for the application
+  Organized by sections for better maintainability
 */
-/*Import for custom police*/
+
+/* ========================================
+   IMPORTS & FONTS
+   ======================================== */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+:root {
+  --text-color: var(--color-black);
+  --font-size-small: 1.2rem;
+  --font-size-medium: 1.6rem;
+  --font-size-large: 1.8rem;
+  --font-size-x-large: 2.3rem;
+  --font-size-xx-large: 4.8rem;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --header-logo-position: relative;
+  --header-logo-link-display: inline-block;
+  --header-logo-link-position: absolute;
+  --header-logo-link-top: -1rem;
+  --header-logo-link-left: 0;
+  --footer-padding: 5rem 0 1rem;
+  --font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================
+   GLOBAL STYLES & RESET
+   ======================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,12 +43,15 @@
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;  /* Hauteur minimum = toute la fenêtre */
+  min-height: 100vh;
   background-color: #f4f4f4;
   color: #333;
   font-family: 'Poppins', sans-serif;
 }
 
+/* ========================================
+   HEADER & NAVIGATION
+   ======================================== */
 header {
   display: flex;
   justify-content: space-between;
@@ -30,6 +61,7 @@ header {
   padding: 1rem 2rem;
 }
 
+/* Logo Styles */
 .logo {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   transition: filter 0.3s ease;
@@ -46,6 +78,7 @@ header {
   text-decoration: none;
 }
 
+/* Navigation Styles */
 nav {
   display: flex;
   align-items: center;
@@ -63,6 +96,7 @@ nav a:hover {
   color: #fff;
 }
 
+/* Login Button */
 .login-button {
   background-color: #ff0000;
   color: #fff;
@@ -77,12 +111,19 @@ nav a:hover {
   background-color: #e60000;
 }
 
-
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
 main {
-  flex: 1;  /* Le main prend tout l'espace disponible */
+  flex: 1;
   padding: 2rem;
 }
 
+/* ========================================
+   INDEX PAGE - PLACES LIST
+   ======================================== */
+
+/* Header Container with Title and Filter */
 .header-container {
   display: flex;
   flex-direction: column;
@@ -99,6 +140,7 @@ main {
   text-align: center;
 }
 
+/* Price Filter Styles */
 #filter {
   display: flex;
   align-items: center;
@@ -130,6 +172,7 @@ main {
   box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
 }
 
+/* Places List Grid */
 #places-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -137,6 +180,7 @@ main {
   padding: 0 1rem;
 }
 
+/* Place Card Styles - Fixed Parameters (margin: 20px, padding: 10px, border: 1px solid #ddd, border-radius: 10px) */
 .place-card {
   background: white;
   text-align: center;
@@ -153,6 +197,7 @@ main {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Details Button */
 .details-button {
   background-color: #ff0000;
   color: #fff;
@@ -165,12 +210,17 @@ main {
   display: inline-block;
 }
 
-/* Place Details Styles */
+/* ========================================
+   PLACE DETAILS PAGE
+   ======================================== */
+
+/* Place Details Container */
 .place-details {
   max-width: 800px;
   margin: 0 auto 2rem;
 }
 
+/* Place Information Card */
 .place-info {
   background: white;
   padding: 2rem;
@@ -203,6 +253,7 @@ main {
   font-weight: 600;
 }
 
+/* Amenities List */
 .place-info ul {
   list-style: none;
   padding-left: 0;
@@ -218,7 +269,9 @@ main {
   color: #555;
 }
 
-/* Reviews Section */
+/* ========================================
+   REVIEWS SECTION
+   ======================================== */
 #reviews {
   max-width: 800px;
   margin: 2rem auto;
@@ -230,6 +283,7 @@ main {
   color: #333;
 }
 
+/* Review Card - Fixed Parameters (margin: 20px, padding: 10px, border: 1px solid #ddd, border-radius: 10px) */
 .review-card {
   background: white;
   margin: 20px 0;
@@ -257,7 +311,9 @@ main {
   margin-top: 0.5rem;
 }
 
-/* Add Review Form */
+/* ========================================
+   ADD REVIEW FORM
+   ======================================== */
 .add-review {
   max-width: 800px;
   margin: 2rem auto;
@@ -273,6 +329,7 @@ main {
   color: #333;
 }
 
+/* Form Elements */
 .form label {
   display: block;
   margin-bottom: 0.5rem;
@@ -332,28 +389,13 @@ main {
   background-color: #e60000;
 }
 
+/* ========================================
+   FOOTER
+   ======================================== */
 footer {
   text-align: center;
   padding: 1rem 0;
   background-color: #333;
   color: #f54242;
   font-family: var(--font-family);
-}
-
-:root {
-  --text-color: var(--color-black);
-  --font-size-small: 1.2rem;
-  --font-size-medium: 1.6rem;
-  --font-size-large: 1.8rem;
-  --font-size-x-large: 2.3rem;
-  --font-size-xx-large: 4.8rem;
-  --font-weight-regular: 400;
-  --font-weight-bold: 700;
-  --header-logo-position: relative;
-  --header-logo-link-display: inline-block;
-  --header-logo-link-position: absolute;
-  --header-logo-link-top: -1rem;
-  --header-logo-link-left: 0;
-  --footer-padding: 5rem 0 1rem;
-  --font-family: 'Poppins', sans-serif;
 }

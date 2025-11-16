@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <!-- Character encoding and viewport settings -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title and resources -->
     <title>List of Places</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="./favicon.png">
   </head>
   <body>
-    <!-- Header -->
+    <!-- ============================================ -->
+    <!-- HEADER SECTION -->
+    <!-- Contains logo and navigation menu -->
+    <!-- ============================================ -->
     <header>
+      <!-- Logo container with link to home -->
       <div>
         <a href="index.html">
           <img src="images/logo.png" alt="HBnB" class="logo">
         </a>
       </div>
+      
+      <!-- Navigation menu -->
+      <!-- Login link visibility controlled by JavaScript based on authentication -->
       <nav>
         <a href="index.html">Home</a>
         <a href="login.html" id="login-link" class="login-button">Login</a>
       </nav>
     </header>
-    <!-- Main -->
+    
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT SECTION -->
+    <!-- Displays available places with filtering -->
+    <!-- ============================================ -->
     <main>
+      <!-- Header container with centered title and filter -->
       <div class="header-container">
         <h2>Available Places</h2>
+        
+        <!-- Price filter dropdown -->
+        <!-- Allows filtering places by maximum price -->
+        <!-- Filtering handled by JavaScript in scripts.js -->
         <div id="filter">
           <label for="price-filter">Max Price:</label>
           <select id="price-filter">
@@ -34,8 +53,12 @@
           </select>
         </div>
       </div>
+      
+      <!-- Places list section -->
+      <!-- This section is dynamically populated by JavaScript -->
+      <!-- Fetches data from /api/v1/places endpoint -->
       <section id="places-list">
-        <!-- List of places will be populated dynamically -->
+        <!-- Static placeholder cards (will be replaced by dynamic content) -->
         <article class="place-card">
           <h3>Apartment Cosy Nice</h3>
           <p>Price: $90 per night</p>
@@ -53,8 +76,14 @@
         </article>
       </section>
     </main>
+    
+    <!-- JavaScript file for authentication, API calls, and dynamic content -->
     <script src="scripts.js"></script>
-    <!-- Footer -->
+    
+    <!-- ============================================ -->
+    <!-- FOOTER SECTION -->
+    <!-- Copyright information -->
+    <!-- ============================================ -->
     <footer>
       <p>© 2025 HBnB. All rights reserved.</p>
     </footer>
