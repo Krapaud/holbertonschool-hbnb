@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Get the price filter element if it exists
   const priceFilter = document.getElementById('price-filter');
-  
+
   // If price filter exists, attach change event listener
   if (priceFilter) {
     priceFilter.addEventListener('change', (event) => {
@@ -177,3 +177,42 @@ function displayPlaces(places) {
     placesList.appendChild(article);
   }
 }
+
+function getPlaceIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+async function fetchPlaceDetails(token, placeId) {
+  // Make a GET request to fetch place details
+  const response = await fetch(`/api/v1/places/${placeId}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    displayPlaceDetails(data);
+  } else {
+    console.error('Failed to fetch place details');
+  }
+}
+
+function displayPlaceDetails(place) {
+  const placesList = document.getElementById('places-list');
+  placesList.innerHTML = '';
+
+    article.innerHTML = `
+      <h1>${place.name}</h1>
+      <p>Host: ${place.host}</p>
+      <p>Price: $${place.price} per night</p>
+      <p>Description: ${place.description}</p>
+      <p>Amenities: ${place.amenities}</p>
+      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
+    `;
+
+    placesList.appendChild(article);
+  }
