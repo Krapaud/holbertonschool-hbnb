@@ -33,8 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (reviewForm) {
     // Check if user is authenticated
     const token = getCookie('token');
-    if (!token) {
-      // Redirect to index if not authenticated
+    
+    // Only redirect on add_review.html (not on place.html)
+    // Check if we're on add_review.html by looking for the specific review textarea ID
+    const isAddReviewPage = document.getElementById('review'); // Only exists on add_review.html
+    
+    if (!token && isAddReviewPage) {
+      // Redirect to index if not authenticated and on add_review.html
       window.location.href = 'index.html';
       return;
     }
@@ -150,8 +155,8 @@ function checkAuthentication() {
     }
   }
 
-  // If authenticated and on places list page, fetch places
-  if (token && document.getElementById('places-list')) {
+  // If on places list page, fetch places (with token if available)
+  if (document.getElementById('places-list')) {
     fetchPlaces(token);
   }
 
@@ -159,14 +164,15 @@ function checkAuthentication() {
   if (document.getElementById('place-details')) {
     // Extract place ID from URL query parameters
     const placeId = getPlaceIdFromURL();
-    const placeDetails = document.getElementById('place-details');
     
-    // Fetch place details only if user is authenticated
-    if (token) {
-        fetchPlaceDetails(token, placeId);
+    if (placeId) {
+      // Fetch place details (with token if available)
+      fetchPlaceDetails(token, placeId);
+      // Fetch reviews for this place
+      fetchPlaceReviews(placeId);
     } else {
-        // Display message prompting user to login
-        placeDetails.innerHTML = '<p>Please login to view place details.</p>';
+      // Display error if no place ID in URL
+      document.getElementById('place-details').innerHTML = '<p>Error: No place ID provided in URL.</p>';
     }
   }
 }
@@ -197,12 +203,18 @@ function getCookie(name) {
  * @returns {Promise<void>}
  */
 async function fetchPlaces(token) {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  
+  // Add Authorization header only if token exists
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  
   const response = await fetch('/api/v1/places', {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: headers,
   });
 
   if (response.ok) {
@@ -259,12 +271,18 @@ function getPlaceIdFromURL() {
  * @returns {Promise<void>}
  */
 async function fetchPlaceDetails(token, placeId) {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  
+  // Add Authorization header only if token exists
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  
   const response = await fetch(`/api/v1/places/${placeId}`, {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: headers,
   });
 
   if (response.ok) {
@@ -324,6 +342,99 @@ function displayPlaceDetails(place) {
 
   // Append the created article to the place details section
   placeDetails.appendChild(article);
+}
+
+// ============================================
+// REVIEWS DISPLAY FUNCTIONS
+// ============================================
+
+/**
+ * Fetches all reviews for a specific place from the API
+ * @param {string} placeId - The unique identifier of the place
+ * @returns {Promise<void>}
+ */
+async function fetchPlaceReviews(placeId) {
+  try {
+    const response = await fetch(`/api/v1/places/${placeId}/reviews`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const reviews = await response.json();
+      console.log('Reviews received:', reviews);
+      displayReviews(reviews);
+    } else {
+      console.error('Failed to fetch reviews');
+      document.getElementById('reviews-list').innerHTML = '<p>Unable to load reviews.</p>';
+    }
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    document.getElementById('reviews-list').innerHTML = '<p>Error loading reviews.</p>';
+  }
+}
+
+/**
+ * Displays reviews on the page
+ * Creates HTML elements dynamically for each review
+ * @param {Array} reviews - Array of review objects
+ * @param {string} reviews[].id - Review ID
+ * @param {string} reviews[].text - Review text
+ * @param {number} reviews[].rating - Review rating (1-5)
+ * @param {string} reviews[].user_id - ID of the user who wrote the review
+ */
+function displayReviews(reviews) {
+  const reviewsList = document.getElementById('reviews-list');
+  reviewsList.innerHTML = '';
+
+  // Check if there are any reviews
+  if (!reviews || reviews.length === 0) {
+    reviewsList.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review this place!</p>';
+    return;
+  }
+
+  // Create a card for each review
+  for (let review of reviews) {
+    const article = document.createElement('article');
+    article.className = 'review-card';
+
+    // Convert rating number to stars
+    const stars = getStarRating(review.rating);
+
+    // Use user_name if available, otherwise fallback to user_id
+    const authorName = review.user_name || `User ${review.user_id.substring(0, 8)}`;
+
+    article.innerHTML = `
+      <h3 class="review-author">${authorName}:</h3>
+      <p class="review-comment">"${review.text}"</p>
+      <p class="review-rating">Rating: ${stars}</p>
+    `;
+
+    reviewsList.appendChild(article);
+  }
+}
+
+/**
+ * Converts a numeric rating to star symbols
+ * @param {number} rating - Rating value (1-5)
+ * @returns {string} Star symbols representing the rating
+ */
+function getStarRating(rating) {
+  const fullStar = '★';
+  const emptyStar = '☆';
+  let stars = '';
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= rating) {
+      stars += fullStar;
+    } else {
+      stars += emptyStar;
+    }
+  }
+  
+  return stars;
 }
 
 // ============================================
