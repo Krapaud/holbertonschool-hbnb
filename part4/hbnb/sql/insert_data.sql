@@ -33,3 +33,41 @@ VALUES
     ('b8c9d0e1-f2a3-4567-2345-678901234567', 'Charming Flat Bordeaux', 'Beautiful flat in historic district', 65.00, 44.8378, -0.5792, '36c9050e-ddd3-4c3b-9731-9f487208bbc1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('c9d0e1f2-a3b4-5678-3456-789012345678', 'Tiny House Toulouse', 'Eco-friendly tiny house with garden', 55.00, 43.6047, 1.4442, '36c9050e-ddd3-4c3b-9731-9f487208bbc1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('d0e1f2a3-b4c5-6789-4567-890123456789', 'Beachfront Apartment Biarritz', 'Direct access to the beach', 95.00, 43.4832, -1.5586, '36c9050e-ddd3-4c3b-9731-9f487208bbc1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Insert Place-Amenity associations
+INSERT INTO place_amenity (place_id, amenity_id)
+VALUES 
+    -- Apartment Cosy Nice (90€): WiFi + Air Conditioning
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    ('a1b2c3d4-e5f6-7890-abcd-ef1234567890', '32561383-c728-4ba3-9fd2-cb7ceab79fca'),
+    
+    -- Apartment Cosy Fréjus (75€): WiFi only
+    ('b2c3d4e5-f6a7-8901-bcde-f12345678901', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    
+    -- Apartment Cosy Paris (120€): WiFi + Air Conditioning
+    ('c3d4e5f6-a7b8-9012-cdef-123456789012', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    ('c3d4e5f6-a7b8-9012-cdef-123456789012', '32561383-c728-4ba3-9fd2-cb7ceab79fca'),
+    
+    -- Budget Studio Marseille (45€): NO amenities
+    
+    -- Luxury Villa Cannes (350€): ALL amenities
+    ('e5f6a7b8-c9d0-1234-ef12-345678901234', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    ('e5f6a7b8-c9d0-1234-ef12-345678901234', 'bcf813cf-1fd0-4a7f-b69d-d4167331aaa1'),
+    ('e5f6a7b8-c9d0-1234-ef12-345678901234', '32561383-c728-4ba3-9fd2-cb7ceab79fca'),
+    
+    -- Cozy Room Lyon (35€): NO amenities
+    
+    -- Penthouse Monaco (500€): ALL amenities
+    ('a7b8c9d0-e1f2-3456-1234-567890123456', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    ('a7b8c9d0-e1f2-3456-1234-567890123456', 'bcf813cf-1fd0-4a7f-b69d-d4167331aaa1'),
+    ('a7b8c9d0-e1f2-3456-1234-567890123456', '32561383-c728-4ba3-9fd2-cb7ceab79fca'),
+    
+    -- Charming Flat Bordeaux (65€): WiFi only
+    ('b8c9d0e1-f2a3-4567-2345-678901234567', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    
+    -- Tiny House Toulouse (55€): WiFi only
+    ('c9d0e1f2-a3b4-5678-3456-789012345678', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    
+    -- Beachfront Apartment Biarritz (95€): WiFi + Swimming Pool
+    ('d0e1f2a3-b4c5-6789-4567-890123456789', '2767d121-c1b4-4d16-a816-0f5113ab06d0'),
+    ('d0e1f2a3-b4c5-6789-4567-890123456789', 'bcf813cf-1fd0-4a7f-b69d-d4167331aaa1');

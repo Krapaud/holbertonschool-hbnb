@@ -46,9 +46,40 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Register the reviews namespace
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
 
-    # Add a simple root route
+    # ============================================
+    # HTML PAGES ROUTES
+    # Serve static HTML pages without /static/ in URL
+    # ============================================
+    
     @app.route('/')
-    def home():
+    @app.route('/index.html')
+    def index():
+        """Serve the main index page"""
+        return app.send_static_file('index.html')
+
+    @app.route('/login.html')
+    def login():
+        """Serve the login page"""
+        return app.send_static_file('login.html')
+
+    @app.route('/place.html')
+    def place():
+        """Serve the place details page"""
+        return app.send_static_file('place.html')
+
+    @app.route('/add_review.html')
+    def add_review():
+        """Serve the add review page"""
+        return app.send_static_file('add_review.html')
+
+    # ============================================
+    # API INFO ROUTE
+    # ============================================
+    
+    @app.route('/api')
+    @app.route('/api/')
+    def api_info():
+        """API information and available endpoints"""
         return jsonify({
             'message': 'Welcome to HBnB API',
             'documentation': '/api/v1/',
@@ -60,4 +91,5 @@ def create_app(config_class="config.DevelopmentConfig"):
                 'auth': '/api/v1/auth'
             }
         })
+    
     return app

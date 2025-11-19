@@ -157,6 +157,7 @@ class PlaceResource(Resource):
             'title': place.title,
             'latitude': place.latitude,
             'longitude': place.longitude,
+            'price': place.price,
             'description': place.description,
             'owner': {
                 'id': place.owner.id,
