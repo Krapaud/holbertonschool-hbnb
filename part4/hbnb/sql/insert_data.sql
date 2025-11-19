@@ -13,6 +13,19 @@ VALUES (
     CURRENT_TIMESTAMP
 );
 
+-- Insert Test User - password: test_user1234
+INSERT INTO users (id, first_name, last_name, email, password, is_admin, created_at, updated_at)
+VALUES (
+    '550e8400-e29b-41d4-a716-446655440000',
+    'Test',
+    'User',
+    'test_user@example.com',
+    '$2b$12$N6HuyLoIbmo0xQgILZdJLeYyYUtLPi9CausIFTzg1krsOKz6h1H6u',
+    FALSE,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP
+);
+
 -- Insert Initial Amenities - Using uuidgenerator.net pour generate UUID4
 INSERT INTO amenities (id, name, created_at, updated_at)
 VALUES 

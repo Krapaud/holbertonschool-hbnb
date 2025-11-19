@@ -27,6 +27,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Handle review form submission
+  const reviewForm = document.getElementById('review-form');
+  
+  if (reviewForm) {
+    // Check if user is authenticated
+    const token = getCookie('token');
+    if (!token) {
+      // Redirect to index if not authenticated
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    const placeId = getPlaceIdFromURL();
+    
+    reviewForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      // Get review text and rating from form
+      // Handle both 'review' (add_review.html) and 'review-text' (place.html)
+      const reviewTextElement = document.getElementById('review') || document.getElementById('review-text');
+      const reviewText = reviewTextElement ? reviewTextElement.value : '';
+      const ratingElement = document.getElementById('rating');
+      const rating = ratingElement ? ratingElement.value : '';
+      
+      // Make AJAX request to submit review
+      try {
+        await submitReview(token, placeId, reviewText, rating);
+      } catch (error) {
+        alert('Error submitting review: ' + error.message);
+      }
+    });
+  }
+
   // Check if user is authenticated on page load
   checkAuthentication();
 
@@ -291,4 +324,39 @@ function displayPlaceDetails(place) {
 
   // Append the created article to the place details section
   placeDetails.appendChild(article);
+}
+
+// ============================================
+// REVIEW SUBMISSION FUNCTIONS
+// ============================================
+
+/**
+ * Submits a review for a place
+ * @param {string} token - JWT authentication token
+ * @param {string} placeId - The place ID
+ * @param {string} reviewText - The review text
+ * @param {string} rating - The rating (1-5)
+ * @returns {Promise<void>}
+ */
+async function submitReview(token, placeId, reviewText, rating) {
+  const response = await fetch('/api/v1/reviews', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      text: reviewText,
+      rating: parseInt(rating),
+      place_id: placeId
+    }),
+  });
+
+  if (response.ok) {
+    alert('Review submitted successfully!');
+    document.getElementById('review-form').reset();
+  } else {
+    const errorData = await response.json();
+    alert('Failed to submit review: ' + (errorData.error || response.statusText));
+  }
 }
