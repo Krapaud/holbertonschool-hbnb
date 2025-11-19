@@ -199,7 +199,7 @@ function getCookie(name) {
 
 /**
  * Fetches all places from the API
- * @param {string} token - JWT authentication token
+ * @param {string|null} token - JWT authentication token (optional)
  * @returns {Promise<void>}
  */
 async function fetchPlaces(token) {
@@ -266,7 +266,7 @@ function getPlaceIdFromURL() {
 
 /**
  * Fetches detailed information about a specific place from the API
- * @param {string} token - JWT authentication token
+ * @param {string|null} token - JWT authentication token (optional)
  * @param {string} placeId - The unique identifier of the place
  * @returns {Promise<void>}
  */
@@ -298,15 +298,14 @@ async function fetchPlaceDetails(token, placeId) {
  * Displays detailed information about a place on the page
  * Creates and populates HTML elements dynamically with place data
  * @param {Object} place - The place object containing all details
- * @param {string} place.name - The name of the place
- * @param {string} place.host - The host's name
+ * @param {string} place.title - The title of the place
+ * @param {Object} place.owner - The owner object with first_name and last_name
  * @param {number} place.price - The price per night
  * @param {string} place.description - The place description
- * @param {string|Array} place.amenities - The available amenities
+ * @param {Array} place.amenities - Array of amenity objects with name property
  */
 function displayPlaceDetails(place) {
   const placeDetails = document.getElementById('place-details');
-  placeDetails.innerHTML = '';
   placeDetails.innerHTML = '';
 
   // Create article element to contain place information
@@ -403,11 +402,8 @@ function displayReviews(reviews) {
     // Convert rating number to stars
     const stars = getStarRating(review.rating);
 
-    // Use user_name if available, otherwise fallback to user_id
-    const authorName = review.user_name || `User ${review.user_id.substring(0, 8)}`;
-
     article.innerHTML = `
-      <h3 class="review-author">${authorName}:</h3>
+      <h3 class="review-author">User ${review.user_id}:</h3>
       <p class="review-comment">"${review.text}"</p>
       <p class="review-rating">Rating: ${stars}</p>
     `;
@@ -446,7 +442,7 @@ function getStarRating(rating) {
  * @param {string} token - JWT authentication token
  * @param {string} placeId - The place ID
  * @param {string} reviewText - The review text
- * @param {string} rating - The rating (1-5)
+ * @param {string} rating - The rating as string (will be converted to integer)
  * @returns {Promise<void>}
  */
 async function submitReview(token, placeId, reviewText, rating) {
