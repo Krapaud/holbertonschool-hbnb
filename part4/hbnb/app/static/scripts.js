@@ -88,12 +88,16 @@ async function loginUser(email, password) {
 
 /**
  * Checks if user is authenticated and updates UI accordingly
- * Hides login link if user is authenticated
- * Fetches places list if on index page and authenticated
+ * - Manages visibility of login link
+ * - Controls display of add review form
+ * - Fetches and displays places list on index.html
+ * - Fetches and displays place details on place.html
+ * @returns {void}
  */
 function checkAuthentication() {
   const token = getCookie('token');
   const loginLink = document.getElementById('login-link');
+  const addReviewSection = document.getElementById('add-review');
 
   // Show or hide login link based on authentication status
   if (loginLink) {
@@ -104,9 +108,33 @@ function checkAuthentication() {
     }
   }
 
+  // Show or hide add review section based on authentication status
+  if (addReviewSection) {
+    if (token) {
+      addReviewSection.style.display = 'block';
+    } else {
+      addReviewSection.style.display = 'none';
+    }
+  }
+
   // If authenticated and on places list page, fetch places
   if (token && document.getElementById('places-list')) {
     fetchPlaces(token);
+  }
+
+  // If on place details page, fetch and display place details
+  if (document.getElementById('place-details')) {
+    // Extract place ID from URL query parameters
+    const placeId = getPlaceIdFromURL();
+    const placeDetails = document.getElementById('place-details');
+    
+    // Fetch place details only if user is authenticated
+    if (token) {
+        fetchPlaceDetails(token, placeId);
+    } else {
+        // Display message prompting user to login
+        placeDetails.innerHTML = '<p>Please login to view place details.</p>';
+    }
   }
 }
 
@@ -178,13 +206,26 @@ function displayPlaces(places) {
   }
 }
 
+// ============================================
+// PLACE DETAILS FUNCTIONS
+// ============================================
+
+/**
+ * Extracts the place ID from the URL query parameters
+ * @returns {string|null} The place ID from the URL, or null if not found
+ */
 function getPlaceIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
 }
 
+/**
+ * Fetches detailed information about a specific place from the API
+ * @param {string} token - JWT authentication token
+ * @param {string} placeId - The unique identifier of the place
+ * @returns {Promise<void>}
+ */
 async function fetchPlaceDetails(token, placeId) {
-  // Make a GET request to fetch place details
   const response = await fetch(`/api/v1/places/${placeId}`, {
     method: 'GET',
     headers: {
@@ -195,24 +236,59 @@ async function fetchPlaceDetails(token, placeId) {
 
   if (response.ok) {
     const data = await response.json();
+    console.log('Place details received:', data);
     displayPlaceDetails(data);
   } else {
     console.error('Failed to fetch place details');
   }
 }
 
+/**
+ * Displays detailed information about a place on the page
+ * Creates and populates HTML elements dynamically with place data
+ * @param {Object} place - The place object containing all details
+ * @param {string} place.name - The name of the place
+ * @param {string} place.host - The host's name
+ * @param {number} place.price - The price per night
+ * @param {string} place.description - The place description
+ * @param {string|Array} place.amenities - The available amenities
+ */
 function displayPlaceDetails(place) {
-  const placesList = document.getElementById('places-list');
-  placesList.innerHTML = '';
+  const placeDetails = document.getElementById('place-details');
+  placeDetails.innerHTML = '';
+  placeDetails.innerHTML = '';
 
-    article.innerHTML = `
-      <h1>${place.name}</h1>
-      <p>Host: ${place.host}</p>
-      <p>Price: $${place.price} per night</p>
-      <p>Description: ${place.description}</p>
-      <p>Amenities: ${place.amenities}</p>
-      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
+  // Create article element to contain place information
+  const article = document.createElement('article');
+  article.className = 'place-info';
+
+  // Get host name
+  let hostName = 'Unknown';
+  if (place.owner) {
+    hostName = place.owner.first_name + ' ' + place.owner.last_name;
+  }
+
+  // Get amenities list
+  let amenitiesList = 'None';
+  if (place.amenities && place.amenities.length > 0) {
+    amenitiesList = '';
+    for (let i = 0; i < place.amenities.length; i++) {
+      amenitiesList = amenitiesList + place.amenities[i].name;
+      if (i < place.amenities.length - 1) {
+        amenitiesList = amenitiesList + ', ';
+      }
+    }
+  }
+
+  // Populate article with place details
+  article.innerHTML = `
+      <h1>${place.title}</h1>
+      <p><strong>Host:</strong> ${hostName}</p>
+      <p><strong>Price per night:</strong> $${place.price}</p>
+      <p><strong>Description:</strong> ${place.description}</p>
+      <p><strong>Amenities:</strong> ${amenitiesList}</p>
     `;
 
-    placesList.appendChild(article);
-  }
+  // Append the created article to the place details section
+  placeDetails.appendChild(article);
+}
