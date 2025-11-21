@@ -1,15 +1,15 @@
-# HBnB Application - Part 3
+# HBnB Backend API - Part 4
 
 ## Project Overview
 
-This is the third part of the HBnB (Holberton Airbnb clone) project, focusing on database persistence with SQLAlchemy, authentication with JWT, and password hashing.
+This is the backend API for the HBnB (Holberton Airbnb clone) project. It provides RESTful endpoints with database persistence using SQLAlchemy, JWT authentication, password hashing with Bcrypt, and CORS support for frontend integration.
 
 ## Project Structure
 
 ```
-hbnb/
+backend/
 ├── app/
-│   ├── __init__.py              # Flask application factory with SQLAlchemy, Bcrypt and JWT
+│   ├── __init__.py              # Flask application factory with SQLAlchemy, Bcrypt, JWT and CORS
 │   ├── api/
 │   │   ├── __init__.py
 │   │   └── v1/
@@ -46,10 +46,13 @@ hbnb/
 │   ├── test_core_classes.py     # Core model validation tests
 │   ├── test_persistence.py      # Database persistence tests
 │   └── test_endpoint_report.md  # Comprehensive test results report
+├── instance/
+│   └── development.db           # SQLite database (created after initialization)
 ├── init_db.py                   # Database initialization script
 ├── run.py                       # Application entry point
 ├── config.py                    # Environment configuration with SQLAlchemy settings
 ├── requirements.txt             # Python dependencies
+├── start_backend.sh             # Script to start the backend API server
 ├── hbnb_database_er_diagram.mmd # Database Entity-Relationship diagram
 └── README.md                    # This file
 ```
@@ -75,6 +78,7 @@ This project follows a three-layer architecture:
 - **SQLAlchemy ORM**: Database models with relationships (User, Place, Review, Amenity)
 - **JWT Authentication**: Secure token-based authentication with role-based access (is_admin)
 - **Password Hashing**: Bcrypt for secure password storage
+- **CORS Support**: Flask-CORS for frontend-backend communication
 - **Database Relationships**: One-to-many and many-to-many relationships between models
 - **SQL Schema**: Pre-defined SQL scripts for table creation and sample data
 
@@ -90,7 +94,7 @@ This project follows a three-layer architecture:
 1. **Clone the repository** (if not already done):
    ```bash
    git clone <repository-url>
-   cd holbertonschool-hbnb/part3/hbnb
+   cd holbertonschool-hbnb/part4/hbnb/backend
    ```
 
 2. **Create a virtual environment** (recommended):
@@ -113,6 +117,10 @@ This project follows a three-layer architecture:
 5. **Run the application**:
    ```bash
    python run.py
+   ```
+   Or use the provided script:
+   ```bash
+   ./start_backend.sh
    ```
    The application will start on `http://localhost:5000`
 
@@ -152,6 +160,7 @@ The API is documented using Flask-RESTX and is available at `/api/v1/` when the 
 - **Flask-RESTX**: REST API framework with automatic documentation
 - **Flask-JWT-Extended**: JWT token authentication
 - **Flask-Bcrypt**: Password hashing
+- **Flask-CORS**: Cross-Origin Resource Sharing support for frontend integration
 - **SQLAlchemy**: ORM for database interactions
 - **Flask-SQLAlchemy**: Flask integration for SQLAlchemy
 
@@ -301,6 +310,7 @@ The API is fully documented using Flask-RESTX and Swagger UI:
 - **JWT Authentication**: Token-based authentication for protected endpoints
 - **Role-Based Access**: Admin flag in JWT claims for role-based authorization
 - **Secure Token Generation**: Secret key configuration for JWT token signing
+- **CORS Configuration**: Controlled cross-origin access for frontend integration
 
 ### RBAC (Role-Based Access Control)
 
@@ -444,6 +454,54 @@ erDiagram
 - A **PLACE** can have multiple **REVIEWS** (one-to-many)
 - A **PLACE** can have multiple **AMENITIES** through the **PLACE_AMENITY** junction table (many-to-many)
 - Each **REVIEW** is unique per user and place combination (enforced by unique constraint)
+
+## CORS and Frontend Integration
+
+This backend API is designed to work with a separate frontend application. CORS (Cross-Origin Resource Sharing) is enabled to allow the frontend to make requests from a different origin.
+
+### CORS Configuration
+
+The API includes Flask-CORS support configured in the application factory (`app/__init__.py`):
+- Allows requests from frontend running on different ports
+- Supports credentials (cookies with JWT tokens)
+- Handles preflight OPTIONS requests
+
+### Frontend Communication
+
+The backend serves only the API endpoints. The frontend is served separately:
+- **Backend API**: `http://localhost:5000` (Flask application)
+- **Frontend**: Served via separate static file server (e.g., `http://localhost:8000`)
+
+### API Usage from Frontend
+
+Frontend applications should:
+1. Set the API base URL in configuration (default: `http://localhost:5000`)
+2. Include JWT tokens in Authorization headers for authenticated requests
+3. Handle CORS preflight requests appropriately
+4. Store tokens securely (cookies with httpOnly flag recommended)
+
+For frontend setup and usage, see the frontend README in the `../frontend/` directory.
+
+## Starting the Application
+
+### Backend Only
+```bash
+./start_backend.sh
+# or
+python run.py
+```
+
+### Full Stack (Backend + Frontend)
+From the parent directory (`part4/hbnb/`):
+```bash
+# Terminal 1: Start backend
+cd backend
+./start_backend.sh
+
+# Terminal 2: Start frontend
+cd frontend
+python3 -m http.server 8000
+```
 
 ## Contributing
 
