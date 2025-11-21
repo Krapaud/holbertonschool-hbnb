@@ -35,18 +35,16 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Create Flask application instance
     app = Flask(__name__, static_folder='../static')
     
-    # Configure CORS to allow requests from frontend
-    CORS(app, resources={
-        r"/api/*": {
-            "origins": ["http://localhost:8000", "http://127.0.0.1:8000"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
-        }
-    })
-    
     # Load configuration from the specified class
     app.config.from_object(config_class)
+    
+    # Configure CORS to allow requests from frontend
+    # This must be done AFTER loading config
+    CORS(app, 
+         resources={r"/api/*": {"origins": "*"}},
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         supports_credentials=False)
 
     # Initialize extensions with the app instance
     bcrypt.init_app(app)  # Enable password hashing

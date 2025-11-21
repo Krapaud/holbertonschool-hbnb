@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {Promise<void>}
  */
 async function loginUser(email, password) {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ async function fetchPlaces(token) {
     headers.Authorization = `Bearer ${token}`;
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/v1/places`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/places/`, {
     method: 'GET',
     headers: headers,
   });
@@ -449,7 +449,7 @@ function getStarRating(rating) {
  * @returns {Promise<void>}
  */
 async function submitReview(token, placeId, reviewText, rating) {
-  const response = await fetch(`${API_BASE_URL}/api/v1/reviews`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/reviews/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -23,11 +23,5 @@ echo ""
 # Change to backend directory
 cd backend
 
-# Activate virtual environment if it exists
-if [ -d "venv" ]; then
-    echo "Activating virtual environment..."
-    source venv/bin/activate
-fi
-
-# Start the Flask application
-python3 run.py
+# Start the Flask application using venv's Python
+./venv/bin/python3 run.py
