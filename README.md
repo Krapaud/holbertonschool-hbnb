@@ -53,21 +53,48 @@ holbertonschool-hbnb/
 │       ├── run.py                            # Application entry point
 │       ├── requirements.txt                  # Python dependencies
 │       └── README.md                         # Part 2 documentation
-└── part3/                                      # Phase 3 - Database and Authentication
-    └── hbnb/                                  # Main application
-        ├── app/                               # Application package
-        │   ├── api/v1/                       # REST API endpoints with auth
-        │   ├── models/                       # SQLAlchemy models
-        │   ├── services/                     # Business logic (Facade)
-        │   └── persistence/                  # SQLAlchemy repository
-        ├── sql/                               # SQL schema files
-        ├── tests/                             # Test suite (51 API + 28 model + 7 persistence tests)
-        ├── init_db.py                        # Database initialization
-        ├── config.py                         # Configuration with SQLAlchemy
-        ├── run.py                            # Application entry point
-        ├── requirements.txt                  # Python dependencies
-        ├── hbnb_database_er_diagram.mmd      # Database ER diagram
-        └── README.md                         # Part 3 documentation
+├── part3/                                      # Phase 3 - Database and Authentication
+│   └── hbnb/                                  # Main application
+│       ├── app/                               # Application package
+│       │   ├── api/v1/                       # REST API endpoints with auth
+│       │   ├── models/                       # SQLAlchemy models
+│       │   ├── services/                     # Business logic (Facade)
+│       │   └── persistence/                  # SQLAlchemy repository
+│       ├── sql/                               # SQL schema files
+│       ├── tests/                             # Test suite (51 API + 28 model + 7 persistence tests)
+│       ├── init_db.py                        # Database initialization
+│       ├── config.py                         # Configuration with SQLAlchemy
+│       ├── run.py                            # Application entry point
+│       ├── requirements.txt                  # Python dependencies
+│       ├── hbnb_database_er_diagram.mmd      # Database ER diagram
+│       └── README.md                         # Part 3 documentation
+└── part4/                                      # Phase 4 - Frontend Integration
+    └── hbnb/                                  # Full-stack application
+        ├── backend/                           # Backend API
+        │   ├── app/                           # Application package
+        │   │   ├── api/v1/                   # REST API endpoints with CORS
+        │   │   ├── models/                   # SQLAlchemy models
+        │   │   ├── services/                 # Business logic (Facade)
+        │   │   └── persistence/              # SQLAlchemy repository
+        │   ├── sql/                           # SQL schema files
+        │   ├── tests/                         # Test suite
+        │   ├── init_db.py                    # Database initialization
+        │   ├── config.py                     # Configuration
+        │   ├── run.py                        # Application entry point
+        │   ├── requirements.txt              # Python dependencies
+        │   ├── start_backend.sh              # Backend startup script
+        │   └── README.md                     # Backend documentation
+        ├── frontend/                          # Frontend application
+        │   ├── index.html                    # Home page with places list
+        │   ├── login.html                    # Login page
+        │   ├── place.html                    # Place details page
+        │   ├── add_review.html               # Review submission page
+        │   ├── scripts.js                    # Main JavaScript with API calls
+        │   ├── styles.css                    # Application styles
+        │   ├── images/                       # Images (logo, favicon)
+        │   └── README.md                     # Frontend documentation
+        ├── start_backend.sh                   # Start backend server
+        └── start_frontend.sh                  # Start frontend server
 ```
 
 ## Implemented Features
@@ -227,11 +254,54 @@ holbertonschool-hbnb/
   - Simplified review deletion logic
 - Updated all documentation to reflect 86 passing tests
 
+### Part 4 - Frontend Integration (Completed) ✅
+
+**Frontend Application:**
+- Static HTML/CSS/JavaScript interface
+- Home page with places list and price filter
+- Login page for user authentication
+- Place details page with reviews display
+- Review submission functionality
+- JWT token management via cookies
+- Dynamic content loading from API
+
+**Backend API with CORS:**
+- Flask-CORS integration for cross-origin requests
+- Separated backend API server (port 5000)
+- Support for frontend on different origin (port 8000)
+- All Part 3 features maintained (JWT auth, database, etc.)
+
+**Pages Implemented:**
+- `index.html` - Home page with places list and price filtering
+- `login.html` - User authentication with JWT
+- `place.html` - Detailed place view with reviews and review form
+- `add_review.html` - Standalone review submission page
+
+**JavaScript Features:**
+- API communication with fetch
+- User authentication flow
+- Cookie-based JWT storage
+- Dynamic content rendering
+- Form validation and submission
+- Price filtering functionality
+
+**Architecture:**
+- Clear separation between frontend and backend
+- RESTful API communication
+- Stateless authentication with JWT
+- CORS-enabled backend for cross-origin requests
+
+**Startup Scripts:**
+- `start_backend.sh` - Launches Flask API server on port 5000
+- `start_frontend.sh` - Launches static file server on port 8000
+
 ## Documentation
 
 - **[Part 1 Documentation](./part1/README.md)** - Design and modeling phase
 - **[Part 2 Documentation](./part2/hbnb/README.md)** - Implementation with in-memory storage
 - **[Part 3 Documentation](./part3/hbnb/README.md)** - Database and authentication implementation
+- **[Part 4 Backend Documentation](./part4/hbnb/backend/README.md)** - Backend API with CORS
+- **[Part 4 Frontend Documentation](./part4/hbnb/frontend/README.md)** - Frontend application
 
 ## Technologies
 
@@ -241,11 +311,19 @@ holbertonschool-hbnb/
 - Flask-RESTX (REST API and automatic documentation)
 - Flask-JWT-Extended (JWT authentication)
 - Flask-Bcrypt (Password hashing)
+- Flask-CORS (Cross-origin resource sharing)
 - SQLAlchemy 2.x (ORM)
 - Flask-SQLAlchemy (Flask-SQLAlchemy integration)
 
+**Frontend:**
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Fetch API for HTTP requests
+
 **Database:**
 - SQLite (Development and Testing)
+- Prepared for PostgreSQL/MySQL migration (production-ready)
 
 **Architecture Patterns:**
 - Facade Pattern (Business Logic simplification)
@@ -354,14 +432,38 @@ To get started with the project:
 1. **Review Part 1** for architecture and design decisions
 2. **Run Part 2** to see the in-memory implementation
 3. **Deploy Part 3** for the full-stack application with database
+4. **Launch Part 4** for the complete application with frontend interface
 
 Each part has detailed README files with setup instructions and documentation.
+
+### Running Part 4 (Frontend + Backend)
+
+```bash
+# Navigate to part4/hbnb directory
+cd part4/hbnb
+
+# Terminal 1: Start backend API
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 init_db.py
+./start_backend.sh
+# Backend runs on http://localhost:5000
+
+# Terminal 2: Start frontend
+cd frontend
+python3 -m http.server 8000
+# Frontend runs on http://localhost:8000
+```
 
 ## Interactive API Documentation
 
 Access the Swagger UI documentation when running the application:
 - **Part 2:** `http://localhost:5000/api/v1/`
 - **Part 3:** `http://localhost:5000/api/v1/`
+- **Part 4 Backend:** `http://localhost:5000/api/v1/`
+- **Part 4 Frontend:** `http://localhost:8000`
 
 The interactive documentation allows you to:
 - Explore all available endpoints

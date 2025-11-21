@@ -13,8 +13,8 @@ class UserModel(BaseModel):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    places = db.relationship("PlaceModel", back_populates="owner")
-    reviews = db.relationship("ReviewModel", back_populates="user")
+    places = db.relationship("PlaceModel", back_populates="owner", cascade="all, delete-orphan")
+    reviews = db.relationship("ReviewModel", back_populates="user", cascade="all, delete-orphan")
 
     @validates('first_name')
     def validate_first_name(self, key, first_name):

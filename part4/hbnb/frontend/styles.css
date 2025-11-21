@@ -1,0 +1,447 @@
+/* 
+  HBnB Evolution - Main Stylesheet
+  This file contains all the styles for the application
+  Organized by sections for better maintainability
+*/
+
+/* ========================================
+   IMPORTS & FONTS
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+:root {
+  --text-color: var(--color-black);
+  --font-size-small: 1.2rem;
+  --font-size-medium: 1.6rem;
+  --font-size-large: 1.8rem;
+  --font-size-x-large: 2.3rem;
+  --font-size-xx-large: 4.8rem;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --header-logo-position: relative;
+  --header-logo-link-display: inline-block;
+  --header-logo-link-position: absolute;
+  --header-logo-link-top: -1rem;
+  --header-logo-link-left: 0;
+  --footer-padding: 5rem 0 1rem;
+  --font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================
+   GLOBAL STYLES & RESET
+   ======================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================
+   HEADER & NAVIGATION
+   ======================================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: #fff;
+  padding: 1rem 2rem;
+}
+
+/* Logo Styles */
+.logo {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: filter 0.3s ease;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 4px 12px rgba(245, 66, 66, 0.8));
+}
+
+.logo a {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Navigation Styles */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+nav a {
+  color: #f54242;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease-in-out;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+/* Login Button */
+.login-button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.login-button:hover {
+  background-color: #e60000;
+}
+
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Center content only for login page */
+main.login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ========================================
+   INDEX PAGE - PLACES LIST
+   ======================================== */
+
+/* Header Container with Title and Filter */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.header-container h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+/* Price Filter Styles */
+#filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#filter label {
+  font-weight: 500;
+  color: #333;
+}
+
+#price-filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+#price-filter:hover {
+  border-color: #ff0000;
+}
+
+#price-filter:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+/* Places List Grid */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+/* Place Card Styles - Fixed Parameters (margin: 20px, padding: 10px, border: 1px solid #ddd, border-radius: 10px) */
+.place-card {
+  background: white;
+  text-align: center;
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.place-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Details Button */
+.details-button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* ========================================
+   PLACE DETAILS PAGE
+   ======================================== */
+
+/* Place Details Container */
+.place-details {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+/* Place Information Card */
+.place-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.place-info h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.place-info p {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.place-info p strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* ========================================
+   REVIEWS SECTION
+   ======================================== */
+#reviews {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+#reviews h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Review Card - Fixed Parameters (margin: 20px, padding: 10px, border: 1px solid #ddd, border-radius: 10px) */
+.review-card {
+  background: white;
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.review-author {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.review-comment {
+  color: #555;
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+.review-rating {
+  color: #ff0000;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* ========================================
+   ADD REVIEW FORM
+   ======================================== */
+.add-review {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-review h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* ========================================
+   LOGIN FORM
+   ======================================== */
+#login-form {
+  background: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+}
+
+#login-form h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 2rem;
+}
+
+#login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+#login-form input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+#login-form input:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+#login-form button {
+  width: 100%;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+#login-form button:hover {
+  background-color: #e60000;
+}
+
+/* Form Elements */
+.form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form textarea:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+.form select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.form select:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+.form button {
+  margin-top: 1rem;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.form button:hover {
+  background-color: #e60000;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+footer {
+  text-align: center;
+  padding: 1rem 0;
+  background-color: #333;
+  color: #f54242;
+  font-family: var(--font-family);
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Character encoding and viewport settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title and styles -->
+    <title>Add Review</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  </head>
+  <body>
+    <!-- ============================================ -->
+    <!-- HEADER SECTION -->
+    <!-- Contains logo and navigation menu -->
+    <!-- ============================================ -->
+    <header>
+      <!-- Logo container with link to home -->
+      <div>
+        <a href="index.html">
+          <img src="images/logo.png" alt="HBnB" class="logo">
+        </a>
+      </div>
+      
+      <!-- Navigation menu -->
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="login.html" id="login-link" class="login-button">Login</a>
+      </nav>
+    </header>
+    
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT SECTION -->
+    <!-- Review submission form -->
+    <!-- ============================================ -->
+    <main>
+      <!-- TODO: Add place identification (name/title) to show which place is being reviewed -->
+      
+      <!-- Add review section -->
+      <section class="add-review">
+        <!-- Review form -->
+        <!-- Submits POST request to /api/v1/places/:id/reviews -->
+        <!-- Requires authentication (JWT token) -->
+        <form id="review-form" class="form">
+          <h2>Add a Review</h2>
+          
+          <!-- Review text area -->
+          <label for="review">Your Review:</label>
+          <textarea id="review" name="review" required></textarea>
+          
+          <!-- Rating selection dropdown (1-5 stars) -->
+          <label for="rating">Rating:</label>
+          <select id="rating" name="rating" required>
+            <option value="">Select rating</option>
+            <option value="1">★ (1/5)</option>
+            <option value="2">★★ (2/5)</option>
+            <option value="3">★★★ (3/5)</option>
+            <option value="4">★★★★ (4/5)</option>
+            <option value="5">★★★★★ (5/5)</option>
+          </select>
+          
+          <!-- Submit button -->
+          <button type="submit">Submit Review</button>
+        </form>
+      </section>
+    </main>
+    
+    <!-- JavaScript files for configuration and form handling -->
+    <script src="scripts.js"></script>
+    
+    <!-- ============================================ -->
+    <!-- FOOTER SECTION -->
+    <!-- Copyright information -->
+    <!-- ============================================ -->
+    <footer>
+      <p>© 2025 HBnB. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

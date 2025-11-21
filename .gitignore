@@ -225,3 +225,6 @@ env*/
 postman/
 /postman
 *.postman_collection.json
+
+# Copilot instructions
+.github/copilot-instructions.md

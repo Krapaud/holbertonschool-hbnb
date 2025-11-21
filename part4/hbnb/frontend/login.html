@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Character encoding and viewport settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title and styles -->
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  </head>
+  <body>
+    <!-- ============================================ -->
+    <!-- HEADER SECTION -->
+    <!-- Contains logo and navigation menu -->
+    <!-- ============================================ -->
+    <header>
+      <!-- Logo container with link to home -->
+      <div>
+        <a href="index.html">
+          <img src="images/logo.png" alt="HBnB" class="logo">
+        </a>
+      </div>
+      
+      <!-- Navigation menu -->
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="login.html" id="login-link" class="login-button">Login</a>
+      </nav>
+    </header>
+    
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT SECTION -->
+    <!-- Login form for user authentication -->
+    <!-- ============================================ -->
+    <main class="login-page">
+      <!-- Login form -->
+      <!-- Sends POST request to /api/v1/auth/login -->
+      <!-- On success, stores JWT token in cookie and redirects to index.html -->
+      <form id="login-form">
+        <h2>Login</h2>
+        
+        <!-- Email input field -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <!-- Password input field -->
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <!-- Submit button -->
+        <button type="submit">Login</button>
+      </form>
+    </main>
+    
+    <!-- JavaScript files for configuration and form handling -->
+    <script src="scripts.js"></script>
+    
+    <!-- ============================================ -->
+    <!-- FOOTER SECTION -->
+    <!-- Copyright information -->
+    <!-- ============================================ -->
+    <footer>
+      <p>© 2025 HBnB. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
