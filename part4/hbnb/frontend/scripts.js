@@ -1,24 +1,29 @@
 /**
- * HBnB Evolution - Main JavaScript File
- * Handles authentication, place listing, filtering, and place details functionality
+ * HBnB Main JavaScript File
+ * This file manages:
+ * - User login and logout
+ * - Display of the places list
+ * - Details of a place
+ * - Reviews
  */
 
-// Call to the API_BASE_URL
+// The address of our backend API
 const API_BASE_URL = 'http://localhost:5000';
 
 // ============================================
-// DOM CONTENT LOADED - INITIALIZATION
+// STARTUP - Code executed when the page loads
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Get the login form element
+  // Get the login form if it exists
   const loginForm = document.getElementById('login-form');
 
-  // If login form exists, attach submit event listener
+  // If the login form exists on the page
   if (loginForm) {
+    // Listen for when the user submits the form
     loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
+      event.preventDefault(); // Prevents page reload
 
-      // Get and trim user input values
+      // Get the email and password entered by the user
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
 
@@ -34,15 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const reviewForm = document.getElementById('review-form');
   
   if (reviewForm) {
-    // Check if user is authenticated
+    // Check if the user is logged in
     const token = getCookie('token');
     
-    // Only redirect on add_review.html (not on place.html)
-    // Check if we're on add_review.html by looking for the specific review textarea ID
-    const isAddReviewPage = document.getElementById('review'); // Only exists on add_review.html
+    // Check if we're on the add_review.html page
+    const isAddReviewPage = document.getElementById('review');
     
     if (!token && isAddReviewPage) {
-      // Redirect to index if not authenticated and on add_review.html
+      // If not logged in on add_review.html, redirect to home
       window.location.href = 'index.html';
       return;
     }
@@ -68,19 +72,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Check if user is authenticated on page load
+  // Check if the user is logged in
   checkAuthentication();
 
-  // Get the price filter element if it exists
+  // Get the price filter if it exists
   const priceFilter = document.getElementById('price-filter');
 
-  // If price filter exists, attach change event listener
+  // If the filter exists, listen for changes
   if (priceFilter) {
     priceFilter.addEventListener('change', (event) => {
-      const selectedPrice = event.target.value;
-      const placeCards = document.querySelectorAll('.place-card');
+      const selectedPrice = event.target.value; // The selected price
+      const placeCards = document.querySelectorAll('.place-card'); // All places
 
-      // Filter place cards based on selected price
+      // Filter places based on the selected price
       for (let card of placeCards) {
         const priceText = card.querySelector('p').textContent;
         const price = parseInt(priceText.split('$')[1]);
@@ -99,14 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================
-// AUTHENTICATION FUNCTIONS
+// LOGIN AND LOGOUT FUNCTIONS
 // ============================================
 
 /**
- * Authenticates a user with email and password
- * @param {string} email - User's email address
- * @param {string} password - User's password
- * @returns {Promise<void>}
+ * Logs in a user with their email and password
+ * @param {string} email - The user's email address
+ * @param {string} password - The user's password
  */
 async function loginUser(email, password) {
   const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
@@ -118,22 +121,22 @@ async function loginUser(email, password) {
   });
 
   if (response.ok) {
-    // Store token in cookie and redirect to index page
+    // If login succeeds, save the token and redirect
     const data = await response.json();
-    document.cookie = `token=${data.access_token}; path=/`;
-    window.location.href = 'index.html';
+    document.cookie = `token=${data.access_token}; path=/`; // Save the token
+    window.location.href = 'index.html'; // Redirect to home page
   } else {
     alert('Login failed: ' + response.statusText);
   }
 }
 
 /**
- * Checks if user is authenticated and updates UI accordingly
- * - Manages visibility of login link
- * - Controls display of add review form
- * - Fetches and displays places list on index.html
- * - Fetches and displays place details on place.html
- * @returns {void}
+ * Checks if the user is logged in and updates the interface
+ * This function:
+ * - Shows "Login" or "Logout" based on login status
+ * - Shows/hides the add review form
+ * - Loads the places list on the home page
+ * - Loads place details on its page
  */
 function checkAuthentication() {
   const token = getCookie('token');
@@ -190,24 +193,25 @@ function checkAuthentication() {
 }
 
 /**
- * Logs out the current user by removing the token cookie
- * and redirecting to the index page
- * @returns {void}
+ * Logs out the user by removing their token
+ * and redirects to the home page
  */
 function logout() {
-  // Delete the token cookie by setting it to expire in the past
+  // Delete the cookie by making it expire in the past
   document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  // Redirect to index page
+  // Redirect to home page
   window.location.href = 'index.html';
 }
 
 /**
- * Retrieves a cookie value by name
- * @param {string} name - Name of the cookie to retrieve
- * @returns {string|null} Cookie value or null if not found
+ * Gets the value of a cookie by its name
+ * @param {string} name - The name of the cookie to search for
+ * @returns {string|null} The cookie value, or null if not found
  */
 function getCookie(name) {
+  // Split all cookies
   const cookies = document.cookie.split('; ');
+  // Search for the cookie we want
   for (let cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split('=');
     if (cookieName === name) {
@@ -218,13 +222,12 @@ function getCookie(name) {
 }
 
 // ============================================
-// PLACES LIST FUNCTIONS
+// FUNCTIONS FOR PLACES LIST
 // ============================================
 
 /**
  * Fetches all places from the API
- * @param {string|null} token - JWT authentication token (optional)
- * @returns {Promise<void>}
+ * @param {string|null} token - The login token (optional)
  */
 async function fetchPlaces(token) {
   const headers = {
@@ -253,12 +256,11 @@ async function fetchPlaces(token) {
 
 /**
  * Displays the list of places on the page
- * Creates HTML elements dynamically for each place
- * @param {Array} places - Array of place objects
+ * @param {Array} places - The list of places to display
  */
 function displayPlaces(places) {
   const placesList = document.getElementById('places-list');
-  placesList.innerHTML = '';
+  placesList.innerHTML = ''; // Clear the current list
 
   // Create a card for each place
   for (let place of places) {
