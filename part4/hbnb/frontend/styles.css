@@ -119,6 +119,14 @@ main {
   padding: 2rem;
 }
 
+/* Center content only for login page */
+main.login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* ========================================
    INDEX PAGE - PLACES LIST
    ======================================== */
@@ -306,6 +314,65 @@ main {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
+}
+
+/* ========================================
+   LOGIN FORM
+   ======================================== */
+#login-form {
+  background: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+}
+
+#login-form h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 2rem;
+}
+
+#login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+#login-form input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+#login-form input:focus {
+  outline: none;
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.1);
+}
+
+#login-form button {
+  width: 100%;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+#login-form button:hover {
+  background-color: #e60000;
 }
 
 /* Form Elements */

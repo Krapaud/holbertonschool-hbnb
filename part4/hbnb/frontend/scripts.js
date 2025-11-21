@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {Promise<void>}
  */
 async function loginUser(email, password) {
-  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login/`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -144,8 +144,17 @@ function checkAuthentication() {
   if (loginLink) {
     if (!token) {
       loginLink.style.display = 'block';
+      loginLink.textContent = 'Login';
+      loginLink.href = 'login.html';
+      loginLink.onclick = null;
     } else {
-      loginLink.style.display = 'none';
+      loginLink.style.display = 'block';
+      loginLink.textContent = 'Logout';
+      loginLink.href = '#';
+      loginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        logout();
+      });
     }
   }
 
@@ -178,6 +187,18 @@ function checkAuthentication() {
       document.getElementById('place-details').innerHTML = '<p>Error: No place ID provided in URL.</p>';
     }
   }
+}
+
+/**
+ * Logs out the current user by removing the token cookie
+ * and redirecting to the index page
+ * @returns {void}
+ */
+function logout() {
+  // Delete the token cookie by setting it to expire in the past
+  document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  // Redirect to index page
+  window.location.href = 'index.html';
 }
 
 /**
@@ -465,6 +486,16 @@ async function submitReview(token, placeId, reviewText, rating) {
   if (response.ok) {
     alert('Review submitted successfully!');
     document.getElementById('review-form').reset();
+    
+    // Refresh reviews list if on place details page
+    if (document.getElementById('reviews-list')) {
+      fetchPlaceReviews(placeId);
+    }
+    
+    // Redirect to place details page if on add_review.html
+    if (document.getElementById('review')) {
+      window.location.href = `place.html?id=${placeId}`;
+    }
   } else {
     const errorData = await response.json();
     alert('Failed to submit review: ' + (errorData.error || response.statusText));
