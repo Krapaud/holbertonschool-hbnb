@@ -34,7 +34,16 @@ def create_app(config_class="config.DevelopmentConfig"):
     """
     # Create Flask application instance
     app = Flask(__name__, static_folder='../static')
-    CORS(app)
+    
+    # Configure CORS to allow requests from frontend
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:8000", "http://127.0.0.1:8000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True
+        }
+    })
     
     # Load configuration from the specified class
     app.config.from_object(config_class)
@@ -69,30 +78,10 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
 
     # ============================================
-    # HTML PAGES ROUTES
-    # Serve static HTML pages without /static/ in URL
+    # HTML PAGES ROUTES - REMOVED FOR FRONTEND/BACKEND SEPARATION
+    # Frontend is now served separately (e.g., with python -m http.server)
+    # This backend only serves the API endpoints
     # ============================================
-    
-    @app.route('/')
-    @app.route('/index.html')
-    def index():
-        """Serve the main index page (list of places)."""
-        return app.send_static_file('index.html')
-
-    @app.route('/login.html')
-    def login():
-        """Serve the login page."""
-        return app.send_static_file('login.html')
-
-    @app.route('/place.html')
-    def place():
-        """Serve the place details page."""
-        return app.send_static_file('place.html')
-
-    @app.route('/add_review.html')
-    def add_review():
-        """Serve the add review page."""
-        return app.send_static_file('add_review.html')
 
     # ============================================
     # API INFO ROUTE

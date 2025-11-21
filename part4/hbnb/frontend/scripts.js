@@ -3,6 +3,9 @@
  * Handles authentication, place listing, filtering, and place details functionality
  */
 
+// Call to the API_BASE_URL
+const API_BASE_URL = 'http://localhost:5000';
+
 // ============================================
 // DOM CONTENT LOADED - INITIALIZATION
 // ============================================
@@ -106,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {Promise<void>}
  */
 async function loginUser(email, password) {
-  const response = await fetch('/api/v1/auth/login', {
+  const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -212,7 +215,7 @@ async function fetchPlaces(token) {
     headers.Authorization = `Bearer ${token}`;
   }
   
-  const response = await fetch('/api/v1/places', {
+  const response = await fetch(`${API_BASE_URL}/api/v1/places`, {
     method: 'GET',
     headers: headers,
   });
@@ -280,7 +283,7 @@ async function fetchPlaceDetails(token, placeId) {
     headers.Authorization = `Bearer ${token}`;
   }
   
-  const response = await fetch(`/api/v1/places/${placeId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/places/${placeId}`, {
     method: 'GET',
     headers: headers,
   });
@@ -354,7 +357,7 @@ function displayPlaceDetails(place) {
  */
 async function fetchPlaceReviews(placeId) {
   try {
-    const response = await fetch(`/api/v1/places/${placeId}/reviews`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/places/${placeId}/reviews`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -446,7 +449,7 @@ function getStarRating(rating) {
  * @returns {Promise<void>}
  */
 async function submitReview(token, placeId, reviewText, rating) {
-  const response = await fetch('/api/v1/reviews', {
+  const response = await fetch(`${API_BASE_URL}/api/v1/reviews`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
