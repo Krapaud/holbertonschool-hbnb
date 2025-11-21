@@ -403,7 +403,7 @@ function displayReviews(reviews) {
     const stars = getStarRating(review.rating);
 
     article.innerHTML = `
-      <h3 class="review-author">User ${review.user_id}:</h3>
+      <h3 class="review-author">${review.user_name}</h3>
       <p class="review-comment">"${review.text}"</p>
       <p class="review-rating">Rating: ${stars}</p>
     `;
