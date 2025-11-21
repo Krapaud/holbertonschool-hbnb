@@ -33,7 +33,7 @@ def create_app(config_class="config.DevelopmentConfig"):
         Flask: Configured Flask application instance
     """
     # Create Flask application instance
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='../static')
     CORS(app)
     
     # Load configuration from the specified class
